@@ -16,7 +16,7 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.BusinessObjects
+namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public interface IExposeValue<TValue>
     {

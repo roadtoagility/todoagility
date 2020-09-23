@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,16 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
 
-namespace TodoAgility.Agile.Model
+namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class TodoState
+    public class AddTodoCommandHandler : ICommandHandler<AddTodoCommand,ExecutionResult>
     {
-        public string Name { get; }
-        
-        public TodoState(string name)
+        public ExecutionResult Execute(AddTodoCommand command)
         {
-            Name = name;
+            throw new NotImplementedException();
         }
     }
 }

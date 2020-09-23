@@ -18,23 +18,41 @@
 
 using System;
 
-namespace TodoAgility.Agile.BusinessObjects
+namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class TodoDTO: IEquatable<TodoDTO>
+    public class Name : IEquatable<Name>, IExposeValue<string>
     {
         private static readonly int NAME_LENGTH_LIMIT = 20;
-        public string Name { get; }
+        private readonly string _nameValue;
 
-        public TodoDTO(string name)
+        private Name(string nameValue)
         {
-            Name = name;
+            _nameValue = nameValue;
         }
 
-        public bool Equals(TodoDTO other)
+        public static Name From(string nameValue)
+        {
+            if (string.IsNullOrEmpty(nameValue) || string.IsNullOrWhiteSpace(nameValue))
+                throw new ArgumentException("O nome informado é nulo, vazio ou composto por espaços em branco.",
+                    nameof(nameValue));
+
+            if (nameValue.Length > NAME_LENGTH_LIMIT)
+                throw new ArgumentException($"O nome excedeu o limite máximo de {NAME_LENGTH_LIMIT} definido.",
+                    nameof(nameValue));
+
+            return new Name(nameValue);
+        }
+
+        public bool Equals(Name other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Name == other.Name;
+            return _nameValue == other._nameValue;
+        }
+
+        string IExposeValue<string>.GetValue()
+        {
+            return _nameValue;
         }
 
         public override bool Equals(object obj)
@@ -42,27 +60,27 @@ namespace TodoAgility.Agile.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TodoDTO) obj);
+            return Equals((Name) obj);
         }
 
-        public static bool operator ==(TodoDTO left, TodoDTO right)
+        public static bool operator ==(Name left, Name right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TodoDTO left, TodoDTO right)
+        public static bool operator !=(Name left, Name right)
         {
             return !Equals(left, right);
         }
 
         public override string ToString()
         {
-            return $"[TODO]:[{ Name.ToString()}]";
+            return $"{_nameValue}";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name);
+            return HashCode.Combine(_nameValue);
         }
     }
 }

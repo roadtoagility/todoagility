@@ -17,10 +17,9 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence.Model;
 using Xunit;
-
-using TodoAgility.Agile.BusinessObjects;
-using TodoAgility.Agile.Model;
 
 namespace TodoAgility.Tests
 {

@@ -17,42 +17,38 @@
 //
 
 using System;
+using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.BusinessObjects
+namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class Name : IEquatable<Name>, IExposeValue<string>
+    public class Todo : IEquatable<Todo>, IExposeValue<TodoState>
     {
-        private static readonly int NAME_LENGTH_LIMIT = 20;
-        private readonly string _nameValue;
+        private readonly Name _name;
 
-        private Name(string nameValue)
+        private Todo(Name name)
         {
-            _nameValue = nameValue;
+            _name = name;
         }
 
-        public static Name From(string nameValue)
+        public static Todo FromName(Name name)
         {
-            if (string.IsNullOrEmpty(nameValue) || string.IsNullOrWhiteSpace(nameValue))
-                throw new ArgumentException("O nome informado é nulo, vazio ou composto por espaços em branco.",
-                    nameof(nameValue));
+            if (name == null )
+                throw new ArgumentException("Informe um nome válido.", nameof(name));
 
-            if (nameValue.Length > NAME_LENGTH_LIMIT)
-                throw new ArgumentException($"O nome excedeu o limite máximo de {NAME_LENGTH_LIMIT} definido.",
-                    nameof(nameValue));
-
-            return new Name(nameValue);
+            return new Todo(name);
         }
 
-        public bool Equals(Name other)
+        public bool Equals(Todo other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _nameValue == other._nameValue;
+            return _name == other._name;
         }
 
-        string IExposeValue<string>.GetValue()
+        TodoState IExposeValue<TodoState>.GetValue()
         {
-            return _nameValue;
+            IExposeValue<string> nameState = _name;
+            return new TodoState(nameState.GetValue());
         }
 
         public override bool Equals(object obj)
@@ -60,27 +56,27 @@ namespace TodoAgility.Agile.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Name) obj);
+            return Equals((Todo) obj);
         }
 
-        public static bool operator ==(Name left, Name right)
+        public static bool operator ==(Todo left, Todo right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Name left, Name right)
+        public static bool operator !=(Todo left, Todo right)
         {
             return !Equals(left, right);
         }
 
         public override string ToString()
         {
-            return $"{_nameValue}";
+            return $"[TODO]:[{ _name.ToString()}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_nameValue);
+            return HashCode.Combine(_name);
         }
     }
 }

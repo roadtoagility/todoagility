@@ -17,38 +17,24 @@
 //
 
 using System;
-using TodoAgility.Agile.Model;
 
-namespace TodoAgility.Agile.BusinessObjects
+namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class Todo : IEquatable<Todo>, IExposeValue<TodoState>
+    public class TodoDTO: IEquatable<TodoDTO>
     {
-        private readonly Name _name;
+        private static readonly int NAME_LENGTH_LIMIT = 20;
+        public string Name { get; }
 
-        private Todo(Name name)
+        public TodoDTO(string name)
         {
-            _name = name;
+            Name = name;
         }
 
-        public static Todo FromName(Name name)
-        {
-            if (name == null )
-                throw new ArgumentException("Informe um nome válido.", nameof(name));
-
-            return new Todo(name);
-        }
-
-        public bool Equals(Todo other)
+        public bool Equals(TodoDTO other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _name == other._name;
-        }
-
-        TodoState IExposeValue<TodoState>.GetValue()
-        {
-            IExposeValue<string> nameState = _name;
-            return new TodoState(nameState.GetValue());
+            return Name == other.Name;
         }
 
         public override bool Equals(object obj)
@@ -56,27 +42,27 @@ namespace TodoAgility.Agile.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Todo) obj);
+            return Equals((TodoDTO) obj);
         }
 
-        public static bool operator ==(Todo left, Todo right)
+        public static bool operator ==(TodoDTO left, TodoDTO right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Todo left, Todo right)
+        public static bool operator !=(TodoDTO left, TodoDTO right)
         {
             return !Equals(left, right);
         }
 
         public override string ToString()
         {
-            return $"[TODO]:[{ _name.ToString()}]";
+            return $"[TODO]:[{ Name.ToString()}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_name);
+            return HashCode.Combine(Name);
         }
     }
 }
