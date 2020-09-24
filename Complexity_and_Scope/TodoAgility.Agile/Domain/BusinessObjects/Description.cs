@@ -20,39 +20,39 @@ using System;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class Name : IEquatable<Name>, IExposeValue<string>
+    public class Description : IEquatable<Description>, IExposeValue<string>
     {
-        private static readonly int NAME_LENGTH_LIMIT = 20;
-        private readonly string _nameValue;
+        private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
+        private readonly string _description;
 
-        private Name(string nameValue)
+        private Description(string description)
         {
-            _nameValue = nameValue;
+            _description = description;
         }
 
-        public static Name From(string nameValue)
+        public static Description From(string description)
         {
-            if (string.IsNullOrEmpty(nameValue) || string.IsNullOrWhiteSpace(nameValue))
-                throw new ArgumentException("O nome informado é nulo, vazio ou composto por espaços em branco.",
-                    nameof(nameValue));
+            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
+                throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
+                    nameof(description));
 
-            if (nameValue.Length > NAME_LENGTH_LIMIT)
-                throw new ArgumentException($"O nome excedeu o limite máximo de {NAME_LENGTH_LIMIT} definido.",
-                    nameof(nameValue));
+            if (description.Length > DESCRIPTION_LENGTH_LIMIT)
+                throw new ArgumentException($"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
+                    nameof(description));
 
-            return new Name(nameValue);
+            return new Description(description);
         }
 
-        public bool Equals(Name other)
+        public bool Equals(Description other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(_nameValue, other._nameValue);
+            return string.Equals(_description, other._description);
         }
 
         string IExposeValue<string>.GetValue()
         {
-            return _nameValue;
+            return _description;
         }
 
         public override bool Equals(object obj)
@@ -60,27 +60,27 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Name) obj);
+            return Equals((Description) obj);
         }
 
-        public static bool operator ==(Name left, Name right)
+        public static bool operator ==(Description left, Description right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Name left, Name right)
+        public static bool operator !=(Description left, Description right)
         {
             return !Equals(left, right);
         }
 
         public override string ToString()
         {
-            return $"{_nameValue}";
+            return $"{_description}";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_nameValue);
+            return HashCode.Combine(_description);
         }
     }
 }

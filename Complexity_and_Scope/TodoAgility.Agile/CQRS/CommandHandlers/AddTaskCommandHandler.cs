@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,20 +16,28 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
+using TodoAgility.Agile.Domain.Aggregations;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Repositories;
 
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class TodoState
+    public class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
-        public string Name { get; }
-        public uint Id { get; }
-        public int Version { get; }
-        
-        public TodoState(string name, uint id, int version)
+        public void Execute(AddTaskCommand command)
         {
-            Name = name;
-            Id = id;
-            Version = version;
+            var agg = new TaskAggregationRoot();
+            var rep = new TaskRepository();
+            
+            agg.AddTask(command.Description);
+            
+            IExposeValue<TaskState>  state = agg.Changes();
+            TaskState taskState = state.GetValue();
+            
+            rep.Save(taskState);
+            rep.Commit();
         }
     }
 }

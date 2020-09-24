@@ -17,12 +17,33 @@
 //
 
 
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public interface ICommandHandler<in TCommand>
+    public class  TaskRepository: IRepository<TaskState>
     {
-        void Execute(TCommand command);
+        private IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
+        
+        public void Save(TaskState task)
+        {
+
+        }
+
+        public TaskState FindBy(uint id)
+        {
+            return new TaskState("",0,0);
+        }
+
+        public TaskState FindBy(uint id, uint version)
+        {
+            return new TaskState("",0,0);
+        }
+
+        public void Commit()
+        {
+            
+        }
     }
 }

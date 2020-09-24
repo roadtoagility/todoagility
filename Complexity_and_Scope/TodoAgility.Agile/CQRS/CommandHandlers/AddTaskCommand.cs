@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,13 +16,16 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using System.Threading.Tasks;
+using System;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public interface ICommandHandler<in TCommand>
+    public class AddTaskCommand
     {
-        void Execute(TCommand command);
+        public string Description { get; }
+        public AddTaskCommand(string description)
+        {
+            Description = description;
+        }
     }
 }
