@@ -17,6 +17,7 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 using Xunit;
@@ -43,6 +44,15 @@ namespace TodoAgility.Tests
         }
         
         [Fact]
+        public void LIKE_DTO_Check_Todo_Invalid()
+        {
+            var name = "";
+            var todo = new TodoDTO(name);
+            
+            Assert.Empty(todo.Name);
+        }
+        
+        [Fact]
         public void LIKE_DTO_Check_Todo_valid_Name()
         {
             var name = "givenName";
@@ -63,7 +73,8 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Name_Invalid_ValueEmpty()
         {
-            Assert.Throws<ArgumentException>(() => Name.From(null));
+            var givenName = "";
+            Assert.Throws<ArgumentException>(() => Name.From(givenName));
         }
 
         [Fact]
@@ -137,6 +148,24 @@ namespace TodoAgility.Tests
                 
             Assert.Equal(todoState.Name, givenName);
         }
+        
+        #endregion
+        
+        #region Todo aggregate
+
+        [Fact]
+        public void Check_TodoAggregation_Create()
+        {
+            var agg = new TodoAggregationRoot();
+            var givenName = "Given Name";
+            var name = Name.From(givenName);
+            
+            agg.Create(name);
+            var todo = agg.GetChanges();
+            
+            Assert.Equal(todo,Todo.FromName(name));
+        }
+        
         #endregion
         
     }

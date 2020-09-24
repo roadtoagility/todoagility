@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,20 +16,22 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public class TodoState
+    public class TodoAggregationRoot
     {
-        public string Name { get; }
-        public uint Id { get; }
-        public int Version { get; }
-        
-        public TodoState(string name, uint id, int version)
+        private Todo _todo;
+
+        public void Create(Name name)
         {
-            Name = name;
-            Id = id;
-            Version = version;
+            _todo = Todo.FromName(name);
+        }
+
+        public Todo GetChanges()
+        {
+            return _todo;
         }
     }
 }

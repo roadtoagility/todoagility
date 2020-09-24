@@ -47,7 +47,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _nameValue == other._nameValue;
+            return string.Equals(_nameValue, other._nameValue);
         }
 
         string IExposeValue<string>.GetValue()

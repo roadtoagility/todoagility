@@ -22,7 +22,6 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public class TodoDTO: IEquatable<TodoDTO>
     {
-        private static readonly int NAME_LENGTH_LIMIT = 20;
         public string Name { get; }
 
         public TodoDTO(string name)

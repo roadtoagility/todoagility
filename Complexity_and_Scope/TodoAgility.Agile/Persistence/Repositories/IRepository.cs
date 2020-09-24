@@ -17,19 +17,15 @@
 //
 
 
-namespace TodoAgility.Agile.Persistence.Model
+using TodoAgility.Agile.Persistence.Model;
+
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class TodoState
+    interface IRepository<TModel>
     {
-        public string Name { get; }
-        public uint Id { get; }
-        public int Version { get; }
-        
-        public TodoState(string name, uint id, int version)
-        {
-            Name = name;
-            Id = id;
-            Version = version;
-        }
+        void Add(string name);
+        TodoState Query(int id);
+        TodoState Query(int id, int version);
+        void Commit();
     }
 }
