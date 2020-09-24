@@ -24,22 +24,30 @@ using Xunit;
 
 namespace TodoAgility.Tests
 {
-    public class TestsTodoCommandHandlers
+    public class TestsAgileCommandHandlers
     {
        
-        #region Todo Command Handlers
+        #region Task Command Handlers
         
         [Fact]
-        public void Todo_Add_CommandHandler_Succeed()
+        public void Task_AddCommandHandler_Succeed()
         {
-            var command = new AddTodoCommand();
+            var description = "Given Description";
+            var command = new AddTaskCommand(description);
 
-            var handler = new AddTodoCommandHandler();
+            var handler = new AddTaskCommandHandler();
             handler.Execute(command);
-            
-            Assert.Throws<ArgumentException>(() => Todo.FromName(null));
         }
-        
+
+        [Fact]
+        public void Task_UpdateCommandHandler_Succeed()
+        {
+            var description = "Given Description";
+            var command = new UpdateTaskCommand(1, description);
+
+            var handler = new UpdateTaskCommandHandler();
+            handler.Execute(command);
+        }
         #endregion
     }
 }

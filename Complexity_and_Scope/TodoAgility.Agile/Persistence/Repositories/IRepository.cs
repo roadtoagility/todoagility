@@ -23,9 +23,9 @@ namespace TodoAgility.Agile.Persistence.Repositories
 {
     interface IRepository<TModel>
     {
-        void Add(string name);
-        TodoState Query(int id);
-        TodoState Query(int id, int version);
+        void Save(TModel task);
+        TModel FindBy(uint id);
+        TModel FindBy(uint id, uint version);
         void Commit();
     }
 }

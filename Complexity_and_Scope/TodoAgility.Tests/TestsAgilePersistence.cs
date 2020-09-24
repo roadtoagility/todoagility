@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,13 +16,29 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
+using TodoAgility.Agile.CQRS.CommandHandlers;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence.Model;
+using Xunit;
 
-using System.Threading.Tasks;
-
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Tests
 {
-    public interface ICommandHandler<in TCommand>
+    public class TestsTodoCommandHandlers
     {
-        void Execute(TCommand command);
+       
+        #region Task Command Handlers
+        
+        [Fact]
+        public void Todo_Add_CommandHandler_Succeed()
+        {
+            var description = "Given Description";
+            var command = new AddTaskCommand(description);
+
+            var handler = new AddTaskCommandHandler();
+            handler.Execute(command);
+        }
+        
+        #endregion
     }
 }

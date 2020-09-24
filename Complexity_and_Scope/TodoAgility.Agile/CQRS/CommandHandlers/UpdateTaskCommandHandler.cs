@@ -16,22 +16,29 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
+using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Repositories;
 
-namespace TodoAgility.Agile.Domain.Aggregations
+namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class TodoAggregationRoot
+    public class UpdateTaskCommandHandler : ICommandHandler<UpdateTaskCommand>
     {
-        private Todo _todo;
-
-        public void Create(Name name)
+        public void Execute(UpdateTaskCommand command)
         {
-            _todo = Todo.FromName(name);
-        }
+            var agg = new TaskAggregationRoot();
+            var rep = new TaskRepository();
 
-        public Todo GetChanges()
-        {
-            return _todo;
+            TaskState currentState = rep.FindBy(command.Id);
+            agg.UpdateTask(currentState, command.Description);
+            
+            IExposeValue<TaskState>  state = agg.Changes();
+            TaskState taskState = state.GetValue();
+            
+            rep.Save(taskState);
+            rep.Commit();
         }
     }
 }

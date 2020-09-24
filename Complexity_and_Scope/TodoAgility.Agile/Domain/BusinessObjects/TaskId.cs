@@ -21,18 +21,18 @@ using System.Collections.Generic;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class TodoId : IEquatable<TodoId>, IComparable<TodoId>, IExposeValue<uint>, IComparable
+    public class TaskId : IEquatable<TaskId>, IComparable<TaskId>, IExposeValue<uint>, IComparable
     {
         private readonly uint _id;
 
-        private TodoId(uint id)
+        private TaskId(uint id)
         {
             _id = id;
         }
 
-        public static TodoId From(uint id)
+        public static TaskId From(uint id)
         {
-            return new TodoId(id);
+            return new TaskId(id);
         }
 
         uint IExposeValue<uint>.GetValue()
@@ -42,7 +42,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IEquatable
         
-        public bool Equals(TodoId other)
+        public bool Equals(TaskId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -54,15 +54,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TodoId) obj);
+            return Equals((TaskId) obj);
         }
 
-        public static bool operator ==(TodoId left, TodoId right)
+        public static bool operator ==(TaskId left, TaskId right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TodoId left, TodoId right)
+        public static bool operator !=(TaskId left, TaskId right)
         {
             return !Equals(left, right);
         }
@@ -71,7 +71,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IComparable
         
-        public int CompareTo(TodoId other)
+        public int CompareTo(TaskId other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
@@ -82,27 +82,27 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
-            return obj is TodoId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TodoId)}");
+            return obj is TaskId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TaskId)}");
         }
 
-        public static bool operator <(TodoId left, TodoId right)
+        public static bool operator <(TaskId left, TaskId right)
         {
-            return Comparer<TodoId>.Default.Compare(left, right) < 0;
+            return Comparer<TaskId>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator >(TodoId left, TodoId right)
+        public static bool operator >(TaskId left, TaskId right)
         {
-            return Comparer<TodoId>.Default.Compare(left, right) > 0;
+            return Comparer<TaskId>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator <=(TodoId left, TodoId right)
+        public static bool operator <=(TaskId left, TaskId right)
         {
-            return Comparer<TodoId>.Default.Compare(left, right) <= 0;
+            return Comparer<TaskId>.Default.Compare(left, right) <= 0;
         }
 
-        public static bool operator >=(TodoId left, TodoId right)
+        public static bool operator >=(TaskId left, TaskId right)
         {
-            return Comparer<TodoId>.Default.Compare(left, right) >= 0;
+            return Comparer<TaskId>.Default.Compare(left, right) >= 0;
         }
         
         #endregion

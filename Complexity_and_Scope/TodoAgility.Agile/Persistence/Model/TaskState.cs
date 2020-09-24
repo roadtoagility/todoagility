@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,15 +16,20 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Persistence.Model
 {
-    public class AddTodoCommand
+    public class TaskState
     {
-        public AddTodoCommand()
+        public string Description { get; }
+        public uint Id { get; }
+        public int Version { get; }
+        
+        public TaskState(string description, uint id, int version)
         {
-            
+            Description = description;
+            Id = id;
+            Version = version;
         }
     }
 }
