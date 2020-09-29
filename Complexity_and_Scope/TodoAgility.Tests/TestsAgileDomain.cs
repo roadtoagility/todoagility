@@ -94,8 +94,8 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Description_Value_Exposing()
         {
-            var givenName = "Given Description";
-            var todoName = Description.From(givenName);
+            string givenName = "Given Description";
+            Description todoName = Description.From(givenName);
             IExposeValue<string> state = todoName;
             Assert.Equal(givenName, state.GetValue());
         }
@@ -141,17 +141,46 @@ namespace TodoAgility.Tests
             Assert.Equal(todoState.Description, givenName);
         }
         
+        [Fact]
+        public void Check_TaskStatus_Invalid_Status()
+        {
+            Assert.Throws<ArgumentException>(() => TaskStatus.From(-1));
+        }
+        
+        [Fact]
+        public void Check_TaskStatus_valid_Status()
+        {
+            var statusStarted = TaskStatus.From(2);
+            IExposeValue<int> state = statusStarted;
+
+            Assert.Equal(2,state.GetValue());
+        }
         #endregion
         
         #region Task aggregate
 
         [Fact]
-        public void Check_TodoAggregation_Create()
+        public void Check_TaskAggregation_Create()
         {
             var agg = new TaskAggregationRoot();
             var descriptionText = "Given Description";
             
             agg.AddTask(descriptionText);
+            IExposeValue<TaskState> changes = agg.Changes();
+            var state = changes.GetValue();
+            
+            Assert.Equal(state.Description, descriptionText);
+        }
+        
+        [Fact]
+        public void Check_TaskAggregation_UpdateTask()
+        {
+            var agg = new TaskAggregationRoot();
+            var descriptionText = "Given Description";
+            var descriptionNewText = "Given Description New One";
+            var started = 2;
+            var oldState = new TaskState(started, descriptionNewText, 1,1);
+            agg.UpdateTask(oldState,descriptionText);
             IExposeValue<TaskState> changes = agg.Changes();
             var state = changes.GetValue();
             

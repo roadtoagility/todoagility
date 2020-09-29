@@ -16,6 +16,7 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
@@ -32,7 +33,10 @@ namespace TodoAgility.Agile.Domain.Aggregations
         
         public void UpdateTask(TaskState task, string description)
         {
-            _task = Task.FromStateAndPatch(task,new Task.TaskPatch(description));
+            if(Description.From(task.Description) == Description.From(description))
+                throw new ApplicationException("A nova descrição não pode ser igual a anterior.");
+                
+            _task = Task.FromStateAndPatch(task,new Task.Patch(description));
         }
         
         public void CompleteTask(TaskId id)

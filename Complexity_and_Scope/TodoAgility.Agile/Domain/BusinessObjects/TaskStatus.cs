@@ -18,35 +18,53 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class TaskId : IEquatable<TaskId>, IComparable<TaskId>, IExposeValue<uint> //, IComparable
+    public class TaskStatus : IEquatable<TaskStatus>, IComparable<TaskStatus>, IExposeValue<int> //, IComparable
     {
-        private readonly uint _id;
-
-        private TaskId(uint id)
+        enum Status
         {
-            _id = id;
+            Created = 1,
+            Started = 2,
+            Completed = 3
+        }
+        
+        private readonly Status _status;
+
+        private TaskStatus(Status status)
+        {
+            _status = status;
         }
 
-        public static TaskId From(uint id)
+        public static TaskStatus From(int status)
         {
-            return new TaskId(id);
+            if (!Enum.IsDefined(typeof(Status),status))
+            {
+                throw new ArgumentException("O estado informado é inválido.",nameof(status));
+            }
+            
+            return new TaskStatus((Status)status);
+        }
+        
+        public static TaskStatus FromState(TaskState state)
+        {
+            return TaskStatus.From(state.Status);
         }
 
-        uint IExposeValue<uint>.GetValue()
+        int IExposeValue<int>.GetValue()
         {
-            return _id;
+            return (int)_status;
         }
         
         #region IEquatable
         
-        public bool Equals(TaskId other)
+        public bool Equals(TaskStatus other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _id == other._id;
+            return _status == other._status;
         }
 
         public override bool Equals(object obj)
@@ -54,15 +72,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TaskId) obj);
+            return Equals((TaskStatus) obj);
         }
 
-        public static bool operator ==(TaskId left, TaskId right)
+        public static bool operator ==(TaskStatus left, TaskStatus right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TaskId left, TaskId right)
+        public static bool operator !=(TaskStatus left, TaskStatus right)
         {
             return !Equals(left, right);
         }
@@ -71,11 +89,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IComparable
         
-        public int CompareTo(TaskId other)
+        public int CompareTo(TaskStatus other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
-            return _id.CompareTo(other._id);
+            return _status.CompareTo(other._status);
         }
 
         public int CompareTo(object obj)
@@ -85,24 +103,24 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             return obj is TaskId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TaskId)}");
         }
 
-        public static bool operator <(TaskId left, TaskId right)
+        public static bool operator <(TaskStatus left, TaskStatus right)
         {
-            return Comparer<TaskId>.Default.Compare(left, right) < 0;
+            return Comparer<TaskStatus>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator >(TaskId left, TaskId right)
+        public static bool operator >(TaskStatus left, TaskStatus right)
         {
-            return Comparer<TaskId>.Default.Compare(left, right) > 0;
+            return Comparer<TaskStatus>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator <=(TaskId left, TaskId right)
+        public static bool operator <=(TaskStatus left, TaskStatus right)
         {
-            return Comparer<TaskId>.Default.Compare(left, right) <= 0;
+            return Comparer<TaskStatus>.Default.Compare(left, right) <= 0;
         }
 
-        public static bool operator >=(TaskId left, TaskId right)
+        public static bool operator >=(TaskStatus left, TaskStatus right)
         {
-            return Comparer<TaskId>.Default.Compare(left, right) >= 0;
+            return Comparer<TaskStatus>.Default.Compare(left, right) >= 0;
         }
         
         #endregion
@@ -110,12 +128,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public override string ToString()
         {
-            return $"{_id}";
+            return $"{_status}";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_id);
+            return HashCode.Combine(_status);
         }
     }
 }

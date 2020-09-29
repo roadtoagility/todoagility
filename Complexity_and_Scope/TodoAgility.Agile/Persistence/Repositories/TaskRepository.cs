@@ -33,12 +33,12 @@ namespace TodoAgility.Agile.Persistence.Repositories
 
         public TaskState FindBy(uint id)
         {
-            return new TaskState("",0,0);
+            return new TaskState(1,"",0,0);
         }
 
         public TaskState FindBy(uint id, uint version)
         {
-            return new TaskState("",0,0);
+            return new TaskState(1,"",0,0);
         }
 
         public void Commit()

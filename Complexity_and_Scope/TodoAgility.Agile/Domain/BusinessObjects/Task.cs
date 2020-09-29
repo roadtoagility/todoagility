@@ -23,12 +23,14 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public class Task : IEquatable<Task>, IExposeValue<TaskState>
     {
+        private readonly TaskStatus _status;
         private readonly TaskId _id;
         private readonly Description _description;
         private readonly int _version;
 
-        private Task(Description description, TaskId id, int version)
+        private Task(TaskStatus status, Description description, TaskId id, int version)
         {
+            _status = status;
             _description = description;
             _id = id;
             _version = version;
@@ -39,18 +41,10 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (description == null )
                 throw new ArgumentException("Informe uma descripção válida.", nameof(description));
 
-            return new Task(description,TaskId.From(0),-1);
+            return new Task( TaskStatus.From(1), description,TaskId.From(0),-1);
         }
         
-        public static Task FromState(TaskState state)
-        {
-            if (state == null )
-                throw new ArgumentException("Informe uma atividade válida.", nameof(state));
-
-            return new Task(Description.From(state.Description),TaskId.From(state.Id), state.Version);
-        }
-        
-        public static Task FromStateAndPatch(TaskState state, TaskPatch patch)
+        public static Task FromStateAndPatch(TaskState state, Patch patch)
         {
             if (patch == null )
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
@@ -58,7 +52,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (state == null )
                 throw new ArgumentException("Informe uma atividade válida.", nameof(state));
 
-            return new Task(Description.From(patch.Description),TaskId.From(state.Id), state.Version);
+            return new Task(TaskStatus.From(state.Status), 
+                Description.From(patch.Description),
+                TaskId.From(state.Id), state.Version);
         }
         
         public bool Equals(Task other)
@@ -72,9 +68,10 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         TaskState IExposeValue<TaskState>.GetValue()
         {
-            IExposeValue<string> nameState = _description;
-            IExposeValue<uint> idState = _id;
-            return new TaskState(nameState.GetValue(), idState.GetValue(), _version);
+            IExposeValue<int> stateStatus = _status;
+            IExposeValue<string> stateDescr = _description;
+            IExposeValue<uint> stateId = _id;
+            return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), stateId.GetValue(), _version);
         }
 
         public override bool Equals(object obj)
@@ -105,11 +102,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             return HashCode.Combine(_id,_description, _version);
         }
 
-        public class TaskPatch
+        public class Patch
         {
             public string Description { get;}
 
-            public TaskPatch(string description)
+            public Patch(string description)
             {
                 Description = description;
             }

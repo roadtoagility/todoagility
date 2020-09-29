@@ -23,6 +23,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
     public class Description : IEquatable<Description>, IExposeValue<string>
     {
         private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
+        
         private readonly string _description;
 
         private Description(string description)
