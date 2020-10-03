@@ -43,25 +43,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         }
         
         /// <summary>
-        /// used for Update routine the concept used was:
-        /// - provide the business identification field
-        /// - provide updatable field
+        /// used to restore the aggregation
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="description"></param>
+        /// <param name="state"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Task FromIdAndPatch(TaskId id, Description description)
-        {
-            if (id == null )
-                throw new ArgumentException("Informe um id válida para a ask.", nameof(id));
-            
-            if (description == null )
-                throw new ArgumentException("Informe uma descripção válida.", nameof(description));
-
-            return new Task( TaskStatus.From(1), description,id);
-        }
-        
         public static Task FromState(TaskState state)
         {
             if (state == null )
@@ -71,6 +57,13 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 Description.From(state.Description), TaskId.From(state.Id));
         }
         
+        /// <summary>
+        /// used to update the aggregation
+        /// </summary>
+        /// <param name="current"></param>
+        /// <param name="patch"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Task CombineWithPatch(Task current, Patch patch)
         {
             var state = ((IExposeValue<TaskState>)current).GetValue();

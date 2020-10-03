@@ -26,42 +26,6 @@ namespace TodoAgility.Tests
 {
     public class TestsTodoDomain
     {
-       
-        #region Task like a DTO
-        // 1 - mínimo controle escopo
-        // 2 - uso de tipos primitivos, gera impacto em refatoramentos
-        // 3 - proximidade com modelo de persistência pode causar confisão
-        // 4 - não possui ferramenta de verificação de estado, muita dependência da
-        //     camada de negócio ou de validação por decoração, ou via construtor, etc.
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_Instance()
-        {
-            var name = "givenName";
-            var todo = new TodoDTO(name);
-            
-            Assert.NotNull(todo);
-        }
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_Invalid()
-        {
-            var name = "";
-            var todo = new TodoDTO(name);
-            
-            Assert.Empty(todo.Name);
-        }
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_valid_Name()
-        {
-            var name = "givenName";
-            var todo = new TodoDTO(name);
-            
-            Assert.Equal(todo.Name,name);
-        }
-
-        #endregion
         
         #region Description Business Object tests
         [Fact]

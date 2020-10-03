@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,12 +16,13 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.Domain.Aggregations
+using System;
+
+namespace TodoAgility.Agile.Layred.Services
 {
-    public interface IChangeSet<out TId,TChange>
+    public interface ITaskService
     {
-        TId Id { get; }
-        void Change(TChange change);
-        TChange GetChange();
+        public void AddTask(Task task);
+        public void UpdateTask(uint id, Task task);
     }
 }

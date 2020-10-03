@@ -17,9 +17,7 @@
 //
 
 using System;
-using System.IO;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.Aggregations
 {
@@ -37,7 +35,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
             _currentTask = currentTask;
         }
 
-        //to register new aggregate as change
+        ///to register new aggregate as change
         private TaskAggregationRoot(Description descr)
         :this(Task.FromDescription(descr))
         {
