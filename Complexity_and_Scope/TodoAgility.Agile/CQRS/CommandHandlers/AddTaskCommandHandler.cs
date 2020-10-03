@@ -24,18 +24,23 @@ using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
+    public sealed class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
+        private readonly IRepository<TaskState> _taskRep;
+        
+        public AddTaskCommandHandler(IRepository<TaskState> taskRep)
+        {
+            _taskRep = taskRep;
+        }
         public void Execute(AddTaskCommand command)
         {
-            var agg = new TaskAggregationRoot();
-            var rep = new TaskRepository();
+            var descr = Description.From(command.Description);
             
-            agg.AddTask(command.Description);
-            
-            IExposeValue<TaskState>  state = agg.Changes();
+            var agg = TaskAggregationRoot.CreateFromDescription(descr);
+            IExposeValue<TaskState>  state = agg.GetChange();
             TaskState taskState = state.GetValue();
             
+            var rep = new TaskRepository();            
             rep.Save(taskState);
             rep.Commit();
         }

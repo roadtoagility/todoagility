@@ -17,36 +17,66 @@
 //
 
 using System;
+using System.IO;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public class TaskAggregationRoot 
+    public sealed class TaskAggregationRoot:AggregationRoot<Guid, Task> 
     {
-        private Task _task;
-        
-        public void AddTask(string description)
+        private readonly Task _currentTask;
+
+        /// <summary>
+        /// load an aggregate from store
+        /// </summary>
+        /// <param name="currentTask"></param>
+        private TaskAggregationRoot(Task currentTask)
         {
-            _task = Task.FromDescription(Description.From(description));
+            Id = Guid.NewGuid();
+            _currentTask = currentTask;
         }
-        
-        public void UpdateTask(TaskState task, string description)
+
+        //to register new aggregate as change
+        private TaskAggregationRoot(Description descr)
+        :this(Task.FromDescription(descr))
         {
-            if(Description.From(task.Description) == Description.From(description))
-                throw new ApplicationException("A nova descrição não pode ser igual a anterior.");
+            Change(_currentTask);
+        }
+
+        /// <summary>
+        /// update currentTask value allowed from patch interface
+        /// </summary>
+        /// <param name="patchTask"></param>
+        public void UpdateTask(Task.Patch patchTask)
+        {
+            var change = Task.CombineWithPatch(_currentTask, patchTask);
                 
-            _task = Task.FromStateAndPatch(task,new Task.Patch(description));
+            Change(change);
+        }
+
+        #region Aggregation contruction
+        
+        /// <summary>
+        /// reconstructing aggregation from current state loaded from store
+        /// </summary>
+        /// <param name="currentState"></param>
+        /// <returns></returns>
+        public static TaskAggregationRoot ReconstructFrom(Task currentState)
+        {
+            return new TaskAggregationRoot(currentState);
+        }
+
+        /// <summary>
+        /// creating new aggregation as design by business based on business concepts 
+        /// </summary>
+        /// <param name="descr"></param>
+        /// <returns></returns>
+        public static TaskAggregationRoot CreateFromDescription(Description descr)
+        {
+            return new TaskAggregationRoot(descr);
         }
         
-        public void CompleteTask(TaskId id)
-        {
-            
-        }
-        
-        public Task Changes()
-        {
-            return _task;
-        }
+        #endregion
     }
 }

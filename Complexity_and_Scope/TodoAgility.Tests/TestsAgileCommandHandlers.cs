@@ -20,6 +20,7 @@ using System;
 using TodoAgility.Agile.CQRS.CommandHandlers;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests
@@ -34,8 +35,8 @@ namespace TodoAgility.Tests
         {
             var description = "Given Description";
             var command = new AddTaskCommand(description);
-
-            var handler = new AddTaskCommandHandler();
+            var rep = new TaskRepository();
+            var handler = new AddTaskCommandHandler(rep);
             handler.Execute(command);
         }
 
@@ -43,10 +44,21 @@ namespace TodoAgility.Tests
         public void Task_UpdateCommandHandler_Succeed()
         {
             var description = "Given Description";
-            var command = new UpdateTaskCommand(1, description);
-
-            var handler = new UpdateTaskCommandHandler();
+            var id = 1u;
+            var status = 2;
+            var rep = new TaskRepository();
+            var ts = new TaskState(status,description,id);
+            rep.Save(ts);
+            
+            var descriptionNew = "Given Description Changed";
+            var command = new UpdateTaskCommand(id, descriptionNew);
+            
+            var handler = new UpdateTaskCommandHandler(rep);
             handler.Execute(command);
+
+            var task = rep.FindBy(id);
+            
+            Assert.Equal(descriptionNew,task.Description);
         }
         #endregion
     }

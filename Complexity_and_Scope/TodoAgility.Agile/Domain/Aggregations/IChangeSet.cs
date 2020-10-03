@@ -16,16 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
 
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public interface IRepository<TModel>
+    public interface IChangeSet<out TId,TChange>
     {
-        void Save(TModel task);
-        TModel FindBy(uint id);
-        TModel FindBy(uint id, uint version);
-        void Commit();
+        TId Id { get; }
+        void Change(TChange change);
+        TChange GetChange();
     }
 }

@@ -162,29 +162,36 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_TaskAggregation_Create()
         {
-            var agg = new TaskAggregationRoot();
+            //given
             var descriptionText = "Given Description";
             
-            agg.AddTask(descriptionText);
-            IExposeValue<TaskState> changes = agg.Changes();
+            //when
+            var agg = TaskAggregationRoot.CreateFromDescription(Description.From(descriptionText));
+            IExposeValue<TaskState> changes = agg.GetChange();
             var state = changes.GetValue();
             
+            //then
             Assert.Equal(state.Description, descriptionText);
         }
         
         [Fact]
         public void Check_TaskAggregation_UpdateTask()
         {
-            var agg = new TaskAggregationRoot();
+            //given
             var descriptionText = "Given Description";
             var descriptionNewText = "Given Description New One";
             var started = 2;
-            var oldState = new TaskState(started, descriptionNewText, 1,1);
-            agg.UpdateTask(oldState,descriptionText);
-            IExposeValue<TaskState> changes = agg.Changes();
+            var id = 1u;
+            var oldState = new TaskState(started, descriptionText,id);
+            
+            //when
+            var agg = TaskAggregationRoot.ReconstructFrom(Task.FromState(oldState));
+            agg.UpdateTask(Task.Patch.From(Description.From(descriptionNewText)));
+            IExposeValue<TaskState> changes = agg.GetChange();
             var state = changes.GetValue();
             
-            Assert.Equal(state.Description, descriptionText);
+            //then
+            Assert.NotEqual(state.Description, descriptionText);
         }
    
         #endregion

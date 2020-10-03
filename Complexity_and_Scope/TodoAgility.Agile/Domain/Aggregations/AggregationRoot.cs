@@ -16,29 +16,25 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.CQRS.CommandHandlers;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Model;
-using Xunit;
+using System.Collections.Generic;
 
-namespace TodoAgility.Tests
+namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public class TestsTodoCommandHandlers
+    public abstract class AggregationRoot<TId,TChange>: IChangeSet<TId,TChange>
     {
-       
-        #region Task Command Handlers
         
-        [Fact]
-        public void Todo_Add_CommandHandler_Succeed()
-        {
-            var description = "Given Description";
-            var command = new AddTaskCommand(description);
+        private  TChange _change = default(TChange);
 
-            var handler = new AddTaskCommandHandler();
-            handler.Execute(command);
+        public TId Id { get; protected set; }
+
+        public void Change(TChange change)
+        {
+            _change = change;
         }
-        
-        #endregion
+
+        public TChange GetChange()
+        {
+            return _change;
+        }
     }
 }

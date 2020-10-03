@@ -17,21 +17,20 @@
 //
 
 
+using System;
+
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class TaskState
+    public class TaskState: PersistentState
     {
         public int Status { get; }
         public string Description { get; }
-        public uint Id { get; }
-        public int Version { get; }
         
-        public TaskState(int status, string description, uint id, int version)
+        public TaskState(int status, string description, uint id)
+        :base(id,-1,DateTime.Now)
         {
             Status = status;
             Description = description;
-            Id = id;
-            Version = version;
         }
     }
 }

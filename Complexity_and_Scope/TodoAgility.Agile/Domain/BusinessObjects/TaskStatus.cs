@@ -22,7 +22,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class TaskStatus : IEquatable<TaskStatus>, IComparable<TaskStatus>, IExposeValue<int> //, IComparable
+    public sealed class TaskStatus : IEquatable<TaskStatus>, IComparable<TaskStatus>, IExposeValue<int> //, IComparable
     {
         enum Status
         {
