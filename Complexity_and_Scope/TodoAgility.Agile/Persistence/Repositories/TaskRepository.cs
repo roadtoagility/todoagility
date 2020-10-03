@@ -38,8 +38,6 @@ namespace TodoAgility.Agile.Persistence.Repositories
             {
                 _tasks.Add(task.Id,task);
             }
-            
-            
         }
 
         public TaskState FindBy(uint id)
@@ -49,12 +47,12 @@ namespace TodoAgility.Agile.Persistence.Repositories
 
         public TaskState FindBy(uint id, uint version)
         {
-            return new TaskState(1,"",0);
+            throw new NotImplementedException();
         }
 
         public void Commit()
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

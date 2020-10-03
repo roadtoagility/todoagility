@@ -36,7 +36,7 @@ namespace TodoAgility.Agile.Layred.Services
             if (string.IsNullOrEmpty(task.Description) || string.IsNullOrWhiteSpace(task.Description))
                 throw new ApplicationException("A descriçao informada é inválida.");
             
-            _taskRepository.Save(new TaskState(1,task.Description,task.Id));
+            _taskRepository.Save(new TaskState(1,task.Description,task.Id, task.ProjectId));
         }
 
         public void UpdateTask(uint id, Task task)
@@ -55,7 +55,7 @@ namespace TodoAgility.Agile.Layred.Services
 
             if (found != null)
             {
-                var taskUpdate = new TaskState(found.Status,task.Description,found.Id);
+                var taskUpdate = new TaskState(found.Status,task.Description,found.Id,found.ProjectId);
                 _taskRepository.Save(taskUpdate);    
             }
             else

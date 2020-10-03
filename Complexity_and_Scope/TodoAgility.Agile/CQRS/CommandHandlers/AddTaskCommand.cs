@@ -23,9 +23,12 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
     public class AddTaskCommand
     {
         public string Description { get; }
-        public AddTaskCommand(string description)
+        public uint ProjectId { get; }
+        
+        public AddTaskCommand(string description, uint projectId)
         {
             Description = description;
+            ProjectId = projectId;
         }
     }
 }

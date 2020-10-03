@@ -17,11 +17,12 @@
 //
 
 using System;
-using TodoAgility.Agile.Layred;
+using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Layred.Services;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
+using Task = TodoAgility.Agile.Layred.Task;
 
 namespace TodoAgility.Tests
 {
@@ -40,7 +41,8 @@ namespace TodoAgility.Tests
         {
             var descr = "givenName";
             var id = 1u;
-            var task = new Task(descr,id);
+            var projectId = 1u;
+            var task = new Task(descr,id,projectId);
             
             Assert.NotNull(task);
         }
@@ -50,7 +52,8 @@ namespace TodoAgility.Tests
         {
             var descr = "";
             var id = 1u;
-            var task = new Task(descr,id);
+            var projectId = 1u;
+            var task = new Task(descr,id,projectId);
             
             Assert.Empty(task.Description);
         }
@@ -60,7 +63,8 @@ namespace TodoAgility.Tests
         {
             var descr = "givenName";
             var id = 1u;
-            var task = new Task(descr,id);
+            var projectId = 1u;
+            var task = new Task(descr,id,projectId);
             
             Assert.Equal(task.Description,descr);
         }
@@ -75,10 +79,11 @@ namespace TodoAgility.Tests
             //given
             var descriptionText = "Given Description";
             var id = 1u;
+            var projectId = 1u;
             //when
             var rep = new TaskRepository();
             var service = new TaskService(rep);
-            var task = new Task(descriptionText, id);
+            var task = new Task(descriptionText, id, projectId);
             service.AddTask(task);
 
             var state = rep.FindBy(id);
@@ -95,13 +100,14 @@ namespace TodoAgility.Tests
             var descriptionNewText = "Given Description New One";
             var started = 2;
             var id = 1u;
-            var oldState = new TaskState(started, descriptionText,id);
+            var projectId = 1u;
+            var oldState = new TaskState(started, descriptionText, id, projectId);
             
             //when
             var rep = new TaskRepository();
             rep.Save(oldState);
             var service = new TaskService(rep);
-            var task = new Task(descriptionNewText, id);
+            var task = new Task(descriptionNewText, id, projectId);
             service.UpdateTask(id,task);
 
             var state = rep.FindBy(id);

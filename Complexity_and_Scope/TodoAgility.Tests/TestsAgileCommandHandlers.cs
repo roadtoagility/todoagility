@@ -34,7 +34,8 @@ namespace TodoAgility.Tests
         public void Task_AddCommandHandler_Succeed()
         {
             var description = "Given Description";
-            var command = new AddTaskCommand(description);
+            var projectId = 1u;
+            var command = new AddTaskCommand(description, projectId);
             var rep = new TaskRepository();
             var handler = new AddTaskCommandHandler(rep);
             handler.Execute(command);
@@ -46,8 +47,9 @@ namespace TodoAgility.Tests
             var description = "Given Description";
             var id = 1u;
             var status = 2;
+            var projectId = 1u;
             var rep = new TaskRepository();
-            var ts = new TaskState(status,description,id);
+            var ts = new TaskState(status,description,id, projectId);
             rep.Save(ts);
             
             var descriptionNew = "Given Description Changed";

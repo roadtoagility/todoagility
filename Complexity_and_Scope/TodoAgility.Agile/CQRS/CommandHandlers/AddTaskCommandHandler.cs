@@ -35,8 +35,9 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
         public void Execute(AddTaskCommand command)
         {
             var descr = Description.From(command.Description);
+            var projectId = ProjectId.From(command.ProjectId);
             
-            var agg = TaskAggregationRoot.CreateFromDescription(descr);
+            var agg = TaskAggregationRoot.CreateFromDescription(descr,projectId);
             IExposeValue<TaskState>  state = agg.GetChange();
             TaskState taskState = state.GetValue();
             

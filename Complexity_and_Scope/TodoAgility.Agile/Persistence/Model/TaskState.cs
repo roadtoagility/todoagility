@@ -25,12 +25,14 @@ namespace TodoAgility.Agile.Persistence.Model
     {
         public int Status { get; }
         public string Description { get; }
+        public uint ProjectId { get; }
         
-        public TaskState(int status, string description, uint id)
+        public TaskState(int status, string description, uint id, uint projectId)
         :base(id,-1,DateTime.Now)
         {
             Status = status;
             Description = description;
+            ProjectId = projectId;
         }
     }
 }

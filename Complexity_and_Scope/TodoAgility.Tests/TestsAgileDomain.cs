@@ -80,16 +80,17 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Task_Invalid_Description()
         {
-            Assert.Throws<ArgumentException>(() => Task.FromDescription(null));
+            Assert.Throws<ArgumentException>(() => Task.From(null,null));
         }
         
         [Fact]
         public void Check_Task_valid_instance()
         {
             var name = Description.From("givenName");
-            var todo = Task.FromDescription(name);
+            var projectId = 1u;
+            var task = Task.From(name,ProjectId.From(projectId));
             
-            Assert.NotNull(todo);
+            Assert.NotNull(task);
         }
         
         [Fact]
@@ -97,8 +98,9 @@ namespace TodoAgility.Tests
         {
             var givenName = "givenName";
             var name = Description.From(givenName);
-            
-            var todo = Task.FromDescription(name);
+            var projectId = 1u;
+
+            var todo = Task.From(name, ProjectId.From(projectId));
             IExposeValue<TaskState> state = todo;
             var todoState = state.GetValue();
                 
@@ -128,9 +130,11 @@ namespace TodoAgility.Tests
         {
             //given
             var descriptionText = "Given Description";
+            var projectId = 1u;
             
             //when
-            var agg = TaskAggregationRoot.CreateFromDescription(Description.From(descriptionText));
+            var agg = TaskAggregationRoot.CreateFromDescription(Description.From(descriptionText),
+                ProjectId.From(projectId));
             IExposeValue<TaskState> changes = agg.GetChange();
             var state = changes.GetValue();
             
@@ -146,7 +150,8 @@ namespace TodoAgility.Tests
             var descriptionNewText = "Given Description New One";
             var started = 2;
             var id = 1u;
-            var oldState = new TaskState(started, descriptionText,id);
+            var projectId = 1u;
+            var oldState = new TaskState(started, descriptionText,id, projectId);
             
             //when
             var agg = TaskAggregationRoot.ReconstructFrom(Task.FromState(oldState));

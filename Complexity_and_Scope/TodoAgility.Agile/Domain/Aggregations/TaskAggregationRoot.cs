@@ -35,9 +35,13 @@ namespace TodoAgility.Agile.Domain.Aggregations
             _currentTask = currentTask;
         }
 
-        ///to register new aggregate as change
-        private TaskAggregationRoot(Description descr)
-        :this(Task.FromDescription(descr))
+        /// <summary>
+        /// to register new aggregate as change
+        /// </summary>
+        /// <param name="descr"></param>
+        /// <param name="projectId"></param>
+        private TaskAggregationRoot(Description descr,ProjectId projectId)
+        :this(Task.From(descr,projectId))
         {
             Change(_currentTask);
         }
@@ -69,10 +73,11 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// creating new aggregation as design by business based on business concepts 
         /// </summary>
         /// <param name="descr"></param>
+        /// <param name="projectId"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot CreateFromDescription(Description descr)
+        public static TaskAggregationRoot CreateFromDescription(Description descr, ProjectId projectId)
         {
-            return new TaskAggregationRoot(descr);
+            return new TaskAggregationRoot(descr,projectId);
         }
         
         #endregion

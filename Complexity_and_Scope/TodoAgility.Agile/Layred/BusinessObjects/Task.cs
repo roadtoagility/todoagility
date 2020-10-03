@@ -24,11 +24,14 @@ namespace TodoAgility.Agile.Layred
     {
         public string Description { get; }
         public uint Id { get; }
+        
+        public uint ProjectId { get; }
 
-        public Task(string description, uint id)
+        public Task(string description, uint id, uint projectId)
         {
             Description = description;
             Id = id;
+            ProjectId = projectId;
         }
 
         public bool Equals(Task other)
