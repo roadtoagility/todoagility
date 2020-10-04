@@ -16,17 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Layred.Services;
+using TodoAgility.Agile.Layered.BusinessObjects;
+using TodoAgility.Agile.Layered.Services;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.Layered;
 using Xunit;
-using Task = TodoAgility.Agile.Layred.Task;
 
 namespace TodoAgility.Tests
 {
-    public class TestsTaskLayred
+    public class TestsTaskLayered
     {
        
         #region Task like a DTO
@@ -71,7 +69,7 @@ namespace TodoAgility.Tests
 
         #endregion
         
-        #region Task aggregate
+        #region Task service
 
         [Fact]
         public void Check_TaskService_Create()

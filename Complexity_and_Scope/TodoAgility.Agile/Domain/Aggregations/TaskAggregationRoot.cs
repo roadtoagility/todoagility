@@ -40,8 +40,8 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
-        private TaskAggregationRoot(Description descr,ProjectId projectId)
-        :this(Task.From(descr,projectId))
+        private TaskAggregationRoot(Description descr, EntityId entityId, EntityId projectId)
+        :this(Task.From(descr, entityId, projectId))
         {
             Change(_currentTask);
         }
@@ -75,9 +75,9 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot CreateFromDescription(Description descr, ProjectId projectId)
+        public static TaskAggregationRoot CreateFromDescription(Description descr, EntityId entityId, EntityId projectId)
         {
-            return new TaskAggregationRoot(descr,projectId);
+            return new TaskAggregationRoot(descr, entityId, projectId);
         }
         
         #endregion

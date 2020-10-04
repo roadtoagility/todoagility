@@ -18,7 +18,7 @@
 
 using System;
 
-namespace TodoAgility.Agile.Layred
+namespace TodoAgility.Agile.Layered.BusinessObjects
 {
     public class Task: IEquatable<Task>
     {

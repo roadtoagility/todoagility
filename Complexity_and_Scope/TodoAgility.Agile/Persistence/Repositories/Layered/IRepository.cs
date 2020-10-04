@@ -17,15 +17,13 @@
 //
 
 
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Repositories.Layered
 {
     public interface IRepository<TModel>
     {
         void Save(TModel task);
         TModel FindBy(uint id);
-        TModel FindBy(uint id, uint version);
+        
         void Commit();
     }
 }

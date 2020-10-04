@@ -21,18 +21,18 @@ using System.Collections.Generic;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class ProjectId : IEquatable<ProjectId>, IComparable<ProjectId>, IExposeValue<uint>
+    public sealed class EntityId : IEquatable<EntityId>, IComparable<EntityId>, IExposeValue<uint> //, IComparable
     {
         private readonly uint _id;
 
-        private ProjectId(uint id)
+        private EntityId(uint id)
         {
             _id = id;
         }
 
-        public static ProjectId From(uint id)
+        public static EntityId From(uint id)
         {
-            return new ProjectId(id);
+            return new EntityId(id);
         }
 
         uint IExposeValue<uint>.GetValue()
@@ -42,7 +42,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IEquatable
         
-        public bool Equals(ProjectId other)
+        public bool Equals(EntityId other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -54,15 +54,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectId) obj);
+            return Equals((EntityId) obj);
         }
 
-        public static bool operator ==(ProjectId left, ProjectId right)
+        public static bool operator ==(EntityId left, EntityId right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(ProjectId left, ProjectId right)
+        public static bool operator !=(EntityId left, EntityId right)
         {
             return !Equals(left, right);
         }
@@ -71,7 +71,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IComparable
         
-        public int CompareTo(ProjectId other)
+        public int CompareTo(EntityId other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
@@ -82,27 +82,27 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
-            return obj is ProjectId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(ProjectId)}");
+            return obj is EntityId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(EntityId)}");
         }
 
-        public static bool operator <(ProjectId left, ProjectId right)
+        public static bool operator <(EntityId left, EntityId right)
         {
-            return Comparer<ProjectId>.Default.Compare(left, right) < 0;
+            return Comparer<EntityId>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator >(ProjectId left, ProjectId right)
+        public static bool operator >(EntityId left, EntityId right)
         {
-            return Comparer<ProjectId>.Default.Compare(left, right) > 0;
+            return Comparer<EntityId>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator <=(ProjectId left, ProjectId right)
+        public static bool operator <=(EntityId left, EntityId right)
         {
-            return Comparer<ProjectId>.Default.Compare(left, right) <= 0;
+            return Comparer<EntityId>.Default.Compare(left, right) <= 0;
         }
 
-        public static bool operator >=(ProjectId left, ProjectId right)
+        public static bool operator >=(EntityId left, EntityId right)
         {
-            return Comparer<ProjectId>.Default.Compare(left, right) >= 0;
+            return Comparer<EntityId>.Default.Compare(left, right) >= 0;
         }
         
         #endregion

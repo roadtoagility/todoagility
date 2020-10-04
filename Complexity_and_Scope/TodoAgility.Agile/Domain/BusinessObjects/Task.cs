@@ -23,12 +23,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Task : IEquatable<Task>, IExposeValue<TaskState>
     {
-        private readonly ProjectId _projectId;
+        private readonly EntityId _projectId;
         private readonly TaskStatus _status;
-        private readonly TaskId _id;
+        private readonly EntityId _id;
         private readonly Description _description;
 
-        private Task(TaskStatus status, Description description, TaskId id, ProjectId projectId)
+        private Task(TaskStatus status, Description description, EntityId id, EntityId projectId)
         {
             _status = status;
             _description = description;
@@ -36,15 +36,18 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             _projectId = projectId;
         }
 
-        public static Task From(Description description, ProjectId projectId)
+        public static Task From(Description description, EntityId entityId, EntityId projectId)
         {
             if (description == null )
                 throw new ArgumentException("Informe uma descripção válida.", nameof(description));
             
             if (projectId == null )
                 throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
+            
+            if (entityId == null )
+                throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
 
-            return new Task( TaskStatus.From(1), description,TaskId.From(0), projectId);
+            return new Task( TaskStatus.From(1), description,entityId, projectId);
         }
         
         /// <summary>
@@ -59,7 +62,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe uma atividade válida.", nameof(state));
 
             return new Task(TaskStatus.From(state.Status), 
-                Description.From(state.Description), TaskId.From(state.Id), ProjectId.From(state.ProjectId));
+                Description.From(state.Description), EntityId.From(state.Id), EntityId.From(state.ProjectId));
         }
         
         /// <summary>
@@ -74,8 +77,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             var state = ((IExposeValue<TaskState>)current).GetValue();
             
             var descr = Description.From(state.Description);
-            var id = TaskId.From(state.Id);
-            var projectId = ProjectId.From(state.ProjectId);
+            var id = EntityId.From(state.Id);
+            var projectId = EntityId.From(state.ProjectId);
             var status = TaskStatus.From(state.Status);
 
             if (patch == null )

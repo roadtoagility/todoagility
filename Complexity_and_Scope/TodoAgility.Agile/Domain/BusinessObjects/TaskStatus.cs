@@ -22,7 +22,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class TaskStatus : IEquatable<TaskStatus>, IComparable<TaskStatus>, IExposeValue<int> //, IComparable
+    public sealed class TaskStatus : IEquatable<TaskStatus>, IComparable<TaskStatus>, IExposeValue<int>
     {
         enum Status
         {
@@ -100,7 +100,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             if (ReferenceEquals(null, obj)) return 1;
             if (ReferenceEquals(this, obj)) return 0;
-            return obj is TaskId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TaskId)}");
+            return obj is TaskStatus other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TaskStatus)}");
         }
 
         public static bool operator <(TaskStatus left, TaskStatus right)

@@ -17,8 +17,9 @@
 //
 
 using System;
+using TodoAgility.Agile.Layered.BusinessObjects;
 
-namespace TodoAgility.Agile.Layred.Services
+namespace TodoAgility.Agile.Layered.Services
 {
     public interface ITaskService
     {

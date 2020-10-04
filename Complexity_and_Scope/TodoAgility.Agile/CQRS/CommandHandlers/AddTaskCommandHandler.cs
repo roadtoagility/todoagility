@@ -21,29 +21,29 @@ using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.Domain;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
-        private readonly IRepository<TaskState> _taskRep;
+        private readonly IRepository<TaskState,Task> _taskRep;
         
-        public AddTaskCommandHandler(IRepository<TaskState> taskRep)
+        public AddTaskCommandHandler(IRepository<TaskState,Task> taskRep)
         {
             _taskRep = taskRep;
         }
         public void Execute(AddTaskCommand command)
         {
             var descr = Description.From(command.Description);
-            var projectId = ProjectId.From(command.ProjectId);
+            var projectId = EntityId.From(command.ProjectId);
+            var entityId = EntityId.From(1u);
             
-            var agg = TaskAggregationRoot.CreateFromDescription(descr,projectId);
-            IExposeValue<TaskState>  state = agg.GetChange();
-            TaskState taskState = state.GetValue();
+            var agg = TaskAggregationRoot.CreateFromDescription(descr, entityId, projectId);
+            var task = agg.GetChange();
             
-            var rep = new TaskRepository();            
-            rep.Save(taskState);
-            rep.Commit();
+            _taskRep.Save(task);
+            _taskRep.Commit();
         }
     }
 }

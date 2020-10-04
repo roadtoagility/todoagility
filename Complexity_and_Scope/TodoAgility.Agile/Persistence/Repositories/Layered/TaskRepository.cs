@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Repositories.Layered
 {
     public class  TaskRepository: IRepository<TaskState>
     {
@@ -45,14 +44,9 @@ namespace TodoAgility.Agile.Persistence.Repositories
             return _tasks[id];
         }
 
-        public TaskState FindBy(uint id, uint version)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Commit()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

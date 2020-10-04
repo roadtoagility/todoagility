@@ -80,7 +80,7 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Task_Invalid_Description()
         {
-            Assert.Throws<ArgumentException>(() => Task.From(null,null));
+            Assert.Throws<ArgumentException>(() => Task.From(null, null,null));
         }
         
         [Fact]
@@ -88,7 +88,8 @@ namespace TodoAgility.Tests
         {
             var name = Description.From("givenName");
             var projectId = 1u;
-            var task = Task.From(name,ProjectId.From(projectId));
+            var entityId = 1u;
+            var task = Task.From(name,EntityId.From(entityId),EntityId.From(projectId));
             
             Assert.NotNull(task);
         }
@@ -99,8 +100,9 @@ namespace TodoAgility.Tests
             var givenName = "givenName";
             var name = Description.From(givenName);
             var projectId = 1u;
+            var entityId = 1u;
 
-            var todo = Task.From(name, ProjectId.From(projectId));
+            var todo = Task.From(name, EntityId.From(entityId),EntityId.From(projectId));
             IExposeValue<TaskState> state = todo;
             var todoState = state.GetValue();
                 
@@ -131,10 +133,11 @@ namespace TodoAgility.Tests
             //given
             var descriptionText = "Given Description";
             var projectId = 1u;
+            var entityId = 1u;
             
             //when
             var agg = TaskAggregationRoot.CreateFromDescription(Description.From(descriptionText),
-                ProjectId.From(projectId));
+                EntityId.From(entityId),EntityId.From(projectId));
             IExposeValue<TaskState> changes = agg.GetChange();
             var state = changes.GetValue();
             

@@ -17,10 +17,11 @@
 //
 
 using System;
+using TodoAgility.Agile.Layered.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.Layered;
 
-namespace TodoAgility.Agile.Layred.Services
+namespace TodoAgility.Agile.Layered.Services
 {
     public class TaskService:ITaskService
     {
