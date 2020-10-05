@@ -39,7 +39,7 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
             var projectId = EntityId.From(command.ProjectId);
             var entityId = EntityId.From(1u);
             
-            var agg = TaskAggregationRoot.CreateFromDescription(descr, entityId, projectId);
+            var agg = TaskAggregationRoot.CreateFrom(descr, entityId, projectId);
             var task = agg.GetChange();
             
             _taskRep.Save(task);

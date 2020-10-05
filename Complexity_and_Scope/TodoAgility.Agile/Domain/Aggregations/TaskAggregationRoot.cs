@@ -75,7 +75,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot CreateFromDescription(Description descr, EntityId entityId, EntityId projectId)
+        public static TaskAggregationRoot CreateFrom(Description descr, EntityId entityId, EntityId projectId)
         {
             return new TaskAggregationRoot(descr, entityId, projectId);
         }

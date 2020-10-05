@@ -89,15 +89,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             
             return new Task(status, patch.Description, id, projectId);
         }
-        
-        public bool Equals(Task other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return _description == other._description 
-                   && _id == other._id;
-        }
 
+        
         TaskState IExposeValue<TaskState>.GetValue()
         {
             IExposeValue<int> stateStatus = _status;
@@ -105,6 +98,16 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             IExposeValue<uint> id = _id;
             IExposeValue<uint> projectId = _projectId;
             return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), id.GetValue(),projectId.GetValue());
+        }
+        
+        #region IEquatable implementation
+        
+        public bool Equals(Task other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _description == other._description 
+                   && _id == other._id;
         }
 
         public override bool Equals(object obj)
@@ -124,7 +127,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             return !Equals(left, right);
         }
-
+        #endregion
+        
         public override string ToString()
         {
             return $"[TODO]:[Id:{ _id.ToString()}, description: { _description.ToString()}: status: {_status}]";

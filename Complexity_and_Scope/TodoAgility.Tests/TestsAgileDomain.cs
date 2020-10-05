@@ -134,15 +134,16 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var projectId = 1u;
             var entityId = 1u;
+            var task = Task.From(Description.From(descriptionText), EntityId.From(entityId)
+                ,EntityId.From(projectId));
             
             //when
-            var agg = TaskAggregationRoot.CreateFromDescription(Description.From(descriptionText),
+            var agg = TaskAggregationRoot.CreateFrom(Description.From(descriptionText),
                 EntityId.From(entityId),EntityId.From(projectId));
-            IExposeValue<TaskState> changes = agg.GetChange();
-            var state = changes.GetValue();
+            var changes = agg.GetChange();
             
             //then
-            Assert.Equal(state.Description, descriptionText);
+            Assert.Equal(changes, task);
         }
         
         [Fact]
@@ -151,19 +152,17 @@ namespace TodoAgility.Tests
             //given
             var descriptionText = "Given Description";
             var descriptionNewText = "Given Description New One";
-            var started = 2;
             var id = 1u;
             var projectId = 1u;
-            var oldState = new TaskState(started, descriptionText,id, projectId);
+            var oldState = Task.From(Description.From(descriptionText),EntityId.From(id), EntityId.From(projectId));
             
             //when
-            var agg = TaskAggregationRoot.ReconstructFrom(Task.FromState(oldState));
+            var agg = TaskAggregationRoot.ReconstructFrom(oldState);
             agg.UpdateTask(Task.Patch.From(Description.From(descriptionNewText)));
-            IExposeValue<TaskState> changes = agg.GetChange();
-            var state = changes.GetValue();
+            var changes = agg.GetChange();
             
             //then
-            Assert.NotEqual(state.Description, descriptionText);
+            Assert.NotEqual(changes, oldState);
         }
    
         #endregion
