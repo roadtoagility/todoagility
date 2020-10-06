@@ -158,7 +158,7 @@ namespace TodoAgility.Tests
             
             //when
             var agg = TaskAggregationRoot.ReconstructFrom(oldState);
-            agg.UpdateTask(Task.Patch.From(Description.From(descriptionNewText)));
+            agg.UpdateTask(Task.Patch.FromDescription(Description.From(descriptionNewText)));
             var changes = agg.GetChange();
             
             //then

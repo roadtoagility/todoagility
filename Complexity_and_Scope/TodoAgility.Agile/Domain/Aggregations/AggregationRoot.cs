@@ -23,13 +23,13 @@ namespace TodoAgility.Agile.Domain.Aggregations
     public abstract class AggregationRoot<TId,TChange>: IChangeSet<TId,TChange>
     {
         
-        private  TChange _change = default(TChange);
+        private  TChange _change;
 
         public TId Id { get; protected set; }
 
-        public void Change(TChange change)
+        public void Change(TChange item)
         {
-            _change = change;
+            _change = item;
         }
 
         public TChange GetChange()

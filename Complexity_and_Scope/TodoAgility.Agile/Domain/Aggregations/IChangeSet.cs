@@ -21,7 +21,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
     public interface IChangeSet<out TId,TChange>
     {
         TId Id { get; }
-        void Change(TChange change);
+        void Change(TChange item);
         TChange GetChange();
     }
 }

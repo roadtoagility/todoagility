@@ -166,7 +166,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 Description = description;
             }
 
-            public static Patch From(Description descr)
+            public static Patch FromDescription(Description descr)
             {
                 if (descr == null)
                 {
