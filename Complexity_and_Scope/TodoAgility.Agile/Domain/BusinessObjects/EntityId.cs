@@ -73,15 +73,31 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public int CompareTo(EntityId other)
         {
-            if (ReferenceEquals(this, other)){ return 0;}
-            if (ReferenceEquals(null, other)){ return 1;}
+            if (ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+
+            if (ReferenceEquals(null, other))
+            {
+                return 1;
+            }
+
             return _id.CompareTo(other._id);
         }
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)){ return 1;}
-            if (ReferenceEquals(this, obj)){ return 0;}
+            if (ReferenceEquals(null, obj))
+            {
+                return 1;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return 0;
+            }
+
             return obj is EntityId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(EntityId)}");
         }
 

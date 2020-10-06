@@ -91,15 +91,31 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public int CompareTo(TaskStatus other)
         {
-            if (ReferenceEquals(this, other)){ return 0;}
-            if (ReferenceEquals(null, other)){ return 1;}
+            if (ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+
+            if (ReferenceEquals(null, other))
+            {
+                return 1;
+            }
+
             return _status.CompareTo(other._status);
         }
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)){ return 1;}
-            if (ReferenceEquals(this, obj)){ return 0;}
+            if (ReferenceEquals(null, obj))
+            {
+                return 1;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return 0;
+            }
+
             return obj is TaskStatus other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TaskStatus)}");
         }
 
