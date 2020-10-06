@@ -35,7 +35,7 @@ namespace TodoAgility.Agile.Layered.Services
         public void AddTask(Task task)
         {
             if (string.IsNullOrEmpty(task.Description) || string.IsNullOrWhiteSpace(task.Description))
-                throw new ApplicationException("A descriçao informada é inválida.");
+                throw new ArgumentNullException(nameof(task.Description));
             
             _taskRepository.Save(new TaskState(1,task.Description,task.Id, task.ProjectId));
         }
@@ -44,12 +44,12 @@ namespace TodoAgility.Agile.Layered.Services
         {
             if (id == 0)
             {
-                throw new ApplicationException("O id da task informado é inválido.");
+                throw new ArgumentException(nameof(id));
             }
 
             if (string.IsNullOrEmpty(task.Description) || string.IsNullOrWhiteSpace(task.Description))
             {
-                throw new ApplicationException("A descriçao informada é inválida.");
+                throw new ArgumentNullException(nameof(task.Description));
             }
 
             var found = _taskRepository.FindBy(id);
@@ -61,7 +61,7 @@ namespace TodoAgility.Agile.Layered.Services
             }
             else
             {
-                throw new ApplicationException("A task informada não foi encontrada.");
+                throw new ArgumentNullException(nameof(id));
             }
         }
     }
