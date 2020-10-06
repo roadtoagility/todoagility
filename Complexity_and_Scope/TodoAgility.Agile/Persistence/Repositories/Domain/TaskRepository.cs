@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,29 +16,41 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.CQRS.CommandHandlers;
+
+using System.Collections.Generic;
+
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using Xunit;
 
-namespace TodoAgility.Tests
+namespace TodoAgility.Agile.Persistence.Repositories.Domain
 {
-    public class TestsTodoCommandHandlers
+    public class  TaskRepository: IRepository<TaskState, Task>
     {
-       
-        #region Task Command Handlers
+        private readonly IDictionary<EntityId, TaskState> _tasks = new Dictionary<EntityId, TaskState>();
         
-        [Fact]
-        public void Todo_Add_CommandHandler_Succeed()
+        public void Save(IExposeValue<TaskState> state)
         {
-            var description = "Given Description";
-            var command = new AddTaskCommand(description);
-
-            var handler = new AddTaskCommandHandler();
-            handler.Execute(command);
+            TaskState task = state.GetValue();
+            var id = EntityId.From(task.Id);
+            
+            if (_tasks.ContainsKey(id))
+            {
+                _tasks[id] = task;
+            }
+            else
+            {
+                _tasks.Add(id,task);
+            }
         }
-        
-        #endregion
+
+        public Task FindBy(EntityId id)
+        {
+            return Task.FromState(_tasks[id]);
+        }
+
+        public void Commit()
+        {
+            //do not persist anything yet
+        }
     }
 }

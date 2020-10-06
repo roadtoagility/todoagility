@@ -17,33 +17,13 @@
 //
 
 
-using System.Collections.Generic;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Repositories.Layered
 {
-    public class  TaskRepository: IRepository<TaskState>
+    public interface IRepository<TModel>
     {
-        private IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
+        void Save(TModel task);
+        TModel FindBy(uint id);
         
-        public void Save(TaskState task)
-        {
-
-        }
-
-        public TaskState FindBy(uint id)
-        {
-            return new TaskState(1,"",0,0);
-        }
-
-        public TaskState FindBy(uint id, uint version)
-        {
-            return new TaskState(1,"",0,0);
-        }
-
-        public void Commit()
-        {
-            
-        }
+        void Commit();
     }
 }

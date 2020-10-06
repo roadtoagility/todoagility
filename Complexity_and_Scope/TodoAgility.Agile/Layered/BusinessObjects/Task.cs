@@ -18,22 +18,27 @@
 
 using System;
 
-namespace TodoAgility.Agile.Domain.BusinessObjects
+namespace TodoAgility.Agile.Layered.BusinessObjects
 {
-    public class TodoDTO: IEquatable<TodoDTO>
+    public class Task: IEquatable<Task>
     {
-        public string Name { get; }
+        public string Description { get; }
+        public uint Id { get; }
+        
+        public uint ProjectId { get; }
 
-        public TodoDTO(string name)
+        public Task(string description, uint id, uint projectId)
         {
-            Name = name;
+            Description = description;
+            Id = id;
+            ProjectId = projectId;
         }
 
-        public bool Equals(TodoDTO other)
+        public bool Equals(Task other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Name == other.Name;
+            return Description == other.Description;
         }
 
         public override bool Equals(object obj)
@@ -41,27 +46,27 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TodoDTO) obj);
+            return Equals((Task) obj);
         }
 
-        public static bool operator ==(TodoDTO left, TodoDTO right)
+        public static bool operator ==(Task left, Task right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TodoDTO left, TodoDTO right)
+        public static bool operator !=(Task left, Task right)
         {
             return !Equals(left, right);
         }
 
         public override string ToString()
         {
-            return $"[TODO]:[{ Name.ToString()}]";
+            return $"[TODO]:[{ Description}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name);
+            return HashCode.Combine(Description);
         }
     }
 }

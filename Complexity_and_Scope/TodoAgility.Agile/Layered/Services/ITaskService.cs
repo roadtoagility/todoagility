@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,16 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
+using TodoAgility.Agile.Layered.BusinessObjects;
 
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Layered.Services
 {
-    interface IRepository<TModel>
+    public interface ITaskService
     {
-        void Save(TModel task);
-        TModel FindBy(uint id);
-        TModel FindBy(uint id, uint version);
-        void Commit();
+        public void AddTask(Task task);
+        public void UpdateTask(uint id, Task task);
     }
 }

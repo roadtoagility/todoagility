@@ -17,22 +17,14 @@
 //
 
 
-using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Persistence.Repositories.Domain
 {
-    public class TaskState: PersistentState
+    public interface IRepository<TState, out TModel>
     {
-        public int Status { get; }
-        public string Description { get; }
-        public uint ProjectId { get; }
-        
-        public TaskState(int status, string description, uint id, uint projectId)
-        :base(id,-1,DateTime.Now)
-        {
-            Status = status;
-            Description = description;
-            ProjectId = projectId;
-        }
+        void Save(IExposeValue<TState> task);
+        TModel FindBy(EntityId id);
+        void Commit();
     }
 }

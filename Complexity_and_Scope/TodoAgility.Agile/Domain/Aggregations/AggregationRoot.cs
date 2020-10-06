@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,23 +16,25 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
 
-using System;
-
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public class TaskState: PersistentState
+    public abstract class AggregationRoot<TId,TChange>: IChangeSet<TId,TChange>
     {
-        public int Status { get; }
-        public string Description { get; }
-        public uint ProjectId { get; }
         
-        public TaskState(int status, string description, uint id, uint projectId)
-        :base(id,-1,DateTime.Now)
+        private  TChange _change;
+
+        public TId Id { get; protected set; }
+
+        public void Change(TChange item)
         {
-            Status = status;
-            Description = description;
-            ProjectId = projectId;
+            _change = item;
+        }
+
+        public TChange GetChange()
+        {
+            return _change;
         }
     }
 }

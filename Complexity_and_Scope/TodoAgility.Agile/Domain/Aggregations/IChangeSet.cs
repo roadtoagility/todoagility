@@ -16,23 +16,12 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using System;
-
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public class TaskState: PersistentState
+    public interface IChangeSet<out TId,TChange>
     {
-        public int Status { get; }
-        public string Description { get; }
-        public uint ProjectId { get; }
-        
-        public TaskState(int status, string description, uint id, uint projectId)
-        :base(id,-1,DateTime.Now)
-        {
-            Status = status;
-            Description = description;
-            ProjectId = projectId;
-        }
+        TId Id { get; }
+        void Change(TChange item);
+        TChange GetChange();
     }
 }

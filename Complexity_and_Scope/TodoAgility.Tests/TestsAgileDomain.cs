@@ -26,42 +26,6 @@ namespace TodoAgility.Tests
 {
     public class TestsTodoDomain
     {
-       
-        #region Task like a DTO
-        // 1 - mínimo controle escopo
-        // 2 - uso de tipos primitivos, gera impacto em refatoramentos
-        // 3 - proximidade com modelo de persistência pode causar confisão
-        // 4 - não possui ferramenta de verificação de estado, muita dependência da
-        //     camada de negócio ou de validação por decoração, ou via construtor, etc.
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_Instance()
-        {
-            var name = "givenName";
-            var todo = new TodoDTO(name);
-            
-            Assert.NotNull(todo);
-        }
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_Invalid()
-        {
-            var name = "";
-            var todo = new TodoDTO(name);
-            
-            Assert.Empty(todo.Name);
-        }
-        
-        [Fact]
-        public void LIKE_DTO_Check_Todo_valid_Name()
-        {
-            var name = "givenName";
-            var todo = new TodoDTO(name);
-            
-            Assert.Equal(todo.Name,name);
-        }
-
-        #endregion
         
         #region Description Business Object tests
         [Fact]
@@ -116,16 +80,18 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Task_Invalid_Description()
         {
-            Assert.Throws<ArgumentException>(() => Task.FromDescription(null));
+            Assert.Throws<ArgumentException>(() => Task.From(null, null,null));
         }
         
         [Fact]
         public void Check_Task_valid_instance()
         {
             var name = Description.From("givenName");
-            var todo = Task.FromDescription(name);
+            var projectId = 1u;
+            var entityId = 1u;
+            var task = Task.From(name,EntityId.From(entityId),EntityId.From(projectId));
             
-            Assert.NotNull(todo);
+            Assert.NotNull(task);
         }
         
         [Fact]
@@ -133,8 +99,10 @@ namespace TodoAgility.Tests
         {
             var givenName = "givenName";
             var name = Description.From(givenName);
-            
-            var todo = Task.FromDescription(name);
+            var projectId = 1u;
+            var entityId = 1u;
+
+            var todo = Task.From(name, EntityId.From(entityId),EntityId.From(projectId));
             IExposeValue<TaskState> state = todo;
             var todoState = state.GetValue();
                 
@@ -162,29 +130,39 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_TaskAggregation_Create()
         {
-            var agg = new TaskAggregationRoot();
+            //given
             var descriptionText = "Given Description";
+            var projectId = 1u;
+            var entityId = 1u;
+            var task = Task.From(Description.From(descriptionText), EntityId.From(entityId)
+                ,EntityId.From(projectId));
             
-            agg.AddTask(descriptionText);
-            IExposeValue<TaskState> changes = agg.Changes();
-            var state = changes.GetValue();
+            //when
+            var agg = TaskAggregationRoot.CreateFrom(Description.From(descriptionText),
+                EntityId.From(entityId),EntityId.From(projectId));
+            var changes = agg.GetChange();
             
-            Assert.Equal(state.Description, descriptionText);
+            //then
+            Assert.Equal(changes, task);
         }
         
         [Fact]
         public void Check_TaskAggregation_UpdateTask()
         {
-            var agg = new TaskAggregationRoot();
+            //given
             var descriptionText = "Given Description";
             var descriptionNewText = "Given Description New One";
-            var started = 2;
-            var oldState = new TaskState(started, descriptionNewText, 1,1);
-            agg.UpdateTask(oldState,descriptionText);
-            IExposeValue<TaskState> changes = agg.Changes();
-            var state = changes.GetValue();
+            var id = 1u;
+            var projectId = 1u;
+            var oldState = Task.From(Description.From(descriptionText),EntityId.From(id), EntityId.From(projectId));
             
-            Assert.Equal(state.Description, descriptionText);
+            //when
+            var agg = TaskAggregationRoot.ReconstructFrom(oldState);
+            agg.UpdateTask(Task.Patch.FromDescription(Description.From(descriptionNewText)));
+            var changes = agg.GetChange();
+            
+            //then
+            Assert.NotEqual(changes, oldState);
         }
    
         #endregion

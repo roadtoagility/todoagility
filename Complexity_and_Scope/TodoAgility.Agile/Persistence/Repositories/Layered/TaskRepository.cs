@@ -18,21 +18,35 @@
 
 
 using System;
+using System.Collections.Generic;
+using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Persistence.Repositories.Layered
 {
-    public class TaskState: PersistentState
+    public class  TaskRepository: IRepository<TaskState>
     {
-        public int Status { get; }
-        public string Description { get; }
-        public uint ProjectId { get; }
+        private readonly IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
         
-        public TaskState(int status, string description, uint id, uint projectId)
-        :base(id,-1,DateTime.Now)
+        public void Save(TaskState task)
         {
-            Status = status;
-            Description = description;
-            ProjectId = projectId;
+            if (_tasks.ContainsKey(task.Id))
+            {
+                _tasks[task.Id] = task;
+            }
+            else
+            {
+                _tasks.Add(task.Id,task);
+            }
+        }
+
+        public TaskState FindBy(uint id)
+        {
+            return _tasks[id];
+        }
+
+        public void Commit()
+        {
+            
         }
     }
 }

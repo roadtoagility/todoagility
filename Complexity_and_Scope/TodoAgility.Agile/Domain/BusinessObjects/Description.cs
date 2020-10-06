@@ -20,7 +20,7 @@ using System;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public class Description : IEquatable<Description>, IExposeValue<string>
+    public sealed class Description : IEquatable<Description>, IExposeValue<string>
     {
         private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
         
@@ -34,20 +34,26 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         public static Description From(string description)
         {
             if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
+            {
                 throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
                     nameof(description));
+            }
+
 
             if (description.Length > DESCRIPTION_LENGTH_LIMIT)
+            {
                 throw new ArgumentException($"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
                     nameof(description));
+            }
+                
 
             return new Description(description);
         }
 
         public bool Equals(Description other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other)){ return false;}
+            if (ReferenceEquals(this, other)){ return true;}
             return string.Equals(_description, other._description);
         }
 
@@ -58,9 +64,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj)){ return false;}
+            if (ReferenceEquals(this, obj)){ return true;}
+            if (obj.GetType() != this.GetType()){ return false;}
             return Equals((Description) obj);
         }
 
