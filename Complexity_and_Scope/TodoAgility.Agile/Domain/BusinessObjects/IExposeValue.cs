@@ -18,7 +18,7 @@
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public interface IExposeValue<TValue>
+    public interface IExposeValue<out TValue>
     {
         TValue GetValue();
     }

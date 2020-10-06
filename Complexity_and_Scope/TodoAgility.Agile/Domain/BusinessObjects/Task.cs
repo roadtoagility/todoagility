@@ -38,14 +38,23 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public static Task From(Description description, EntityId entityId, EntityId projectId)
         {
-            if (description == null )
+            if (description == null)
+            {
                 throw new ArgumentException("Informe uma descripção válida.", nameof(description));
-            
-            if (projectId == null )
+            }
+
+
+            if (projectId == null)
+            {
                 throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
-            
-            if (entityId == null )
+            }
+
+
+            if (entityId == null)
+            {
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
+            }
+                
 
             return new Task( TaskStatus.From(1), description,entityId, projectId);
         }
@@ -58,8 +67,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         /// <exception cref="ArgumentException"></exception>
         public static Task FromState(TaskState state)
         {
-            if (state == null )
+            if (state == null)
+            {
                 throw new ArgumentException("Informe uma atividade válida.", nameof(state));
+            }
+                
 
             return new Task(TaskStatus.From(state.Status), 
                 Description.From(state.Description), EntityId.From(state.Id), EntityId.From(state.ProjectId));
@@ -81,11 +93,17 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             var projectId = EntityId.From(state.ProjectId);
             var status = TaskStatus.From(state.Status);
 
-            if (patch == null )
+            if (patch == null)
+            {
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
+            }
 
-            if(descr == patch.Description)
+
+            if (descr == patch.Description)
+            {
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
+            }
+                
             
             return new Task(status, patch.Description, id, projectId);
         }
@@ -104,17 +122,17 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public bool Equals(Task other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other)){ return false;}
+            if (ReferenceEquals(this, other)){ return true;}
             return _description == other._description 
                    && _id == other._id;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj)){ return false;}
+            if (ReferenceEquals(this, obj)){ return true;}
+            if (obj.GetType() != this.GetType()){ return false;}
             return Equals((Task) obj);
         }
 
@@ -150,11 +168,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
             public static Patch From(Description descr)
             {
-                if (descr == null )
+                if (descr == null)
+                {
                     throw new ArgumentException("Informe os valores a serem atualizados.", nameof(descr));
-
+                }
+                    
                 return new Patch(descr);
-
             }
         }
     }

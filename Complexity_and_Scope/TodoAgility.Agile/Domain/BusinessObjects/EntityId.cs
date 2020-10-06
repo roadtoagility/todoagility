@@ -44,16 +44,16 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public bool Equals(EntityId other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other)){ return false;}
+            if (ReferenceEquals(this, other)){ return true;}
             return _id == other._id;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj)){ return false;}
+            if (ReferenceEquals(this, obj)){ return true;}
+            if (obj.GetType() != this.GetType()){ return false;}
             return Equals((EntityId) obj);
         }
 
@@ -73,15 +73,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public int CompareTo(EntityId other)
         {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
+            if (ReferenceEquals(this, other)){ return 0;}
+            if (ReferenceEquals(null, other)){ return 1;}
             return _id.CompareTo(other._id);
         }
 
         public int CompareTo(object obj)
         {
-            if (ReferenceEquals(null, obj)) return 1;
-            if (ReferenceEquals(this, obj)) return 0;
+            if (ReferenceEquals(null, obj)){ return 1;}
+            if (ReferenceEquals(this, obj)){ return 0;}
             return obj is EntityId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(EntityId)}");
         }
 
