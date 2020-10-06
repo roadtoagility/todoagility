@@ -56,16 +56,6 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             return Equals(vo);
         }
 
-        public static bool operator ==(ValueObject<TValueObject> left, ValueObject<TValueObject> right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(ValueObject<TValueObject> left, ValueObject<TValueObject> right)
-        {
-            return !Equals(left, right);
-        }
-
         #endregion
        
         public override string ToString()
