@@ -37,7 +37,9 @@ namespace TodoAgility.Tests
             var projectId = 1u;
             var command = new AddTaskCommand(description, projectId);
             var rep = new TaskRepository();
-            var handler = new AddTaskCommandHandler(rep);
+            var projRep = new ProjectRepository();
+            projRep.Save(Project.From(Description.From(description),EntityId.From(projectId)));
+            var handler = new AddTaskCommandHandler(rep, projRep);
             handler.Execute(command);
         }
 
@@ -47,17 +49,20 @@ namespace TodoAgility.Tests
             var description = "Given Description";
             var id = 1u;
             var projectId = 1u;
-            var rep = new TaskRepository();
-            var originalTask = Task.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
-            rep.Save(originalTask);
+            var repTask = new TaskRepository();
+            var repProject = new ProjectRepository();
+            var project = Project.From(Description.From(description), EntityId.From(projectId));
+            var originalTask = Task.From(Description.From(description), EntityId.From(id), project);
+            repProject.Save(project);
+            repTask.Save(originalTask);
             
             var descriptionNew = "Given Description Changed";
             var command = new UpdateTaskCommand(id, descriptionNew);
             
-            var handler = new UpdateTaskCommandHandler(rep);
+            var handler = new UpdateTaskCommandHandler(repTask);
             handler.Execute(command);
 
-            var task = rep.FindBy(EntityId.From(id));
+            var task = repTask.FindBy(EntityId.From(id));
             
             Assert.NotEqual(task,originalTask);
         }
@@ -70,7 +75,8 @@ namespace TodoAgility.Tests
             var status = 3;
             var projectId = 1u;
             var rep = new TaskRepository();
-            var originalTask = Task.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
+            var project = Project.From(Description.From(description), EntityId.From(projectId));
+            var originalTask = Task.From(Description.From(description), EntityId.From(id), project);
             rep.Save(originalTask);
             
             var command = new ChangeTaskStatusCommand(id, status);

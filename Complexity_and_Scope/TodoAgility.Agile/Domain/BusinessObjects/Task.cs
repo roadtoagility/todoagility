@@ -36,7 +36,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             _projectId = projectId;
         }
 
-        public static Task From(Description description, EntityId entityId, EntityId projectId)
+        public static Task From(Description description, EntityId entityId, Project project)
         {
             if (description == null)
             {
@@ -44,9 +44,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
 
-            if (projectId == null)
+            if (project == null)
             {
-                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
+                throw new ArgumentException("Informe um projeto válido.", nameof(project));
             }
 
 
@@ -54,9 +54,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             {
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
-                
 
-            return new Task( TaskStatus.From(1), description,entityId, projectId);
+            IExposeValue<ProjectState> projectState = project;
+            var state = projectState.GetValue();
+
+            return new Task( TaskStatus.From(1), description,entityId, EntityId.From(state.Id));
         }
         
         /// <summary>
