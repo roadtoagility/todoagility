@@ -202,7 +202,6 @@ namespace TodoAgility.Tests
             Assert.Throws<ArgumentException>(() =>
             {
                 agg.ChangeTaskStatus(TaskStatus.From(newStatus));
-                var changes = agg.GetChange();
             });
         }
 
