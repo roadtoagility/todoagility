@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,37 +16,19 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
 using System;
-using System.Collections.Generic;
-using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories.Layered
+namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class  TaskRepository: IRepository<TaskState>
+    public class ChangeTaskStatusCommand
     {
-        private readonly IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
+        public uint Id { get; }
+        public int NewStatus { get; }
         
-        public void Save(TaskState task)
+        public ChangeTaskStatusCommand(uint id, int newStatus)
         {
-            if (_tasks.ContainsKey(task.Id))
-            {
-                _tasks[task.Id] = task;
-            }
-            else
-            {
-                _tasks.Add(task.Id,task);
-            }
-        }
-
-        public TaskState FindBy(uint id)
-        {
-            return _tasks[id];
-        }
-
-        public void Commit()
-        {
-            //not implemented yet.
+            Id = id;
+            NewStatus = newStatus;
         }
     }
 }

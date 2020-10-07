@@ -165,6 +165,46 @@ namespace TodoAgility.Tests
             Assert.NotEqual(changes, oldState);
         }
    
+        [Fact]
+        public void Check_TaskAggregation_UpdateTaskStatus()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var id = 1u;
+            var newStatus = 3;
+            var projectId = 1u;
+            var oldState = Task.From(Description.From(descriptionText),EntityId.From(id), EntityId.From(projectId));
+            
+            //when
+            var agg = TaskAggregationRoot.ReconstructFrom(oldState);
+            agg.ChangeTaskStatus(TaskStatus.From(newStatus));
+            var changes = agg.GetChange();
+            
+            //then
+            Assert.NotEqual(changes, oldState);
+        }
+
+           
+        [Fact]
+        public void Check_TaskAggregation_UpdateTaskStatus_invalid()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var id = 1u;
+            var newStatus = 6;
+            var projectId = 1u;
+            var oldState = Task.From(Description.From(descriptionText),EntityId.From(id), EntityId.From(projectId));
+            
+            //when
+            var agg = TaskAggregationRoot.ReconstructFrom(oldState);
+            
+            //then
+            Assert.Throws<ArgumentException>(() =>
+            {
+                agg.ChangeTaskStatus(TaskStatus.From(newStatus));
+            });
+        }
+
         #endregion
         
     }

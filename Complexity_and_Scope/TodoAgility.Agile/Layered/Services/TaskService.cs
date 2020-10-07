@@ -35,7 +35,10 @@ namespace TodoAgility.Agile.Layered.Services
         public void AddTask(Task task)
         {
             if (string.IsNullOrEmpty(task.Description) || string.IsNullOrWhiteSpace(task.Description))
+            {
                 throw new ArgumentNullException(nameof(task.Description));
+            }
+                
             
             _taskRepository.Save(new TaskState(1,task.Description,task.Id, task.ProjectId));
         }

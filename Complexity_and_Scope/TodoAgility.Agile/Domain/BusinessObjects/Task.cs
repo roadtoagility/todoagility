@@ -98,16 +98,35 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
             }
 
-
             if (descr == patch.Description)
             {
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
             }
-                
             
             return new Task(status, patch.Description, id, projectId);
         }
 
+        public static Task CombineWithStatus(Task current, TaskStatus newStatus)
+        {
+            var state = ((IExposeValue<TaskState>)current).GetValue();
+            
+            var descr = Description.From(state.Description);
+            var id = EntityId.From(state.Id);
+            var projectId = EntityId.From(state.ProjectId);
+            var status = TaskStatus.From(state.Status);
+
+            if (newStatus == null)
+            {
+                throw new ArgumentException("Informe o novo estado da atividade.", nameof(newStatus));
+            }
+
+            if (status == newStatus)
+            {
+                throw new ArgumentException("Informe um estado diferente da atual.", nameof(newStatus));
+            }
+            
+            return new Task(newStatus, descr, id, projectId);
+        }
         
         TaskState IExposeValue<TaskState>.GetValue()
         {
@@ -133,7 +152,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
             return _description == other._description 
-                   && _id == other._id;
+                   && _id == other._id && _status == other._status;
         }
 
         public override bool Equals(object obj)
@@ -188,11 +207,6 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
             public static Patch FromDescription(Description descr)
             {
-                if (descr == null)
-                {
-                    throw new ArgumentException("Informe os valores a serem atualizados.", nameof(descr));
-                }
-                    
                 return new Patch(descr);
             }
         }
