@@ -28,18 +28,21 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
     public sealed class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
         private readonly IRepository<TaskState,Task> _taskRep;
+        private readonly IRepository<ProjectState, Project> _projectRep;
         
-        public AddTaskCommandHandler(IRepository<TaskState,Task> taskRep)
+        public AddTaskCommandHandler(IRepository<TaskState,Task> taskRep, IRepository<ProjectState,Project> projectRep)
         {
             _taskRep = taskRep;
+            _projectRep = projectRep;
         }
         public void Execute(AddTaskCommand command)
         {
             var descr = Description.From(command.Description);
             var projectId = EntityId.From(command.ProjectId);
             var entityId = EntityId.From(1u);
+            var project = _projectRep.FindBy(projectId);
             
-            var agg = TaskAggregationRoot.CreateFrom(descr, entityId, projectId);
+            var agg = TaskAggregationRoot.CreateFrom(descr, entityId, project);
             var task = agg.GetChange();
             
             _taskRep.Save(task);

@@ -24,7 +24,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
     public sealed class TaskAggregationRoot:AggregationRoot<Guid, Task> 
     {
         private readonly Task _currentTask;
-
+        private readonly Project _project;
         /// <summary>
         /// load an aggregate from store
         /// </summary>
@@ -40,9 +40,10 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
-        private TaskAggregationRoot(Description descr, EntityId entityId, EntityId projectId)
-        :this(Task.From(descr, entityId, projectId))
+        private TaskAggregationRoot(Description descr, EntityId entityId, Project project)
+        :this(Task.From(descr, entityId, project))
         {
+            _project = project;
             Change(_currentTask);
         }
 
@@ -80,11 +81,11 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// creating new aggregation as design by business based on business concepts 
         /// </summary>
         /// <param name="descr"></param>
-        /// <param name="projectId"></param>
+        /// <param name="project"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot CreateFrom(Description descr, EntityId entityId, EntityId projectId)
+        public static TaskAggregationRoot CreateFrom(Description descr, EntityId entityId, Project project)
         {
-            return new TaskAggregationRoot(descr, entityId, projectId);
+            return new TaskAggregationRoot(descr, entityId, project);
         }
         
         #endregion
