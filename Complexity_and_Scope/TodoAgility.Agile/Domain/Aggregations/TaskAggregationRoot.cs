@@ -57,6 +57,13 @@ namespace TodoAgility.Agile.Domain.Aggregations
             Change(change);
         }
 
+        public void ChangeTaskStatus(TaskStatus newStatus)
+        {
+            var change = Task.CombineWithStatus(_currentTask, newStatus);
+                
+            Change(change);
+        }
+
         #region Aggregation contruction
         
         /// <summary>

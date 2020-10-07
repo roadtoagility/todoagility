@@ -61,6 +61,28 @@ namespace TodoAgility.Tests
             
             Assert.NotEqual(task,originalTask);
         }
+        
+        [Fact]
+        public void Task_ChangeStatusCommandHandler_Succeed()
+        {
+            var description = "Given Description";
+            var id = 1u;
+            var status = 3;
+            var projectId = 1u;
+            var rep = new TaskRepository();
+            var originalTask = Task.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
+            rep.Save(originalTask);
+            
+            var command = new ChangeTaskStatusCommand(id, status);
+            
+            var handler = new ChangeTaskStatusCommandHandler(rep);
+            handler.Execute(command);
+
+            var task = rep.FindBy(EntityId.From(id));
+            
+            Assert.NotEqual(task,originalTask);
+        }
+        
         #endregion
     }
 }
