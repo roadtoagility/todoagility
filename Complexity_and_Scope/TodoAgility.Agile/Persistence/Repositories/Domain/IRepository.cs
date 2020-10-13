@@ -21,7 +21,7 @@ using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.Persistence.Repositories.Domain
 {
-    public interface IRepository<TState, out TModel>
+    public interface IRepository<in TState, out TModel>
     {
         void Save(IExposeValue<TState> task);
         TModel FindBy(EntityId id);

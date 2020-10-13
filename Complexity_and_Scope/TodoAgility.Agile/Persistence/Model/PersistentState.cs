@@ -23,16 +23,19 @@ namespace TodoAgility.Agile.Persistence.Model
 {
     public abstract class PersistentState
     {
-        public uint Id { get; }
-        public int Version { get; }
+        public Guid TransactionId { get; set; }
+        public uint Id { get; set; }
         
-        public DateTime CreateAt { get; }
+        public DateTime CreateAt { get; set; }
         
-        protected PersistentState(uint id, int version, DateTime createAt)
+        public int RowVersion { get; set; }
+        
+        public PersistentState(uint id, DateTime createAt, Guid transactionId, int rowVersion)
         {
             Id = id;
-            Version = version;
             CreateAt = createAt;
+            TransactionId = transactionId;
+            RowVersion = rowVersion;
         }
     }
 }

@@ -23,17 +23,25 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Task : IEquatable<Task>, IExposeValue<TaskState>
     {
-        private readonly EntityId _projectId;
-        private readonly TaskStatus _status;
-        private readonly EntityId _id;
-        private readonly Description _description;
+        public EntityId ProjectId { get; }
 
-        private Task(TaskStatus status, Description description, EntityId id, EntityId projectId)
+        public TaskStatus Status { get; }
+
+        public EntityId Id { get; }
+
+        public Description Description { get; }
+
+        private readonly int _rowVersion;
+        
+
+        private Task(TaskStatus status, Description description, EntityId id, 
+            EntityId projectId, int rowVersion)
         {
-            _status = status;
-            _description = description;
-            _id = id;
-            _projectId = projectId;
+            Status = status;
+            Description = description;
+            Id = id;
+            ProjectId = projectId;
+            _rowVersion = rowVersion;
         }
 
         public static Task From(Description description, EntityId entityId, Project project)
@@ -58,7 +66,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             IExposeValue<ProjectState> projectState = project;
             var state = projectState.GetValue();
 
-            return new Task( TaskStatus.From(1), description,entityId, EntityId.From(state.Id));
+            return new Task( TaskStatus.From(1), description,entityId, project.Id,0);
         }
         
         /// <summary>
@@ -76,7 +84,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 
 
             return new Task(TaskStatus.From(state.Status), 
-                Description.From(state.Description), EntityId.From(state.Id), EntityId.From(state.ProjectId));
+                Description.From(state.Description), EntityId.From(state.Id), 
+                EntityId.From(state.ProjectId), state.RowVersion);
         }
         
         /// <summary>
@@ -105,7 +114,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
             }
             
-            return new Task(status, patch.Description, id, projectId);
+            return new Task(status, patch.Description, id, projectId, state.RowVersion);
         }
 
         public static Task CombineWithStatus(Task current, TaskStatus newStatus)
@@ -127,16 +136,17 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um estado diferente da atual.", nameof(newStatus));
             }
             
-            return new Task(newStatus, descr, id, projectId);
+            return new Task(newStatus, descr, id, projectId, state.RowVersion);
         }
         
         TaskState IExposeValue<TaskState>.GetValue()
         {
-            IExposeValue<int> stateStatus = _status;
-            IExposeValue<string> stateDescr = _description;
-            IExposeValue<uint> id = _id;
-            IExposeValue<uint> projectId = _projectId;
-            return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), id.GetValue(),projectId.GetValue());
+            IExposeValue<int> stateStatus = Status;
+            IExposeValue<string> stateDescr = Description;
+            IExposeValue<uint> id = Id;
+            IExposeValue<uint> projectId = ProjectId;
+            return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), id.GetValue()
+                ,projectId.GetValue(), Guid.NewGuid(),  _rowVersion+1);
         }
         
         #region IEquatable implementation
@@ -153,8 +163,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return true;
             }
 
-            return _description == other._description 
-                   && _id == other._id && _status == other._status;
+            return Description == other.Description 
+                   && Id == other.Id && Status == other.Status;
         }
 
         public override bool Equals(object obj)
@@ -190,12 +200,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         public override string ToString()
         {
-            return $"[TODO]:[Id:{ _id.ToString()}, description: { _description.ToString()}: status: {_status}]";
+            return $"[TASK]:[Id:{ Id.ToString()}, description: { Description.ToString()}: status: {Status}: Project: {ProjectId}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_id,_description,_status);
+            return HashCode.Combine(Id,Description,Status, ProjectId);
         }
 
         public class Patch

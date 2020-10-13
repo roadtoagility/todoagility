@@ -16,6 +16,7 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
 using TodoAgility.Agile.Layered.BusinessObjects;
 using TodoAgility.Agile.Layered.Services;
 using TodoAgility.Agile.Persistence.Model;
@@ -99,7 +100,8 @@ namespace TodoAgility.Tests
             var started = 2;
             var id = 1u;
             var projectId = 1u;
-            var oldState = new TaskState(started, descriptionText, id, projectId);
+            var oldState = new TaskState(started, descriptionText, id, projectId
+                ,Guid.NewGuid(), 1);
             
             //when
             var rep = new TaskRepository();

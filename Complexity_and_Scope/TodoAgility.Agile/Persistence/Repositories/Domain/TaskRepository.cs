@@ -17,40 +17,53 @@
 //
 
 
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories.Domain
 {
-    public class  TaskRepository: IRepository<TaskState, Task>
+    public sealed class TaskRepository: IRepository<TaskState, Task>, IDisposable
     {
-        private readonly IDictionary<EntityId, TaskState> _tasks = new Dictionary<EntityId, TaskState>();
+        private readonly TaskDbContext _contextDb;
+
+        public TaskRepository(DbContextOptions<TaskDbContext> contextOptions)
+        {
+            _contextDb = new TaskDbContext(contextOptions);
+            _contextDb.Database.EnsureDeleted();
+            _contextDb.Database.EnsureCreated();
+        }
         
         public void Save(IExposeValue<TaskState> state)
         {
             TaskState task = state.GetValue();
-            var id = EntityId.From(task.Id);
-            
-            if (_tasks.ContainsKey(id))
-            {
-                _tasks[id] = task;
-            }
-            else
-            {
-                _tasks.Add(id,task);
-            }
+            task.RowVersion = task.RowVersion + 1;
+            _contextDb.Tasks.Add(task);
         }
 
         public Task FindBy(EntityId id)
         {
-            return Task.FromState(_tasks[id]);
+            IExposeValue<uint> entityId = id;
+            
+            var task = _contextDb.Tasks.AsQueryable()
+                .OrderByDescending( ob => ob.RowVersion )
+                .ThenBy( tb => tb.Id)
+                .First(t => t.Id == entityId.GetValue());
+            
+            return Task.FromState(task);
         }
 
         public void Commit()
         {
-            //do not persist anything yet
+            var count = _contextDb.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            _contextDb?.Dispose();
         }
     }
 }

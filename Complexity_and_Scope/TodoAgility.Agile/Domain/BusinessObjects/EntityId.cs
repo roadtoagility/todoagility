@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class EntityId : IEquatable<EntityId>, IComparable<EntityId>, IExposeValue<uint> //, IComparable
+    public sealed class EntityId : IEquatable<EntityId>, IComparable<EntityId>, IExposeValue<uint>
     {
         private readonly uint _id;
 

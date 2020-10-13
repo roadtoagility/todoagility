@@ -40,7 +40,8 @@ namespace TodoAgility.Agile.Layered.Services
             }
                 
             
-            _taskRepository.Save(new TaskState(1,task.Description,task.Id, task.ProjectId));
+            _taskRepository.Save(new TaskState(1,task.Description,task.Id, task.ProjectId
+                ,Guid.NewGuid(), 0));
         }
 
         public void UpdateTask(uint id, Task task)
@@ -59,7 +60,8 @@ namespace TodoAgility.Agile.Layered.Services
 
             if (found != null)
             {
-                var taskUpdate = new TaskState(found.Status,task.Description,found.Id,found.ProjectId);
+                var taskUpdate = new TaskState(found.Status,task.Description,found.Id,found.ProjectId
+                ,Guid.NewGuid(), found.RowVersion+1);
                 _taskRepository.Save(taskUpdate);    
             }
             else

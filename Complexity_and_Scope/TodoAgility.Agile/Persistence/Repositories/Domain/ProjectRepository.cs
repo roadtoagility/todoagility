@@ -17,40 +17,49 @@
 //
 
 
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories.Domain
 {
-    public class  ProjectRepository: IRepository<ProjectState, Project>
+    public class  ProjectRepository: IRepository<ProjectState, Project>, IDisposable
     {
-        private readonly IDictionary<EntityId, ProjectState> _items = new Dictionary<EntityId, ProjectState>();
+        private readonly ProjectDbContext _context;
+        
+        public ProjectRepository(DbContextOptions<ProjectDbContext> contextOptions)
+        {
+            _context = new ProjectDbContext(contextOptions);
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+        }
         
         public void Save(IExposeValue<ProjectState> state)
         {
-            ProjectState task = state.GetValue();
-            var id = EntityId.From(task.Id);
-            
-            if (_items.ContainsKey(id))
-            {
-                _items[id] = task;
-            }
-            else
-            {
-                _items.Add(id,task);
-            }
+            ProjectState project = state.GetValue();
+            _context.Projects.Add(project);
         }
 
         public Project FindBy(EntityId id)
         {
-            return Project.FromState(_items[id]);
+            IExposeValue<uint> entityId = id;
+            
+            var project = _context.Projects.AsQueryable().First(t => t.Id == entityId.GetValue());
+            
+            return Project.FromState(project);
         }
 
         public void Commit()
         {
-            //do not persist anything yet
+            _context.SaveChanges();
+        }
+        
+        public void Dispose()
+        {
+            _context?.Dispose();
         }
     }
 }
