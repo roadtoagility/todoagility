@@ -23,12 +23,13 @@ namespace TodoAgility.Agile.Persistence.Model
 {
     public class TaskState: PersistentState
     {
-        public int Status { get; }
-        public string Description { get; }
-        public uint ProjectId { get; }
+        public int Status { get; set; }
+        public string Description { get; set; }
+        public uint ProjectId { get; set; }
         
-        public TaskState(int status, string description, uint id, uint projectId)
-        :base(id,-1,DateTime.Now)
+        public TaskState(int status, string description, uint id, uint projectId, 
+            Guid transactionId, int rowVersion)
+            :base(id, DateTime.Now,transactionId,rowVersion)
         {
             Status = status;
             Description = description;

@@ -25,8 +25,8 @@ namespace TodoAgility.Agile.Persistence.Model
     {
         public string Description { get; }
 
-        public ProjectState(string description, uint id)
-        :base(id,-1,DateTime.Now)
+        public ProjectState(string description, uint id, Guid transactionId, int rowVersion)
+        :base(id, DateTime.Now,transactionId,rowVersion)
         {
             Description = description;
         }

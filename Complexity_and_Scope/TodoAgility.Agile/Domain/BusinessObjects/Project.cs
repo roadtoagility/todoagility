@@ -17,20 +17,22 @@
 //
 
 using System;
-using System.Collections;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Project : IEquatable<Project>, IExposeValue<ProjectState>
     {
-        private readonly EntityId _id;
-        private readonly Description _description;
+        public EntityId Id { get; }
+        public Description Description { get; }
+        
+        private readonly int  _rowVersion;
 
-        private Project(Description description, EntityId id)
+        private Project(Description description, EntityId id, int  rowVersion)
         {
-            _description = description;
-            _id = id;
+            Description = description;
+            Id = id;
+            _rowVersion = rowVersion;
         }
 
         public static Project From(Description description, EntityId entityId)
@@ -47,7 +49,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
 
-            return new Project(description, entityId);
+            return new Project(description, entityId, 0);
         }
 
         //     
@@ -64,14 +66,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(state));
             }
 
-            return new Project(Description.From(state.Description), EntityId.From(state.Id));
+            return new Project(Description.From(state.Description), EntityId.From(state.Id),state.RowVersion);
         }
 
         ProjectState IExposeValue<ProjectState>.GetValue()
         {
-            IExposeValue<string> stateDescr = _description;
-            IExposeValue<uint> id = _id;
-            return new ProjectState(stateDescr.GetValue(), id.GetValue());
+            IExposeValue<string> stateDescr = Description;
+            IExposeValue<uint> id = Id;
+            return new ProjectState(stateDescr.GetValue(), 
+                id.GetValue(), Guid.NewGuid(),_rowVersion);
         }
 
         #region IEquatable implementation
@@ -88,8 +91,8 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return true;
             }
 
-            return _description == other._description
-                   && _id == other._id;
+            return Description == other.Description
+                   && Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -126,12 +129,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override string ToString()
         {
-            return $"[TODO]:[Id:{_id.ToString()}, description: {_description.ToString()}]";
+            return $"[PROJECT]:[Id:{Id.ToString()}, description: {Description.ToString()}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(_id, _description);
+            return HashCode.Combine(Id, Description);
         }
     }
 }
