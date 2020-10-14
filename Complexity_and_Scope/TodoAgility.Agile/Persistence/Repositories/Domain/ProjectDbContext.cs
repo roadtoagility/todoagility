@@ -16,7 +16,7 @@ namespace TodoAgility.Agile.Persistence.Repositories.Domain
         {
             base.OnModelCreating(modelBuilder);
             
-            #region ConfigureTask
+            #region ConfigurePRoject
             
             modelBuilder.Entity<ProjectState>(
                 b =>

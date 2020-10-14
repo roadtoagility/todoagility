@@ -35,10 +35,10 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
         }
         public void Execute(UpdateTaskCommand command)
         {
-            var entityId = EntityId.From(command.Id);
+            var entityId = command.Id;
             var currentState = _taskRep.FindBy(entityId);
             var agg = TaskAggregationRoot.ReconstructFrom(currentState);
-            var descr = Description.From(command.Description);
+            var descr = command.Description;
             
             agg.UpdateTask(Task.Patch.FromDescription(descr));
             var task = agg.GetChange();
