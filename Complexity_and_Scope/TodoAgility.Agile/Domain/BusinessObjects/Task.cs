@@ -63,9 +63,6 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
 
-            IExposeValue<ProjectState> projectState = project;
-            var state = projectState.GetValue();
-
             return new Task( TaskStatus.From(1), description,entityId, project.Id,0);
         }
         
