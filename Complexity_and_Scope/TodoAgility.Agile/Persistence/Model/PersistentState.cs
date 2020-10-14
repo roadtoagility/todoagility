@@ -30,7 +30,7 @@ namespace TodoAgility.Agile.Persistence.Model
         
         public int RowVersion { get; set; }
         
-        public PersistentState(uint id, DateTime createAt, Guid transactionId, int rowVersion)
+        protected PersistentState(uint id, DateTime createAt, Guid transactionId, int rowVersion)
         {
             Id = id;
             CreateAt = createAt;

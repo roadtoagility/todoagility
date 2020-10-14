@@ -58,7 +58,7 @@ namespace TodoAgility.Agile.Persistence.Repositories.Domain
 
         public void Commit()
         {
-            var count = _contextDb.SaveChanges();
+            _contextDb.SaveChanges();
         }
 
         public void Dispose()

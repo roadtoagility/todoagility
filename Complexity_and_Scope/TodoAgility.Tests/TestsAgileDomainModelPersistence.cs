@@ -37,7 +37,6 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var projectId = 1u;
             var id = 1u;
-            var status = 1;
 
             var project = Project.From(Description.From(descriptionText), EntityId.From(projectId));
             var task = Task.From(Description.From(descriptionText),EntityId.From(id), project);
