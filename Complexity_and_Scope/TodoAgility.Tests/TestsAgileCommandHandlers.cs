@@ -21,7 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.CQRS.CommandHandlers;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories.Domain;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests
@@ -60,7 +60,7 @@ namespace TodoAgility.Tests
             var projectId = 1u;
             var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_test.db;");
-            using var repTask = new TaskRepository(taskOptionsBuilder.Options);
+            using var repTask = new TaskDbSession(taskOptionsBuilder.Options);
             
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagilityProject_test.db;");            
@@ -70,8 +70,8 @@ namespace TodoAgility.Tests
             repProject.Save(project);
             repProject.Commit();
             
-            repTask.Save(originalTask);
-            repTask.Commit();
+            repTask.Tasks.Add(originalTask);
+            repTask.SaveChanges();
             
             var descriptionNew = "Given Description Changed";
             var command = new UpdateTaskCommand(id, descriptionNew);
@@ -79,7 +79,7 @@ namespace TodoAgility.Tests
             var handler = new UpdateTaskCommandHandler(repTask);
             handler.Execute(command);
 
-            var task = repTask.FindBy(EntityId.From(id));
+            var task = repTask.Tasks.Get(EntityId.From(id));
             
             Assert.NotEqual(task,originalTask);
         }

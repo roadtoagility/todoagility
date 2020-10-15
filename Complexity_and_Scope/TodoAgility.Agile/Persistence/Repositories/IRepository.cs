@@ -19,34 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using TodoAgility.Agile.Persistence.Model;
+using System.Linq.Expressions;
+using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Repositories.Layered
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class  TaskRepository: IRepository<TaskState>
+    public interface IRepository<TState,out TModel> where TState:class where TModel:class
     {
-        private readonly IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
-        
-        public void Save(TaskState task)
-        {
-            if (_tasks.ContainsKey(task.Id))
-            {
-                _tasks[task.Id] = task;
-            }
-            else
-            {
-                _tasks.Add(task.Id,task);
-            }
-        }
-
-        public TaskState FindBy(uint id)
-        {
-            return _tasks[id];
-        }
-
-        public void Commit()
-        {
-            //not implemented yet.
-        }
+        void Add(IExposeValue<TState> task);
+        TModel Get(EntityId id);
+        IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
     }
 }

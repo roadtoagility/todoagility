@@ -20,23 +20,22 @@ using System;
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-
-using TodoAgility.Agile.Persistence.Repositories.Domain;
+using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class UpdateTaskCommandHandler : ICommandHandler<UpdateTaskCommand>
     {
-        private readonly IRepository<TaskState,Task> _taskRep;
+        private readonly TaskDbSession _taskRep;
 
-        public UpdateTaskCommandHandler(IRepository<TaskState,Task> taskRep)
+        public UpdateTaskCommandHandler(TaskDbSession taskRep)
         {
             _taskRep = taskRep;
         }
         public void Execute(UpdateTaskCommand command)
         {
             var entityId = EntityId.From(command.Id);
-            var currentState = _taskRep.FindBy(entityId);
+            var currentState = _taskRep.Tasks.Get(entityId);
             var agg = TaskAggregationRoot.ReconstructFrom(currentState);
             var descr = Description.From(command.Description);
             

@@ -21,7 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories.Domain;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests

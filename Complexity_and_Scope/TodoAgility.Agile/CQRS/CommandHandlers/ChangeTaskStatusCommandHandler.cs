@@ -21,8 +21,6 @@ using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
-using TodoAgility.Agile.Persistence.Repositories.Domain;
-
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class ChangeTaskStatusCommandHandler : ICommandHandler<ChangeTaskStatusCommand>
