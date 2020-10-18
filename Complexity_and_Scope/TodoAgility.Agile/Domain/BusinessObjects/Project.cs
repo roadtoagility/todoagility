@@ -23,11 +23,17 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Project : IEquatable<Project>, IExposeValue<ProjectState>
     {
+        private static readonly int INITIAL_VERSION = 0;
         public EntityId Id { get; }
         public Description Description { get; }
-        
-        private readonly int  _rowVersion;
 
+        private readonly int _rowVersion;
+
+        private Project(Description description, EntityId id)
+            :this(description, id, INITIAL_VERSION)
+        {
+        }
+        
         private Project(Description description, EntityId id, int  rowVersion)
         {
             Description = description;
@@ -49,7 +55,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
 
-            return new Project(description, entityId, 0);
+            return new Project(description, entityId);
         }
 
         //     
@@ -74,7 +80,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
             return new ProjectState(stateDescr.GetValue(), 
-                id.GetValue(), Guid.NewGuid(),_rowVersion);
+                id.GetValue(), Guid.NewGuid(), _rowVersion);
         }
 
         #region IEquatable implementation

@@ -23,6 +23,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Task : IEquatable<Task>, IExposeValue<TaskState>
     {
+        private static readonly int INITiAL_VERSION = 0;
         public EntityId ProjectId { get; }
 
         public TaskStatus Status { get; }
@@ -33,7 +34,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         private readonly int _rowVersion;
         
-
+        private Task(TaskStatus status, Description description, EntityId id, 
+            EntityId projectId)
+        :this(status,description,id,projectId,INITiAL_VERSION)
+        {
+        }
+        
         private Task(TaskStatus status, Description description, EntityId id, 
             EntityId projectId, int rowVersion)
         {
@@ -63,7 +69,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
 
-            return new Task( TaskStatus.From(1), description,entityId, project.Id,0);
+            return new Task( TaskStatus.From(1), description,entityId, project.Id);
         }
         
         /// <summary>
@@ -143,7 +149,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             IExposeValue<uint> id = Id;
             IExposeValue<uint> projectId = ProjectId;
             return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), id.GetValue()
-                ,projectId.GetValue(), Guid.NewGuid(),  _rowVersion+1);
+                ,projectId.GetValue(), Guid.NewGuid(),  _rowVersion);
         }
         
         #region IEquatable implementation

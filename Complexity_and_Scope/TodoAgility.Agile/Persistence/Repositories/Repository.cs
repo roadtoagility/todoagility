@@ -23,6 +23,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
@@ -33,13 +34,17 @@ namespace TodoAgility.Agile.Persistence.Repositories
         {
             Context = context;
         }
-        public void Add(IExposeValue<TState> task)
+        public void Add(IExposeValue<TState> entity)
         {
-            Context.Set<TState>().Add(task.GetValue());
+            var state = PrepareToAdd(entity);
+            Context.Set<TState>().Add(state);
         }
 
         public abstract TModel Get(EntityId id);
 
         public abstract IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
+        
+        protected abstract TState PrepareToAdd(IExposeValue<TState> entity);
+
     }
 }

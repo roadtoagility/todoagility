@@ -55,6 +55,71 @@ namespace TodoAgility.Tests
             var taskSaved = taskDbSession.Repository.Get(EntityId.From(id));
             Assert.Equal(taskSaved, task);
         }
+        
+        [Fact]
+        public void Check_TaskRespository_Update()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var descriptionTextChanged = "Given Description Modificada";
+            var projectId = 1u;
+            var id = 1u;
+
+            var project = Project.From(Description.From(descriptionText), EntityId.From(projectId));
+            var task = Task.From(Description.From(descriptionText),EntityId.From(id), project);
+
+            //when
+            var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_update_test.db;");
+            var taskDbContext = new TaskDbContext(taskOptionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
+            taskDbSession.Repository.Add(task);
+            taskDbSession.SaveChanges();
+
+            //then
+            var taskSaved = taskDbSession.Repository.Get(EntityId.From(id));
+            var updatetask = Task.CombineWithPatch(taskSaved, 
+                Task.Patch.FromDescription(Description.From(descriptionTextChanged)));
+            using var taskDbSession2 = new DbSession<ITaskRepository>(taskDbContext,repTask);
+            taskDbSession2.Repository.Add(updatetask);
+            taskDbSession2.SaveChanges();
+            
+            var taskUpdated = taskDbSession2.Repository.Get(EntityId.From(id));
+            Assert.NotEqual(taskUpdated, task);
+        }
+        
+        [Fact]
+        public void Check_TaskRespository_Concurrency()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var projectId = 1u;
+            var id = 1u;
+
+            var project = Project.From(Description.From(descriptionText), EntityId.From(projectId));
+            var task = Task.From(Description.From(descriptionText),EntityId.From(id), project);
+
+            //when
+            var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_concurrency_test.db;");
+            var taskDbContext = new TaskDbContext(taskOptionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
+            taskDbSession.Repository.Add(task);
+            taskDbSession.SaveChanges();
+
+            
+            //then
+            Assert.Throws<DbUpdateException>(() =>
+            {
+                using var taskDbSession1 = new DbSession<ITaskRepository>(taskDbContext,repTask);
+                taskDbSession1.Repository.Add(task);
+                taskDbSession1.SaveChanges();         
+            });
+        }
 
         #endregion
     }

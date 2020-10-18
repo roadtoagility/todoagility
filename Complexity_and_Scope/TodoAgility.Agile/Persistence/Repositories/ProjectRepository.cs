@@ -36,6 +36,7 @@ namespace TodoAgility.Agile.Persistence.Repositories
         {
             Context.Database.EnsureCreated();
         }
+
         public override Project Get(EntityId id)
         {
             IExposeValue<uint> entityId = id;
@@ -49,6 +50,13 @@ namespace TodoAgility.Agile.Persistence.Repositories
         public override IEnumerable<Project> Find(Expression<Func<ProjectState, bool>> predicate)
         {
             return DbContext.Projects.Where(predicate).Select(t=> Project.FromState(t));
+        }
+        
+        protected override ProjectState PrepareToAdd(IExposeValue<ProjectState> entity)
+        {
+            var state = entity.GetValue();
+            state.RowVersion++;
+            return state;
         }
     }
 }
