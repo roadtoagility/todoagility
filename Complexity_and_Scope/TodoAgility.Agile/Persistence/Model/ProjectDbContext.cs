@@ -15,13 +15,15 @@ namespace TodoAgility.Agile.Persistence.Model
         {
             base.OnModelCreating(modelBuilder);
             
-            #region ConfigureTask
+            #region ConfigureProject
             
             modelBuilder.Entity<ProjectState>(
                 b =>
                 {
-                    b.Property(e => e.Id);
-                    b.HasKey(k => new { k.Id });
+                    b.Property(e => e.TransactionId).ValueGeneratedNever();
+                    b.HasKey(k => new { k.TransactionId });
+                    b.Property(e => e.Id).ValueGeneratedNever();
+                    b.HasIndex(k => new { k.Id });
                     b.Property(e => e.Description).IsRequired();
                     b.Property(e => e.CreateAt);
                 });

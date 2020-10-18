@@ -25,9 +25,16 @@ using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class DbSession:IDisposable
+    public class DbSession<TRepository>:IDbSession<TRepository>, IDisposable
     {
-        public DbContext Context { get; protected set; }
+        private DbContext Context { get;}
+        public TRepository Repository { get;}
+
+        public DbSession(DbContext context, TRepository repository)
+        {
+            Context = context;
+            Repository = repository;
+        }
 
         public void SaveChanges()
         {
@@ -38,6 +45,5 @@ namespace TodoAgility.Agile.Persistence.Repositories
         {
             Context?.Dispose();
         }
-
     }
 }

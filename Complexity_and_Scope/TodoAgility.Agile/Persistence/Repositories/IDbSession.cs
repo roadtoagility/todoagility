@@ -25,10 +25,9 @@ using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public interface IDbSession
+    public interface IDbSession<out TRepository>
     {
-        DbContext Context { get; set; }
-
+        TRepository Repository { get; }
         void SaveChanges();
     }
 }

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
@@ -28,22 +29,27 @@ namespace TodoAgility.Agile.Persistence.Repositories
 {
     public sealed class TaskRepository: Repository<TaskState,Task>, ITaskRepository
     {
-        public TaskDbContext Tasks => Context as TaskDbContext;
+        private TaskDbContext TaskDbContext => Context as TaskDbContext;
 
         public TaskRepository(DbContext context)
         :base(context)
         {
-
+            Context.Database.EnsureCreated();
         }
 
-        protected override Task GetModel(EntityId id)
+        public override Task Get(EntityId id)
         {
-            throw new NotImplementedException();
+            IExposeValue<uint> entityId = id;
+            var task = TaskDbContext.Tasks.AsQueryable()
+                .OrderByDescending( ob => ob.RowVersion )
+                .ThenBy( tb => tb.Id)
+                .First(t => t.Id == entityId.GetValue());
+            return Task.FromState(task);
         }
 
-        protected override IEnumerable<Task> FindModels(Expression<Func<TaskState, bool>> predicate)
+        public override IEnumerable<Task> Find(Expression<Func<TaskState, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return TaskDbContext.Tasks.Where(predicate).Select(t=> Task.FromState(t));
         }
     }
 }

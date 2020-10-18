@@ -38,18 +38,8 @@ namespace TodoAgility.Agile.Persistence.Repositories
             Context.Set<TState>().Add(task.GetValue());
         }
 
-        public TModel Get(EntityId id)
-        {
-            return GetModel(id);
-        }
+        public abstract TModel Get(EntityId id);
 
-        protected abstract TModel GetModel(EntityId id);
-
-        public IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate)
-        {
-            return FindModels(predicate);
-        }
-
-        protected abstract IEnumerable<TModel> FindModels(Expression<Func<TState, bool>> predicate);
+        public abstract IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
     }
 }
