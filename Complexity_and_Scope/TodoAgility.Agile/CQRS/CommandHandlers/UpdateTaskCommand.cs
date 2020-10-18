@@ -17,17 +17,18 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public class UpdateTaskCommand
     {
-        public uint Id { get; }
-        public string Description { get; }
+        public EntityId Id { get; }
+        public Description Description { get; }
         public UpdateTaskCommand(uint id, string description)
         {
-            Id = id;
-            Description = description;
+            Id = EntityId.From(id);
+            Description = Description.From(description);
         }
     }
 }

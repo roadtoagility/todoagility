@@ -36,8 +36,8 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
         }
         public void Execute(AddTaskCommand command)
         {
-            var descr = Description.From(command.Description);
-            var projectId = EntityId.From(command.ProjectId);
+            var descr = command.Description;
+            var projectId = command.ProjectId;
             var entityId = EntityId.From(1u);
             var project = _projectSession.Repository.Get(projectId);
             
