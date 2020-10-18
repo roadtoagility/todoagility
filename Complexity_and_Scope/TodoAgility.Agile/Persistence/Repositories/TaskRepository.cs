@@ -51,5 +51,26 @@ namespace TodoAgility.Agile.Persistence.Repositories
         {
             return TaskDbContext.Tasks.Where(predicate).Select(t=> Task.FromState(t));
         }
+        
+        protected override TaskState PrepareToAdd(IExposeValue<TaskState> entity)
+        {
+            var newState = entity.GetValue();
+            newState.RowVersion++;
+            try
+            {
+                var task = Get(EntityId.From(newState.Id));
+                IExposeValue<TaskState> oldState = task;
+
+                if (oldState.GetValue().RowVersion >= newState.RowVersion)
+                {
+                    throw new DbUpdateException("O Registro já foi alterado");
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                
+            }
+            return newState;
+        }
     }
 }

@@ -20,12 +20,13 @@ namespace TodoAgility.Agile.Persistence.Model
             modelBuilder.Entity<ProjectState>(
                 b =>
                 {
-                    b.Property(e => e.TransactionId).ValueGeneratedNever();
+                    b.Property(e => e.TransactionId).ValueGeneratedNever().IsRequired();
                     b.HasKey(k => new { k.TransactionId });
-                    b.Property(e => e.Id).ValueGeneratedNever();
-                    b.HasIndex(k => new { k.Id });
+                    b.Property(e => e.Id).ValueGeneratedNever().IsRequired();
                     b.Property(e => e.Description).IsRequired();
+                    b.Property(e => e.RowVersion).IsRequired();
                     b.Property(e => e.CreateAt);
+                    b.HasIndex(idx => new {idx.Id, idx.RowVersion}).IsUnique();
                 });
             #endregion
         }
