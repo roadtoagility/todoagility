@@ -17,13 +17,33 @@
 //
 
 
-namespace TodoAgility.Agile.Persistence.Repositories.Layered
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.BusinessObjects;
+
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public interface IRepository<TModel>
+    public class DbSession<TRepository>:IDbSession<TRepository>, IDisposable
     {
-        void Save(TModel task);
-        TModel FindBy(uint id);
-        
-        void Commit();
+        private DbContext Context { get;}
+        public TRepository Repository { get;}
+
+        public DbSession(DbContext context, TRepository repository)
+        {
+            Context = context;
+            Repository = repository;
+        }
+
+        public void SaveChanges()
+        {
+            Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context?.Dispose();
+        }
     }
 }

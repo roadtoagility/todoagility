@@ -17,36 +17,13 @@
 //
 
 
-using System;
-using System.Collections.Generic;
+using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories.Layered
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class  TaskRepository: IRepository<TaskState>
+    public interface ITaskRepository: IRepository<TaskState, Task>
     {
-        private readonly IDictionary<uint, TaskState> _tasks = new Dictionary<uint, TaskState>();
-        
-        public void Save(TaskState task)
-        {
-            if (_tasks.ContainsKey(task.Id))
-            {
-                _tasks[task.Id] = task;
-            }
-            else
-            {
-                _tasks.Add(task.Id,task);
-            }
-        }
 
-        public TaskState FindBy(uint id)
-        {
-            return _tasks[id];
-        }
-
-        public void Commit()
-        {
-            //not implemented yet.
-        }
     }
 }

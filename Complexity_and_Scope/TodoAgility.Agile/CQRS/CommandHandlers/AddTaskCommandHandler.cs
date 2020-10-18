@@ -21,32 +21,31 @@ using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
-using TodoAgility.Agile.Persistence.Repositories.Domain;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
     {
-        private readonly IRepository<TaskState,Task> _taskRep;
-        private readonly IRepository<ProjectState, Project> _projectRep;
+        private readonly IDbSession<ITaskRepository> _taskSession;
+        private readonly IDbSession<IProjectRepository> _projectSession;
         
-        public AddTaskCommandHandler(IRepository<TaskState,Task> taskRep, IRepository<ProjectState,Project> projectRep)
+        public AddTaskCommandHandler(IDbSession<ITaskRepository> taskSession, IDbSession<IProjectRepository> projectSession)
         {
-            _taskRep = taskRep;
-            _projectRep = projectRep;
+            _taskSession = taskSession;
+            _projectSession = projectSession;
         }
         public void Execute(AddTaskCommand command)
         {
             var descr = command.Description;
             var projectId = command.ProjectId;
             var entityId = EntityId.From(1u);
-            var project = _projectRep.FindBy(projectId);
+            var project = _projectSession.Repository.Get(projectId);
             
             var agg = TaskAggregationRoot.CreateFrom(descr, entityId, project);
             var task = agg.GetChange();
             
-            _taskRep.Save(task);
-            _taskRep.Commit();
+            _taskSession.Repository.Add(task);
+            _taskSession.SaveChanges();
         }
     }
 }

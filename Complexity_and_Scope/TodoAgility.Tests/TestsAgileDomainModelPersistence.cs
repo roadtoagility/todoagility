@@ -21,7 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories.Domain;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests
@@ -40,17 +40,19 @@ namespace TodoAgility.Tests
 
             var project = Project.From(Description.From(descriptionText), EntityId.From(projectId));
             var task = Task.From(Description.From(descriptionText),EntityId.From(id), project);
-            
-            var optionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
-            optionsBuilder.UseSqlite("Data Source=todoagility_test.db;");
-            
+
             //when
-            using var rep = new TaskRepository(optionsBuilder.Options);
-            rep.Save(task);
-            rep.Commit();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_test.db;");
+            var taskDbContext = new TaskDbContext(taskOptionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
+            taskDbSession.Repository.Add(task);
+            taskDbSession.SaveChanges();
 
             //then
-            var taskSaved = rep.FindBy(EntityId.From(id));
+            var taskSaved = taskDbSession.Repository.Get(EntityId.From(id));
             Assert.Equal(taskSaved, task);
         }
 

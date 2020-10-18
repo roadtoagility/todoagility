@@ -20,46 +20,36 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories.Domain
+namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class  ProjectRepository: IRepository<ProjectState, Project>, IDisposable
+    public sealed class TaskRepository: Repository<TaskState,Task>, ITaskRepository
     {
-        private readonly ProjectDbContext _context;
-        
-        public ProjectRepository(DbContextOptions<ProjectDbContext> contextOptions)
+        private TaskDbContext TaskDbContext => Context as TaskDbContext;
+
+        public TaskRepository(DbContext context)
+        :base(context)
         {
-            _context = new ProjectDbContext(contextOptions);
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
-        }
-        
-        public void Save(IExposeValue<ProjectState> state)
-        {
-            ProjectState project = state.GetValue();
-            _context.Projects.Add(project);
+            Context.Database.EnsureCreated();
         }
 
-        public Project FindBy(EntityId id)
+        public override Task Get(EntityId id)
         {
             IExposeValue<uint> entityId = id;
-            
-            var project = _context.Projects.AsQueryable().First(t => t.Id == entityId.GetValue());
-            
-            return Project.FromState(project);
+            var task = TaskDbContext.Tasks.AsQueryable()
+                .OrderByDescending( ob => ob.RowVersion )
+                .ThenBy( tb => tb.Id)
+                .First(t => t.Id == entityId.GetValue());
+            return Task.FromState(task);
         }
 
-        public void Commit()
+        public override IEnumerable<Task> Find(Expression<Func<TaskState, bool>> predicate)
         {
-            _context.SaveChanges();
-        }
-        
-        public void Dispose()
-        {
-            _context?.Dispose();
+            return TaskDbContext.Tasks.Where(predicate).Select(t=> Task.FromState(t));
         }
     }
 }

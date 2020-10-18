@@ -21,7 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.CQRS.CommandHandlers;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Repositories.Domain;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests
@@ -36,19 +36,24 @@ namespace TodoAgility.Tests
         {
             var description = "Given Description";
             var projectId = 1u;
+
             var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
-            taskOptionsBuilder.UseSqlite("Data Source=todoagility_test.db;");
-            using var repTask = new TaskRepository(taskOptionsBuilder.Options);
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_add_test.db;");
+            var taskDbContext = new TaskDbContext(taskOptionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
             
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
-            projectOptionsBuilder.UseSqlite("Data Source=todoagilityProject_test.db;");            
-            using var repProject = new ProjectRepository(projectOptionsBuilder.Options);
+            projectOptionsBuilder.UseSqlite("Data Source=todoagilityProject_add_test.db;");
+            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var repProject = new ProjectRepository(projectDbContext);
+            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext,repProject);
             
             var command = new AddTaskCommand(description, projectId);
 
-            repProject.Save(Project.From(Description.From(description),EntityId.From(projectId)));
-            repProject.Commit();
-            var handler = new AddTaskCommandHandler(repTask, repProject);
+            projectDbSession.Repository.Add(Project.From(Description.From(description),EntityId.From(projectId)));
+            projectDbSession.SaveChanges();
+            var handler = new AddTaskCommandHandler(taskDbSession, projectDbSession);
             handler.Execute(command);
         }
 
@@ -59,27 +64,32 @@ namespace TodoAgility.Tests
             var id = 1u;
             var projectId = 1u;
             var taskOptionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
-            taskOptionsBuilder.UseSqlite("Data Source=todoagility_test.db;");
-            using var repTask = new TaskRepository(taskOptionsBuilder.Options);
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_cqrs_test.db;");
+            var taskDbContext = new TaskDbContext(taskOptionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
             
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
-            projectOptionsBuilder.UseSqlite("Data Source=todoagilityProject_test.db;");            
-            using var repProject = new ProjectRepository(projectOptionsBuilder.Options);
+            projectOptionsBuilder.UseSqlite("Data Source=todoagilityProject_cqrs_test.db;");
+            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var repProject = new ProjectRepository(projectDbContext);
+            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext,repProject);
+            
             var project = Project.From(Description.From(description), EntityId.From(projectId));
             var originalTask = Task.From(Description.From(description), EntityId.From(id), project);
-            repProject.Save(project);
-            repProject.Commit();
+            projectDbSession.Repository.Add(project);
+            projectDbSession.SaveChanges();
             
-            repTask.Save(originalTask);
-            repTask.Commit();
+            taskDbSession.Repository.Add(originalTask);
+            taskDbSession.SaveChanges();
             
             var descriptionNew = "Given Description Changed";
             var command = new UpdateTaskCommand(id, descriptionNew);
             
-            var handler = new UpdateTaskCommandHandler(repTask);
+            var handler = new UpdateTaskCommandHandler(taskDbSession);
             handler.Execute(command);
 
-            var task = repTask.FindBy(EntityId.From(id));
+            var task = taskDbSession.Repository.Get(EntityId.From(id));
             
             Assert.NotEqual(task,originalTask);
         }
@@ -92,20 +102,22 @@ namespace TodoAgility.Tests
             var status = 3;
             var projectId = 1u;
             var optionsBuilder = new DbContextOptionsBuilder<TaskDbContext>();
-            optionsBuilder.UseSqlite("Data Source=todoagility_test.db;");
-            using var rep = new TaskRepository(optionsBuilder.Options);
+            optionsBuilder.UseSqlite("Data Source=todoagility_cqrs_changed_test.db;");
+            var taskDbContext = new TaskDbContext(optionsBuilder.Options);
+            var repTask = new TaskRepository(taskDbContext);
+            using var taskDbSession = new DbSession<ITaskRepository>(taskDbContext,repTask);
             
             var project = Project.From(Description.From(description), EntityId.From(projectId));
             var originalTask = Task.From(Description.From(description), EntityId.From(id), project);
-            rep.Save(originalTask);
-            rep.Commit();
+            taskDbSession.Repository.Add(originalTask);
+            taskDbSession.SaveChanges();
             
             var command = new ChangeTaskStatusCommand(id, status);
             
-            var handler = new ChangeTaskStatusCommandHandler(rep);
+            var handler = new ChangeTaskStatusCommandHandler(taskDbSession);
             handler.Execute(command);
 
-            var task = rep.FindBy(EntityId.From(id));
+            var task = taskDbSession.Repository.Get(EntityId.From(id));
             
             Assert.NotEqual(task,originalTask);
         }
