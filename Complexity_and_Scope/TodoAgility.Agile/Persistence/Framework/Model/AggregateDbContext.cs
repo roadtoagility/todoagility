@@ -22,15 +22,14 @@ namespace TodoAgility.Agile.Persistence.Framework.Model
         {
             foreach (var entry in ChangeTracker.Entries())
             {
-                switch (entry.State)
+                if (entry.State == EntityState.Deleted)
                 {
-                    case EntityState.Deleted:
-                        entry.State = EntityState.Modified;
-                        entry.CurrentValues["IsDeleted"] = true;
-                        break;
-                    default:
-                        entry.CurrentValues["IsDeleted"] = false;
-                        break;
+                    entry.State = EntityState.Modified;
+                    entry.CurrentValues["IsDeleted"] = true;
+                }
+                else
+                {
+                    entry.CurrentValues["IsDeleted"] = false;    
                 }
             }
         }

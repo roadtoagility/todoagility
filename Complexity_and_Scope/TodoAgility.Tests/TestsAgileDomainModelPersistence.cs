@@ -112,7 +112,7 @@ namespace TodoAgility.Tests
             projectDbSession.SaveChanges();
 
             //when
-            var tasks = new List<EntityId>() {task.Id};
+            var tasks = new List<EntityId>{task.Id};
             var projectWithTasks = Project.CombineProjectAndActivities(project, tasks);
             var projectDbContext2 = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject2 = new ProjectRepository(projectDbContext2);
