@@ -18,31 +18,37 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Domain.BusinessObjects
+namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
-    public sealed class EntityId : IEquatable<EntityId>, IComparable<EntityId>, IExposeValue<uint>
+    public sealed class AggregateId : IEquatable<AggregateId>, IComparable<AggregateId>, IExposeValue<Guid>
     {
-        private readonly uint _id;
+        private readonly Guid _id;
 
-        private EntityId(uint id)
+        private AggregateId(Guid data)
         {
-            _id = id;
+            _id = data;
         }
 
-        public static EntityId From(uint id)
+        public static AggregateId FromSeed(Guid seed)
         {
-            return new EntityId(id);
+            if (seed == null)
+            {
+                throw new ArgumentNullException(nameof(seed));
+            }
+            
+            return new AggregateId(seed);
         }
-
-        uint IExposeValue<uint>.GetValue()
+        
+        Guid IExposeValue<Guid>.GetValue()
         {
             return _id;
         }
         
         #region IEquatable
         
-        public bool Equals(EntityId other)
+        public bool Equals(AggregateId other)
         {
             if (ReferenceEquals(null, other)){ return false;}
             if (ReferenceEquals(this, other)){ return true;}
@@ -54,15 +60,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             if (ReferenceEquals(null, obj)){ return false;}
             if (ReferenceEquals(this, obj)){ return true;}
             if (obj.GetType() != this.GetType()){ return false;}
-            return Equals((EntityId) obj);
+            return Equals(obj as AggregateId);
         }
 
-        public static bool operator ==(EntityId left, EntityId right)
+        public static bool operator ==(AggregateId left, AggregateId right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(EntityId left, EntityId right)
+        public static bool operator !=(AggregateId left, AggregateId right)
         {
             return !Equals(left, right);
         }
@@ -71,7 +77,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         
         #region IComparable
         
-        public int CompareTo(EntityId other)
+        public int CompareTo(AggregateId other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -98,27 +104,28 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return 0;
             }
 
-            return obj is EntityId other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(EntityId)}");
+            return obj is AggregateId other ? CompareTo(other) : 
+                throw new ArgumentException($"Object must be of type {nameof(AggregateId)}");
         }
 
-        public static bool operator <(EntityId left, EntityId right)
+        public static bool operator <(AggregateId left, AggregateId right)
         {
-            return Comparer<EntityId>.Default.Compare(left, right) < 0;
+            return Comparer<AggregateId>.Default.Compare(left, right) < 0;
         }
 
-        public static bool operator >(EntityId left, EntityId right)
+        public static bool operator >(AggregateId left, AggregateId right)
         {
-            return Comparer<EntityId>.Default.Compare(left, right) > 0;
+            return Comparer<AggregateId>.Default.Compare(left, right) > 0;
         }
 
-        public static bool operator <=(EntityId left, EntityId right)
+        public static bool operator <=(AggregateId left, AggregateId right)
         {
-            return Comparer<EntityId>.Default.Compare(left, right) <= 0;
+            return Comparer<AggregateId>.Default.Compare(left, right) <= 0;
         }
 
-        public static bool operator >=(EntityId left, EntityId right)
+        public static bool operator >=(AggregateId left, AggregateId right)
         {
-            return Comparer<EntityId>.Default.Compare(left, right) >= 0;
+            return Comparer<AggregateId>.Default.Compare(left, right) >= 0;
         }
         
         #endregion

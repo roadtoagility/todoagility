@@ -19,6 +19,9 @@
 using System;
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Persistence;
+using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
 
@@ -26,20 +29,18 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class ChangeTaskStatusCommandHandler : ICommandHandler<ChangeTaskStatusCommand>
     {
-        private readonly IDbSession<ITaskRepository> _session;
+        private readonly IDbSession<IActivityRepository> _session;
 
-        public ChangeTaskStatusCommandHandler(IDbSession<ITaskRepository> session)
+        public ChangeTaskStatusCommandHandler(IDbSession<IActivityRepository> session)
         {
             _session = session;
         }
         public void Execute(ChangeTaskStatusCommand command)
         {
-            var entityId = EntityId.From(command.Id);
-            var currentState = _session.Repository.Get(entityId);
-            var agg = TaskAggregationRoot.ReconstructFrom(currentState);
-            var newStatus = TaskStatus.From(command.NewStatus);
+            var currentState = _session.Repository.Get(command.Id);
+            var agg = ActivityAggregationRoot.ReconstructFrom(currentState);
             
-            agg.ChangeTaskStatus(newStatus);
+            agg.ChangeTaskStatus(command.NewStatus);
             var task = agg.GetChange();
 
             _session.Repository.Add(task);

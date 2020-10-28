@@ -16,26 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using System;
-
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
-    public abstract class PersistentState
+    public interface IDomainEventHandler 
     {
-        public Guid TransactionId { get; set; }
-        public uint Id { get; set; }
+        string HandlerId { get; }
         
-        public DateTime CreateAt { get; set; }
+        string EventType { get; }
         
-        public int RowVersion { get; set; }
-        
-        protected PersistentState(uint id, DateTime createAt, Guid transactionId, int rowVersion)
-        {
-            Id = id;
-            CreateAt = createAt;
-            TransactionId = transactionId;
-            RowVersion = rowVersion;
-        }
+        void Handle(IDomainEvent @event);
     }
 }

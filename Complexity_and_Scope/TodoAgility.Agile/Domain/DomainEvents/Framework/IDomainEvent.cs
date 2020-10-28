@@ -16,34 +16,12 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
-    public class DbSession<TRepository>:IDbSession<TRepository>, IDisposable
+    public interface IDomainEvent
     {
-        private DbContext Context { get;}
-        public TRepository Repository { get;}
-
-        public DbSession(DbContext context, TRepository repository)
-        {
-            Context = context;
-            Repository = repository;
-        }
-
-        public void SaveChanges()
-        {
-            Context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            Context?.Dispose();
-        }
+        DateTime When { get; }
     }
 }

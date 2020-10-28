@@ -18,16 +18,21 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using TodoAgility.Agile.Domain.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework.Model
 {
-    public interface IDbSession<out TRepository>
+    public abstract class PersistentState:IPersistentState
     {
-        TRepository Repository { get; }
-        void SaveChanges();
+
+        public Guid PersistenceId { get; set; }
+        public DateTime CreateAt { get; set; }
+        
+        public bool IsDeleted { get; set; }
+ 
+        protected PersistentState(DateTime createAt)
+        {
+            PersistenceId = Guid.NewGuid();
+            CreateAt = createAt;
+        }
     }
 }

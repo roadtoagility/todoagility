@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
@@ -10,6 +13,7 @@ namespace TodoAgility.Agile.Persistence.Model
         }
         
         public DbSet<ProjectState> Projects { get; set; }
+        public DbSet<ActivityStateReference> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,13 +24,28 @@ namespace TodoAgility.Agile.Persistence.Model
             modelBuilder.Entity<ProjectState>(
                 b =>
                 {
-                    b.Property(e => e.TransactionId).ValueGeneratedNever().IsRequired();
-                    b.HasKey(k => new { k.TransactionId });
-                    b.Property(e => e.Id).ValueGeneratedNever().IsRequired();
+                    b.Property(e => e.ProjectId).ValueGeneratedNever().IsRequired();
+                    b.HasKey(e => e.ProjectId);
                     b.Property(e => e.Description).IsRequired();
-                    b.Property(e => e.RowVersion).IsRequired();
+                    b.Property(p => p.PersistenceId);
+                    b.HasQueryFilter(q => !q.IsDeleted);
                     b.Property(e => e.CreateAt);
-                    b.HasIndex(idx => new {idx.Id, idx.RowVersion}).IsUnique();
+                });
+            
+            modelBuilder.Entity<ActivityStateReference>(
+                b =>
+                {
+                    b.Property(k => k.ActivityReferenceId)
+                        .ValueGeneratedNever().IsRequired();
+                    b.HasKey(k => k.ActivityReferenceId);
+                    b.HasOne<ProjectState>()
+                        .WithMany(m=> m.Activities)
+                        .HasForeignKey(f=> f.ProjectId);
+
+                    b.Property(p => p.PersistenceId);
+                    b.HasQueryFilter(q => !q.IsDeleted);
+                    b.Property(e => e.CreateAt);
+                    b.HasIndex(idx => new {idx.ActivityReferenceId, idx.ProjectId}).IsUnique();
                 });
             #endregion
         }

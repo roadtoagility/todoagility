@@ -17,18 +17,20 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public class ChangeTaskStatusCommand
     {
-        public uint Id { get; }
-        public int NewStatus { get; }
+        public EntityId Id { get; }
+        public ActivityStatus NewStatus { get; }
         
         public ChangeTaskStatusCommand(uint id, int newStatus)
         {
-            Id = id;
-            NewStatus = newStatus;
+            Id =  EntityId.From(id);
+            NewStatus = ActivityStatus.From(newStatus);
         }
     }
 }

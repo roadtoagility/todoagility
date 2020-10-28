@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,15 +16,32 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using TodoAgility.Agile.Domain.DomainEvents;
+using TodoAgility.Agile.Domain.DomainEvents.Framework;
+using Xunit;
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Tests
 {
-    public interface IProjectRepository:IRepository<ProjectState,Project>
+    public partial class TestsAgileDomainEvents
     {
+        #region Activity DomainEvents
 
+        [Fact]
+        public void Check_DomainEvents_Raise()
+        {
+            //given
+            var dispatcher = new EventDispatcher();
+            //dispatcher.Subscribe();
+            
+            //when
+
+
+            //then
+
+        }
+        
+
+
+        #endregion
     }
 }

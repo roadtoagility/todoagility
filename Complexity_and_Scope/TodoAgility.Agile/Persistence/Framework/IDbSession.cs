@@ -17,13 +17,11 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework
 {
-    public interface ITaskRepository: IRepository<TaskState, Task>
+    public interface IDbSession<out TRepository>
     {
-
+        TRepository Repository { get; }
+        void SaveChanges();
     }
 }

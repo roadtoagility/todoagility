@@ -18,16 +18,23 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using TodoAgility.Agile.Domain.BusinessObjects;
+using System.ComponentModel.DataAnnotations.Schema;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Framework.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Model
 {
-    public interface IRepository<TState,out TModel> where TState:class where TModel:class
+    public class ActivityStateReference: PersistentState
     {
-        void Add(IExposeValue<TState> task);
-        TModel Get(EntityId id);
-        IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
+        public uint ActivityReferenceId { get; set; }
+
+        public uint ProjectId { get; set; }
+        
+        public ActivityStateReference(uint activityReferenceId, uint projectId)
+            :base(DateTime.Now)
+        {
+            ActivityReferenceId = activityReferenceId;
+            ProjectId = projectId;
+        }
     }
 }

@@ -18,6 +18,7 @@
 
 using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {

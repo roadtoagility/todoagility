@@ -17,45 +17,57 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Project : IEquatable<Project>, IExposeValue<ProjectState>
     {
-        private static readonly int INITIAL_VERSION = 0;
         public EntityId Id { get; }
         public Description Description { get; }
 
-        private readonly int _rowVersion;
-
-        private Project(Description description, EntityId id)
-            :this(description, id, INITIAL_VERSION)
-        {
-        }
+        public IReadOnlyList<EntityId> Activities { get; }
         
-        private Project(Description description, EntityId id, int  rowVersion)
+
+        private Project(Description description, EntityId id, IReadOnlyList<EntityId> tasks)
         {
             Description = description;
             Id = id;
-            _rowVersion = rowVersion;
+            Activities = new List<EntityId>(tasks);
         }
 
-        public static Project From(Description description, EntityId entityId)
+        public static Project From(EntityId id, Description description)
         {
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+            
             if (description == null)
             {
-                throw new ArgumentException("Informe uma descripção válida.", nameof(description));
+                throw new ArgumentNullException(nameof(description));
             }
+            
+            return new Project(description, id,ImmutableList<EntityId>.Empty);
+        }
 
-
-            if (entityId == null)
+        public static Project CombineProjectAndActivities(Project project, IReadOnlyList<EntityId> activities)
+        {
+            if (project == null)
             {
-                throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
+                throw new ArgumentNullException(nameof(project));
             }
-
-
-            return new Project(description, entityId);
+            
+            if (activities == null)
+            {
+                throw new ArgumentNullException(nameof(activities));
+            }
+            
+            return new Project(project.Description,project.Id,activities);
         }
 
         //     
@@ -72,15 +84,26 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(state));
             }
 
-            return new Project(Description.From(state.Description), EntityId.From(state.Id),state.RowVersion);
+            var activities = state.Activities.Select(ac =>
+            {
+                return  EntityId.From(ac.ProjectId);
+            }).ToList();
+            
+            return new Project(Description.From(state.Description), EntityId.From(state.ProjectId), activities);
         }
 
         ProjectState IExposeValue<ProjectState>.GetValue()
         {
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
-            return new ProjectState(stateDescr.GetValue(), 
-                id.GetValue(), Guid.NewGuid(), _rowVersion);
+            var transactionId = Guid.NewGuid();
+            var tasks = Activities.Select(t =>
+            {
+                IExposeValue<uint> task = t;
+                return new ActivityStateReference(task.GetValue(), id.GetValue());
+            });
+            
+            return new ProjectState(stateDescr.GetValue(), id.GetValue(),tasks.ToList());
         }
 
         #region IEquatable implementation

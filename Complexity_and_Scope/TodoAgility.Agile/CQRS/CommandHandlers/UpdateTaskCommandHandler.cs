@@ -18,15 +18,17 @@
 
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Persistence;
+using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class UpdateTaskCommandHandler : ICommandHandler<UpdateTaskCommand>
     {
-        private readonly IDbSession<ITaskRepository> _session;
+        private readonly IDbSession<IActivityRepository> _session;
 
-        public UpdateTaskCommandHandler(IDbSession<ITaskRepository> session)
+        public UpdateTaskCommandHandler(IDbSession<IActivityRepository> session)
         {
             _session = session;
         }
@@ -34,10 +36,10 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
         {
             var entityId = command.Id;
             var currentState = _session.Repository.Get(entityId);
-            var agg = TaskAggregationRoot.ReconstructFrom(currentState);
+            var agg = ActivityAggregationRoot.ReconstructFrom(currentState);
             var descr = command.Description;
             
-            agg.UpdateTask(Task.Patch.FromDescription(descr));
+            agg.UpdateTask(Activity.Patch.FromDescription(descr));
             var task = agg.GetChange();
             
             _session.Repository.Add(task);

@@ -17,14 +17,30 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using System;
+using Microsoft.EntityFrameworkCore;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework
 {
-    public interface IProjectRepository:IRepository<ProjectState,Project>
+    public class DbSession<TRepository>:IDbSession<TRepository>, IDisposable
     {
+        private DbContext Context { get;}
+        public TRepository Repository { get;}
 
+        public DbSession(DbContext context, TRepository repository)
+        {
+            Context = context;
+            Repository = repository;
+        }
+
+        public void SaveChanges()
+        {
+            Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context?.Dispose();
+        }
     }
 }

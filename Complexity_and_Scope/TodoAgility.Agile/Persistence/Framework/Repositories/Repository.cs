@@ -19,32 +19,37 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Linq;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
-namespace TodoAgility.Agile.Persistence.Model
+namespace TodoAgility.Agile.Persistence.Framework.Repositories
 {
-    public class ProjectState: PersistentState
+    public abstract class Repository<TState, TModel>: IRepository<TState,TModel> where TState:class where TModel:class
     {
-        public uint ProjectId { get; set; }
-        public string Description { get; }
-        
-        public ICollection<ActivityStateReference> Activities { get; }
-        
-        public ProjectState(string description, uint projectId)
-            :this(description,projectId, ImmutableList<ActivityStateReference>.Empty)
+        protected DbContext Context { get; }
+        protected Repository(DbContext context)
         {
-            Description = description;
+            Context = context;
+            
+            Context.Database.EnsureDeleted();
+            Context.Database.EnsureCreated();
+        }
+        public void Add(IExposeValue<TState> entity)
+        {
+            Context.Entry(entity.GetValue()).State = EntityState.Added;
+        }
+
+        public void Remove(IExposeValue<TState> entity)
+        {
+            Context.Entry(entity.GetValue()).State = EntityState.Deleted;
         }
         
-        public ProjectState(string description, uint projectId, IList<ActivityStateReference> activities)
-            :base(DateTime.Now)
-        {
-            ProjectId = projectId;
-            Description = description;
-            Activities = new List<ActivityStateReference>(activities);
-        }
+        public abstract TModel Get(EntityId id);
+
+        public abstract IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
     }
 }

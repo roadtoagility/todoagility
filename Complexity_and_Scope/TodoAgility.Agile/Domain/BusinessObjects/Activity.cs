@@ -17,40 +17,32 @@
 //
 
 using System;
+using System.Data.SqlTypes;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class Task : IEquatable<Task>, IExposeValue<TaskState>
+    public sealed class Activity : IEquatable<Activity>, IExposeValue<ActivityState>
     {
-        private static readonly int INITiAL_VERSION = 0;
+        private static readonly int InitialStatus = 1;
         public EntityId ProjectId { get; }
 
-        public TaskStatus Status { get; }
+        public ActivityStatus Status { get; }
 
         public EntityId Id { get; }
 
         public Description Description { get; }
 
-        private readonly int _rowVersion;
-        
-        private Task(TaskStatus status, Description description, EntityId id, 
-            EntityId projectId)
-        :this(status,description,id,projectId,INITiAL_VERSION)
-        {
-        }
-        
-        private Task(TaskStatus status, Description description, EntityId id, 
-            EntityId projectId, int rowVersion)
+        private Activity(ActivityStatus status, Description description, EntityId id, EntityId projectId)
         {
             Status = status;
             Description = description;
             Id = id;
             ProjectId = projectId;
-            _rowVersion = rowVersion;
         }
 
-        public static Task From(Description description, EntityId entityId, Project project)
+        public static Activity From(Description description, EntityId entityId, EntityId projectId)
         {
             if (description == null)
             {
@@ -58,9 +50,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
 
-            if (project == null)
+            if (projectId == null)
             {
-                throw new ArgumentException("Informe um projeto válido.", nameof(project));
+                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
             }
 
 
@@ -69,7 +61,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
 
-            return new Task( TaskStatus.From(1), description,entityId, project.Id);
+            return new Activity( ActivityStatus.From(InitialStatus), description,entityId, projectId);
         }
         
         /// <summary>
@@ -78,7 +70,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         /// <param name="state"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Task FromState(TaskState state)
+        public static Activity FromState(ActivityState state)
         {
             if (state == null)
             {
@@ -86,9 +78,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
                 
 
-            return new Task(TaskStatus.From(state.Status), 
-                Description.From(state.Description), EntityId.From(state.Id), 
-                EntityId.From(state.ProjectId), state.RowVersion);
+            return new Activity(ActivityStatus.From(state.Status), 
+                Description.From(state.Description), EntityId.From(state.ActivityId), 
+                EntityId.From(state.ProjectId));
         }
         
         /// <summary>
@@ -98,63 +90,55 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         /// <param name="patch"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static Task CombineWithPatch(Task current, Patch patch)
+        public static Activity CombineWithPatch(Activity current, Patch patch)
         {
-            var state = ((IExposeValue<TaskState>)current).GetValue();
+            var state = ((IExposeValue<ActivityState>)current).GetValue();
             
             var descr = Description.From(state.Description);
-            var id = EntityId.From(state.Id);
+            var id = EntityId.From(state.ActivityId);
             var projectId = EntityId.From(state.ProjectId);
-            var status = TaskStatus.From(state.Status);
+            var status = ActivityStatus.From(state.Status);
 
             if (patch == null)
             {
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
             }
 
+            
             if (descr == patch.Description)
             {
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
             }
             
-            return new Task(status, patch.Description, id, projectId, state.RowVersion);
-        }
-
-        public static Task CombineWithStatus(Task current, TaskStatus newStatus)
-        {
-            var state = ((IExposeValue<TaskState>)current).GetValue();
-            
-            var descr = Description.From(state.Description);
-            var id = EntityId.From(state.Id);
-            var projectId = EntityId.From(state.ProjectId);
-            var status = TaskStatus.From(state.Status);
-
-            if (newStatus == null)
-            {
-                throw new ArgumentException("Informe o novo estado da atividade.", nameof(newStatus));
-            }
-
-            if (status == newStatus)
-            {
-                throw new ArgumentException("Informe um estado diferente da atual.", nameof(newStatus));
-            }
-            
-            return new Task(newStatus, descr, id, projectId, state.RowVersion);
+            return new Activity(status, patch.Description, id, projectId);
         }
         
-        TaskState IExposeValue<TaskState>.GetValue()
+        public static Activity CombineWithStatus(Activity current, ActivityStatus status)
+        {
+            if (status == null)
+            {
+                throw new ArgumentNullException(nameof(status));
+            }
+            
+            var state = ((IExposeValue<ActivityState>)current).GetValue();
+            IExposeValue<int> st = status;
+            state.Status = st.GetValue(); 
+            return FromState(state);
+        }
+        
+        ActivityState IExposeValue<ActivityState>.GetValue()
         {
             IExposeValue<int> stateStatus = Status;
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
             IExposeValue<uint> projectId = ProjectId;
-            return new TaskState(stateStatus.GetValue(),stateDescr.GetValue(), id.GetValue()
-                ,projectId.GetValue(), Guid.NewGuid(),  _rowVersion);
+            return new ActivityState(stateStatus.GetValue(),stateDescr.GetValue()
+                , id.GetValue(), projectId.GetValue());
         }
         
         #region IEquatable implementation
         
-        public bool Equals(Task other)
+        public bool Equals(Activity other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -187,15 +171,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return false;
             }
 
-            return Equals((Task) obj);
+            return Equals((Activity) obj);
         }
 
-        public static bool operator ==(Task left, Task right)
+        public static bool operator ==(Activity left, Activity right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Task left, Task right)
+        public static bool operator !=(Activity left, Activity right)
         {
             return !Equals(left, right);
         }

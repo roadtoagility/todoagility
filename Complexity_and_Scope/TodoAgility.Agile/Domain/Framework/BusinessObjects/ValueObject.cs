@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TodoAgility.Agile.Domain.BusinessObjects
+namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
     public abstract class ValueObject<TValueObject> where TValueObject: ValueObject<TValueObject>, IEquatable<TValueObject>
     {

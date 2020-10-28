@@ -19,32 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework.Repositories
 {
-    public abstract class Repository<TState, TModel>: IRepository<TState,TModel> where TState:class where TModel:class
+    public interface IRepository<TState,out TModel> where TState:class where TModel:class
     {
-        protected DbContext Context { get; }
-        protected Repository(DbContext context)
-        {
-            Context = context;
-        }
-        public void Add(IExposeValue<TState> entity)
-        {
-            var state = PrepareToAdd(entity);
-            Context.Set<TState>().Add(state);
-        }
-
-        public abstract TModel Get(EntityId id);
-
-        public abstract IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
-        
-        protected abstract TState PrepareToAdd(IExposeValue<TState> entity);
-
+        void Add(IExposeValue<TState> task);
+        void Remove(IExposeValue<TState> entity);
+        TModel Get(EntityId id);
+        IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
     }
 }

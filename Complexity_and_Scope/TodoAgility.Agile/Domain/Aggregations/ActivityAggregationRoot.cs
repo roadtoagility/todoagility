@@ -18,21 +18,22 @@
 
 using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public sealed class TaskAggregationRoot:AggregationRoot<Guid, Task> 
+    public sealed class ActivityAggregationRoot:AggregationRoot<Guid, Activity> 
     {
-        private readonly Task _currentTask;
+        private readonly Activity _currentActivity;
         private readonly Project _project;
         /// <summary>
         /// load an aggregate from store
         /// </summary>
-        /// <param name="currentTask"></param>
-        private TaskAggregationRoot(Task currentTask)
+        /// <param name="currentActivity"></param>
+        private ActivityAggregationRoot(Activity currentActivity)
         {
             Id = Guid.NewGuid();
-            _currentTask = currentTask;
+            _currentActivity = currentActivity;
         }
 
         /// <summary>
@@ -40,27 +41,27 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
-        private TaskAggregationRoot(Description descr, EntityId entityId, Project project)
-        :this(Task.From(descr, entityId, project))
+        private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
+        :this(Activity.From(descr, entityId, project.Id))
         {
             _project = project;
-            Change(_currentTask);
+            Change(_currentActivity);
         }
 
         /// <summary>
-        /// update currentTask value allowed from patch interface
+        /// update currentActivity value allowed from patch interface
         /// </summary>
         /// <param name="patchTask"></param>
-        public void UpdateTask(Task.Patch patchTask)
+        public void UpdateTask(Activity.Patch patchTask)
         {
-            var change = Task.CombineWithPatch(_currentTask, patchTask);
+            var change = Activity.CombineWithPatch(_currentActivity, patchTask);
                 
             Change(change);
         }
 
-        public void ChangeTaskStatus(TaskStatus newStatus)
+        public void ChangeTaskStatus(ActivityStatus newStatus)
         {
-            var change = Task.CombineWithStatus(_currentTask, newStatus);
+            var change = Activity.CombineWithStatus(_currentActivity, newStatus);
                 
             Change(change);
         }
@@ -72,9 +73,9 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// </summary>
         /// <param name="currentState"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot ReconstructFrom(Task currentState)
+        public static ActivityAggregationRoot ReconstructFrom(Activity currentState)
         {
-            return new TaskAggregationRoot(currentState);
+            return new ActivityAggregationRoot(currentState);
         }
 
         /// <summary>
@@ -82,10 +83,11 @@ namespace TodoAgility.Agile.Domain.Aggregations
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="project"></param>
+        /// <param name="entityId"></param>
         /// <returns></returns>
-        public static TaskAggregationRoot CreateFrom(Description descr, EntityId entityId, Project project)
+        public static ActivityAggregationRoot CreateFrom(Description descr, EntityId entityId, Project project)
         {
-            return new TaskAggregationRoot(descr, entityId, project);
+            return new ActivityAggregationRoot(descr, entityId, project);
         }
         
         #endregion
