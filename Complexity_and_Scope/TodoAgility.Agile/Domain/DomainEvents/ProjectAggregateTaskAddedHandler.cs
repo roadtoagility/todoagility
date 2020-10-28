@@ -11,7 +11,7 @@ namespace TodoAgility.Agile.Domain.DomainEvents
 {
     public class ProjectAggregateTaskAddedHandler : DomainEventHandler
     {
-        private IDbSession<IProjectRepository> _projectSession;
+        private readonly IDbSession<IProjectRepository> _projectSession;
         public ProjectAggregateTaskAddedHandler(IDbSession<IProjectRepository> projectSession)
         {
             _projectSession = projectSession;
@@ -21,7 +21,7 @@ namespace TodoAgility.Agile.Domain.DomainEvents
         {
             var ev = @event as TaskAddedEvent;
             var project = _projectSession.Repository.Get(ev.ProjectId);
-            var tasks = new List<EntityId>(){ev.Id};
+            var tasks = new List<EntityId>{ev.Id};
             var updateProject = Project.CombineProjectAndActivities(project, tasks);
             _projectSession.Repository.Add(updateProject);
         }

@@ -90,7 +90,6 @@ namespace TodoAgility.Tests
             var name = Description.From("givenName");
             var projectId = EntityId.From(1u);
             var entityId = EntityId.From(1u);
-            var project = Project.From(projectId, name);
 
             var task = Activity.From(name, entityId, projectId);            
             Assert.NotNull(task);
@@ -103,7 +102,6 @@ namespace TodoAgility.Tests
             var name = Description.From(givenName);
             var projectId = EntityId.From(1u);
             var entityId = EntityId.From(1u);
-            var project = Project.From(projectId, Description.From(givenName));
 
             var todo = Activity.From(name, entityId, projectId);
             IExposeValue<ActivityState> state = todo;

@@ -86,19 +86,13 @@ namespace TodoAgility.Agile.Persistence.Repositories
         public void Remove(IExposeValue<ProjectState> entity)
         {
             DbContext.Entry(entity.GetValue()).State = EntityState.Deleted;
-            // var existing = DbContext.Projects
-            //     .FirstOrDefault(p => p.ProjectId == state.ProjectId);
-            //
-            // if (state != null)
-            // {
-            //     DbContext.Projects.Remove(entity.GetValue());    
-            // }
         }
         
         public Project Get(EntityId id)
         {
             IExposeValue<uint> entityId = id;
             var project = DbContext.Projects.AsNoTracking()
+                .Include(b=>b.Activities)
                 .OrderByDescending( ob => ob.ProjectId )
                 .First(t => t.ProjectId == entityId.GetValue());
 

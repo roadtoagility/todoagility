@@ -22,7 +22,7 @@ using Xunit;
 
 namespace TodoAgility.Tests
 {
-    public partial class TestsAgileDomainEvents
+    public class TestsAgileDomainEvents
     {
         #region Activity DomainEvents
 

@@ -96,7 +96,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
-            var transactionId = Guid.NewGuid();
+            
             var tasks = Activities.Select(t =>
             {
                 IExposeValue<uint> task = t;

@@ -42,7 +42,6 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
             var id = EntityId.From(1u);
 
-            var project = Project.From(projectId, Description.From(descriptionText));
             var task = Activity.From(Description.From(descriptionText),id, projectId);
 
             //when
@@ -123,8 +122,8 @@ namespace TodoAgility.Tests
             projectDbSession2.Repository.Add(projectWithTasks);
             projectDbSession2.SaveChanges();
 
-            var taskUpdated = projectDbSession2.Repository.Get(projectWithTasks.Id);
-            Assert.True(projectWithTasks.Activities.Count > 0);
+            var projectUpdated = projectDbSession2.Repository.Get(projectWithTasks.Id);
+            Assert.True(projectUpdated.Activities.Count > 0);
         }
         
         [Fact]
