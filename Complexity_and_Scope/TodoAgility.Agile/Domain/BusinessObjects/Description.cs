@@ -23,31 +23,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
     public sealed class Description : IEquatable<Description>, IExposeValue<string>
     {
         private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
-        
+
         private readonly string _description;
 
         private Description(string description)
         {
             _description = description;
-        }
-
-        public static Description From(string description)
-        {
-            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
-            {
-                throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
-                    nameof(description));
-            }
-
-
-            if (description.Length > DESCRIPTION_LENGTH_LIMIT)
-            {
-                throw new ArgumentException($"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
-                    nameof(description));
-            }
-                
-
-            return new Description(description);
         }
 
         public bool Equals(Description other)
@@ -70,6 +51,27 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             return _description;
         }
 
+        public static Description From(string description)
+        {
+            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
+            {
+                throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
+                    nameof(description));
+            }
+
+
+
+            if (description.Length > DESCRIPTION_LENGTH_LIMIT)
+            {
+                throw new ArgumentException(
+                    $"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
+                    nameof(description));
+            }
+
+
+            return new Description(description);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -82,7 +84,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return true;
             }
 
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }

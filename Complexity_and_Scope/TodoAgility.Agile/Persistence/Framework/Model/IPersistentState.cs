@@ -17,13 +17,12 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using System;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework.Model
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    internal interface IPersistentState
     {
+        public Guid PersistenceId { get; set; }
     }
 }

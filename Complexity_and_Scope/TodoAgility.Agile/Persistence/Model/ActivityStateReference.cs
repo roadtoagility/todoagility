@@ -17,13 +17,22 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using System;
+using TodoAgility.Agile.Persistence.Framework.Model;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Model
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public class ActivityStateReference : PersistentState
     {
+        public ActivityStateReference(uint activityReferenceId, uint projectId)
+            : base(DateTime.Now)
+        {
+            ActivityReferenceId = activityReferenceId;
+            ProjectId = projectId;
+        }
+
+        public uint ActivityReferenceId { get; set; }
+
+        public uint ProjectId { get; set; }
     }
 }

@@ -17,13 +17,10 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public interface ICommandHandler<in TCommand, out TResult>
     {
+        TResult Execute(TCommand command);
     }
 }

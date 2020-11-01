@@ -16,14 +16,12 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public interface IDomainEventHandler
     {
+        string HandlerId { get; }
+
+        void Handle(IDomainEvent @event);
     }
 }

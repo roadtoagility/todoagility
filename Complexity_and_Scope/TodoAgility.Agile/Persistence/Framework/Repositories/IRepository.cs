@@ -17,13 +17,19 @@
 //
 
 
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework.Repositories
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public interface IRepository<TState, out TModel> where TState : class where TModel : class
     {
+        void Add(IExposeValue<TState> task);
+        void Remove(IExposeValue<TState> entity);
+        TModel Get(EntityId id);
+        IEnumerable<TModel> Find(Expression<Func<TState, bool>> predicate);
     }
 }

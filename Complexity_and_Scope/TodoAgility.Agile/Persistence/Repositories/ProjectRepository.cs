@@ -23,40 +23,83 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public class  ProjectRepository: Repository<ProjectState,Project>, IProjectRepository
+    public class ProjectRepository : IProjectRepository
     {
-        private ProjectDbContext DbContext => Context as ProjectDbContext;
-        
         public ProjectRepository(DbContext context)
-        :base(context)
         {
-            Context.Database.EnsureCreated();
+            DbContext = context as ProjectDbContext;
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
         }
 
-        public override Project Get(EntityId id)
+        private ProjectDbContext DbContext { get; }
+
+        // https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities
+
+        public void Add(IExposeValue<ProjectState> entity)
+        {
+            var entry = entity.GetValue();
+            var oldState =
+                DbContext.Projects.Include(b => b.Activities)
+                    .FirstOrDefault(b => b.ProjectId == entry.ProjectId);
+
+            if (oldState == null)
+            {
+                DbContext.Projects.Add(entry);
+            }
+            else
+            {
+                DbContext.Entry(oldState).CurrentValues.SetValues(entry);
+                foreach (var activity in entry.Activities)
+                {
+                    var existing = oldState.Activities.AsQueryable()
+                        .FirstOrDefault(p => p.ActivityReferenceId == activity.ActivityReferenceId);
+
+                    if (existing == null)
+                    {
+                        oldState.Activities.Add(activity);
+                    }
+                    else
+                    {
+                        DbContext.Entry(oldState).CurrentValues.SetValues(activity);
+                    }
+                }
+
+                foreach (var activity in oldState.Activities)
+                {
+                    if (!entry.Activities.All(p => p.ActivityReferenceId == activity.ActivityReferenceId))
+                    {
+                        DbContext.Remove(activity);
+                    }                    
+                }
+            }
+        }
+
+        public void Remove(IExposeValue<ProjectState> entity)
+        {
+            DbContext.Entry(entity.GetValue()).State = EntityState.Deleted;
+        }
+
+        public Project Get(EntityId id)
         {
             IExposeValue<uint> entityId = id;
-            var project = DbContext.Projects.AsQueryable()
-                .OrderByDescending( ob => ob.RowVersion )
-                .ThenBy( tb => tb.Id)
-                .First(t => t.Id == entityId.GetValue());
+            var project = DbContext.Projects.AsNoTracking()
+                .Include(b => b.Activities)
+                .OrderByDescending(ob => ob.ProjectId)
+                .First(t => t.ProjectId == entityId.GetValue());
+
             return Project.FromState(project);
         }
 
-        public override IEnumerable<Project> Find(Expression<Func<ProjectState, bool>> predicate)
+        public IEnumerable<Project> Find(Expression<Func<ProjectState, bool>> predicate)
         {
-            return DbContext.Projects.Where(predicate).Select(t=> Project.FromState(t));
-        }
-        
-        protected override ProjectState PrepareToAdd(IExposeValue<ProjectState> entity)
-        {
-            var state = entity.GetValue();
-            state.RowVersion++;
-            return state;
+            return DbContext.Projects.Where(predicate).AsNoTracking()
+                .Select(t => Project.FromState(t));
         }
     }
 }

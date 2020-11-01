@@ -17,13 +17,33 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using System;
+using LiteDB;
+using TodoAgility.Agile.Persistence.Framework.Projections;
+using TodoAgility.Agile.Persistence.Model.Projections;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public class DbProjectionSession<TRepository> : IDbSession<TRepository>, IDisposable
     {
+
+        public DbProjectionSession(ProjectionDbContext context, TRepository repository)
+        {
+            Context = context;
+            Repository = repository;
+        }
+
+        private ProjectionDbContext Context { get; }
+        public TRepository Repository { get; }
+
+        public void SaveChanges()
+        {
+            Context.Database.Commit();
+        }
+
+        public void Dispose()
+        {
+            Context?.Database.Dispose();
+        }
     }
 }

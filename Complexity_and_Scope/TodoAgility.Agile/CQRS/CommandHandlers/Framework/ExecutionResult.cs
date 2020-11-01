@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,14 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public class ExecutionResult
     {
+        public ExecutionResult(bool isSucceed)
+        {
+            IsSucceed = isSucceed;
+        }
+
+        public bool IsSucceed { get; }
     }
 }

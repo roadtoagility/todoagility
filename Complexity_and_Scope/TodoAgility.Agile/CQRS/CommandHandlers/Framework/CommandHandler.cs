@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,14 +16,24 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public abstract class CommandHandler<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     {
+        protected IEventDispatcher Publisher { get; }
+        
+        protected CommandHandler(IEventDispatcher publisher)
+        {
+            Publisher = publisher;
+        }
+
+        public TResult Execute(TCommand command)
+        {
+            return ExecuteCommand(command);
+        }
+
+        protected abstract TResult ExecuteCommand(TCommand command);
     }
 }

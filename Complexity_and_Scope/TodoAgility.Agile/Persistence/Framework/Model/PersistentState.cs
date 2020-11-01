@@ -17,13 +17,23 @@
 //
 
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
+using System;
 
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Persistence.Framework.Model
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public abstract class PersistentState : IPersistentState
     {
+        protected PersistentState(DateTime createAt)
+        {
+            PersistenceId = Guid.NewGuid();
+            CreateAt = createAt;
+        }
+
+        public DateTime CreateAt { get; set; }
+
+        public byte[] RowVersion { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public Guid PersistenceId { get; set; }
     }
 }

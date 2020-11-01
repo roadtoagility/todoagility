@@ -20,10 +20,11 @@
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework.Repositories;
 using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Projections;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public interface IActivityProjectionRepository : IProjectionRepository<ActivityProjection>
     {
     }
 }
