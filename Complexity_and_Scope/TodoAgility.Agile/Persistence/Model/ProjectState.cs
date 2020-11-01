@@ -20,31 +20,29 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class ProjectState: PersistentState
+    public class ProjectState : PersistentState
     {
-        public uint ProjectId { get; set; }
-        public string Description { get; }
-        
-        public ICollection<ActivityStateReference> Activities { get; }
-        
         public ProjectState(string description, uint projectId)
-            :this(description,projectId, ImmutableList<ActivityStateReference>.Empty)
+            : this(description, projectId, ImmutableList<ActivityStateReference>.Empty)
         {
             Description = description;
         }
-        
+
         public ProjectState(string description, uint projectId, IList<ActivityStateReference> activities)
-            :base(DateTime.Now)
+            : base(DateTime.Now)
         {
             ProjectId = projectId;
             Description = description;
             Activities = new List<ActivityStateReference>(activities);
         }
+
+        public uint ProjectId { get; set; }
+        public string Description { get; }
+
+        public ICollection<ActivityStateReference> Activities { get; }
     }
 }

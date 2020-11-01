@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,21 +16,34 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+using System;
+using LiteDB;
+using TodoAgility.Agile.Persistence.Framework.Projections;
+using TodoAgility.Agile.Persistence.Model.Projections;
+
+namespace TodoAgility.Agile.Persistence.Framework
 {
-    public class AddTaskCommand
+    public class DbProjectionSession<TRepository> : IDbSession<TRepository>, IDisposable
     {
-        public Description Description { get; }
-        public EntityId ProjectId { get; }
-        
-        public AddTaskCommand(string description, uint projectId)
+
+        public DbProjectionSession(ProjectionDbContext context, TRepository repository)
         {
-            Description = Description.From(description);
-            ProjectId = EntityId.From(projectId);
+            Context = context;
+            Repository = repository;
+        }
+
+        private ProjectionDbContext Context { get; }
+        public TRepository Repository { get; }
+
+        public void SaveChanges()
+        {
+            Context.Database.Commit();
+        }
+
+        public void Dispose()
+        {
+            Context?.Database.Dispose();
         }
     }
 }

@@ -16,8 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.DomainEvents;
 using TodoAgility.Agile.Domain.DomainEvents.Framework;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
 namespace TodoAgility.Tests
@@ -30,17 +36,28 @@ namespace TodoAgility.Tests
         public void Check_DomainEvents_Raise()
         {
             //given
-            var dispatcher = new EventDispatcher();
-            //dispatcher.Subscribe();
+            var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), 
+                EntityId.From(1u));
+            var project = Project.From(EntityId.From(1u), Description.From("descriptionText"));
             
-            //when
+            var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
+            projectOptionsBuilder.UseSqlite("Data Source=todoagility_proj_activity_reference.db;");
+            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var repProject = new ProjectRepository(projectDbContext);
+            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
+            repProject.Add(project);
+            projectDbSession.SaveChanges();
+            var handlerActivityAdded = new ProjectAggregateActivityAddedHandler(projectDbSession);
+            var dispatcher = new DomainEventDispatcher();
+            dispatcher.Subscribe(typeof(ActivityAddedEvent).FullName, handlerActivityAdded);
 
+            //when
+            dispatcher.Publish(ActivityAddedEvent.For(activity));
 
             //then
-
+            var proj = repProject.Get(EntityId.From(1u));
+            Assert.True(proj.Activities.Count > 0);
         }
-        
-
 
         #endregion
     }

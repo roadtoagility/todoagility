@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,21 +16,25 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Persistence.Projections
 {
-    public class ChangeTaskStatusCommand
+    public class ActivityProjection
     {
-        public EntityId Id { get; }
-        public ActivityStatus NewStatus { get; }
-        
-        public ChangeTaskStatusCommand(uint id, int newStatus)
+        public ActivityProjection()
         {
-            Id =  EntityId.From(id);
-            NewStatus = ActivityStatus.From(newStatus);
         }
+        public ActivityProjection(string status, string description, uint activityId, uint projectId)
+        {
+            ActivityId = activityId;
+            Status = status;
+            Description = description;
+            ProjectId = projectId;
+        }
+
+        public uint ActivityId { get; set; }
+        public string Status { get; set; }
+        public string Description { get; set; }
+        public uint ProjectId { get; set; }
     }
 }

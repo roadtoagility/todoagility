@@ -18,13 +18,14 @@
 
 using System;
 using System.Collections.Generic;
+using LiteDB;
 using Microsoft.EntityFrameworkCore;
-using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
-using TodoAgility.Agile.Persistence;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
+using TodoAgility.Agile.Persistence.Model.Projections;
+using TodoAgility.Agile.Persistence.Projections;
 using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
 
@@ -35,22 +36,22 @@ namespace TodoAgility.Tests
         #region Activity Persistence
 
         [Fact]
-        public void Check_TaskRespository_Create()
+        public void Check_ActivityRespository_Create()
         {
             //given
             var descriptionText = "Given Description";
             var projectId = EntityId.From(1u);
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText),id, projectId);
+            var task = Activity.From(Description.From(descriptionText), id, projectId);
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_test.db;");
             var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
-            
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext,repTask);
+
+            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
             taskDbSession.Repository.Add(task);
             taskDbSession.SaveChanges();
 
@@ -58,9 +59,9 @@ namespace TodoAgility.Tests
             var taskSaved = taskDbSession.Repository.Get(id);
             Assert.Equal(taskSaved, task);
         }
-        
+
         [Fact]
-        public void Check_TaskRespository_Update()
+        public void Check_ActivityRespository_Update()
         {
             //given
             var descriptionText = "Given Description";
@@ -68,64 +69,64 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText),id, projectId);
+            var task = Activity.From(Description.From(descriptionText), id, projectId);
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_update_test.db;");
             var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
-            
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext,repTask);
+
+            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
             taskDbSession.Repository.Add(task);
             taskDbSession.SaveChanges();
 
             //then
             var taskSaved = taskDbSession.Repository.Get(id);
-            var updatetask = Activity.CombineWithPatch(taskSaved, 
+            var updatetask = Activity.CombineWithPatch(taskSaved,
                 Activity.Patch.FromDescription(Description.From(descriptionTextChanged)));
             taskDbSession.Repository.Add(updatetask);
             taskDbSession.SaveChanges();
-            
+
             var taskUpdated = taskDbSession.Repository.Get(id);
             Assert.NotEqual(taskUpdated, task);
         }
-        
+
         [Fact]
         public void Check_ProjectActivityReferenceRespository_Update()
         {
             //given
             var descriptionText = "Given Description";
             var projectId = EntityId.From(1u);
-            var id =  EntityId.From(1u);
+            var id = EntityId.From(1u);
 
             var project = Project.From(projectId, Description.From(descriptionText));
-            var task = Activity.From(Description.From(descriptionText),id, projectId);
-            
+            var task = Activity.From(Description.From(descriptionText), id, projectId);
+
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_update.db;");
             var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
-            
-            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext,repProject);
+
+            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
             projectDbSession.Repository.Add(project);
             projectDbSession.SaveChanges();
 
             //when
-            var tasks = new List<EntityId>{task.Id};
+            var tasks = new List<EntityId> {task.Id};
             var projectWithTasks = Project.CombineProjectAndActivities(project, tasks);
             var projectDbContext2 = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject2 = new ProjectRepository(projectDbContext2);
-            
+
             //then
-            using var projectDbSession2 = new DbSession<IProjectRepository>(projectDbContext2,repProject2);
+            using var projectDbSession2 = new DbSession<IProjectRepository>(projectDbContext2, repProject2);
             projectDbSession2.Repository.Add(projectWithTasks);
             projectDbSession2.SaveChanges();
 
             var projectUpdated = projectDbSession2.Repository.Get(projectWithTasks.Id);
             Assert.True(projectUpdated.Activities.Count > 0);
         }
-        
+
         [Fact]
         public void Check_ProjectRespository_Remove()
         {
@@ -137,7 +138,7 @@ namespace TodoAgility.Tests
 
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_remove.db;");
-            
+
             var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
 
@@ -149,15 +150,39 @@ namespace TodoAgility.Tests
             var projectToremove = projectDbSession.Repository.Get(projectId);
             projectDbSession.Repository.Remove(projectToremove);
             projectDbSession.SaveChanges();
-            
+
             //then
-            Assert.Throws<InvalidOperationException>(()=>
+            Assert.Throws<InvalidOperationException>(() =>
             {
                 var repProject3 = new ProjectRepository(projectDbContext);
-                using var dbs = new DbSession<IProjectRepository>(projectDbContext,repProject3);
+                using var dbs = new DbSession<IProjectRepository>(projectDbContext, repProject3);
                 return dbs.Repository.Get(projectId);
             });
         }
+
         #endregion
+        
+        [Fact]
+        public void Check_ActivityProjection_Create()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var projectId = EntityId.From(1u);
+
+            var activity = new ActivityProjection("created", descriptionText, 1u, 1u);
+            var connString = "Filename=todoagility_projection.db;Connection=shared";
+            var activityDbContext = new ActivityProjectionDbContext(connString, BsonMapper.Global);
+            var repActivity = new ActivityProjectionRepository(activityDbContext);
+
+            using var pDbSession = new ProjectionDbSession<IActivityProjectionRepository>(activityDbContext, repActivity);
+            pDbSession.Repository.Add(activity);
+            pDbSession.SaveChanges();
+
+            //when
+            var found = pDbSession.Repository.Get(projectId);
+
+            //then
+            Assert.Equal(activity.ActivityId,found.ActivityId);
+        }
     }
 }

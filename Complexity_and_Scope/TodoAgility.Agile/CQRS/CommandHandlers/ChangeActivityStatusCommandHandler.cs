@@ -16,34 +16,36 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 using TodoAgility.Agile.Domain.Aggregations;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence;
+using TodoAgility.Agile.Domain.DomainEvents.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public sealed class UpdateTaskCommandHandler : ICommandHandler<UpdateTaskCommand>
+    public sealed class ChangeActivityStatusCommandHandler : CommandHandler<ChangeActivityStatusCommand, ExecutionResult>
     {
         private readonly IDbSession<IActivityRepository> _session;
 
-        public UpdateTaskCommandHandler(IDbSession<IActivityRepository> session)
+        public ChangeActivityStatusCommandHandler(IDbSession<IActivityRepository> session, IEventDispatcher publisher)
+        :base(publisher)
         {
             _session = session;
         }
-        public void Execute(UpdateTaskCommand command)
+
+        protected override ExecutionResult ExecuteCommand(ChangeActivityStatusCommand command)
         {
-            var entityId = command.Id;
-            var currentState = _session.Repository.Get(entityId);
+            var currentState = _session.Repository.Get(command.Id);
             var agg = ActivityAggregationRoot.ReconstructFrom(currentState);
-            var descr = command.Description;
-            
-            agg.UpdateTask(Activity.Patch.FromDescription(descr));
+
+            agg.ChangeTaskStatus(command.NewStatus);
             var task = agg.GetChange();
-            
+
             _session.Repository.Add(task);
             _session.SaveChanges();
+            
+            return new ExecutionResult(true);
         }
     }
 }

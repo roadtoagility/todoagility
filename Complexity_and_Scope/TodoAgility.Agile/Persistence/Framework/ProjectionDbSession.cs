@@ -16,27 +16,34 @@
 // Boston, MA  02110-1301, USA.
 //
 
+
 using System;
+using LiteDB;
+using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Persistence.Framework.Projections;
+using TodoAgility.Agile.Persistence.Model.Projections;
 
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Persistence.Framework
 {
-    public abstract class DomainEventHandler : IDomainEventHandler
+    public class ProjectionDbSession<TProjection> : IDbSession<TProjection>, IDisposable
     {
-        protected Exception Exception { get; set; }
-        public string HandlerId { get; protected set; }
-
-        public void Handle(IDomainEvent @event)
+        public ProjectionDbSession(ProjectionDbContext context, TProjection repository)
         {
-            try
-            {
-                ExecuteHandle(@event);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
+            Context = context;
+            Repository = repository;
         }
 
-        protected abstract void ExecuteHandle(IDomainEvent @event);
+        private ProjectionDbContext Context { get; }
+        public TProjection Repository { get; }
+
+        public void SaveChanges()
+        {
+            Context.Database.Commit();
+        }
+
+        public void Dispose()
+        {
+            Context?.Database.Dispose();
+        }
     }
 }

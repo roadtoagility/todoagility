@@ -16,20 +16,20 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class UpdateTaskCommand
+    public class AddActivityCommand
     {
-        public EntityId Id { get; }
-        public Description Description { get; }
-        public UpdateTaskCommand(uint id, string description)
+        public AddActivityCommand(string description, uint projectId)
         {
-            Id = EntityId.From(id);
             Description = Description.From(description);
+            ProjectId = EntityId.From(projectId);
         }
+
+        public Description Description { get; }
+        public EntityId ProjectId { get; }
     }
 }

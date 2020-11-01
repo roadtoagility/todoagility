@@ -21,32 +21,34 @@ using System.Collections.Generic;
 
 namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
-    public sealed class EventDispatcher: IEventDispatcher
+    public sealed class DomainEventDispatcher : IEventDispatcher
     {
-        private readonly IDictionary<string, IDictionary<string,IDomainEventHandler>> _handlers = 
-            new SortedDictionary<string, IDictionary<string,IDomainEventHandler>>();
-        
-        public void Subscribe(Type eventType, IDomainEventHandler handler)
+        private readonly IDictionary<string, IDictionary<string, IDomainEventHandler>> _eventRegistry =
+            new SortedDictionary<string, IDictionary<string, IDomainEventHandler>>();
+
+        public void Subscribe(String eventType, IDomainEventHandler handler)
         {
-            if (!_handlers.ContainsKey(nameof(eventType.FullName)))
+            if (!_eventRegistry.ContainsKey(eventType))
             {
-                _handlers.Add(eventType.FullName,new SortedDictionary<string, IDomainEventHandler>());
-                _handlers[eventType.FullName].Add(handler.HandlerId,handler);
+                _eventRegistry.Add(eventType, new SortedDictionary<string, IDomainEventHandler>());
             }
-            else
+
+            var handlers = _eventRegistry[eventType];
+            if (!handlers.ContainsKey(handler.HandlerId))
             {
-                _handlers[eventType.FullName].Add(handler.HandlerId,handler);
+                handlers.Add(handler.HandlerId, handler);                
             }
         }
 
         public void Publish(IDomainEvent @event)
         {
-            if (_handlers.ContainsKey(@event.GetType().FullName))
+            var evt = @event.GetType().FullName;
+
+            if (string.IsNullOrEmpty(evt) || !_eventRegistry.ContainsKey(evt)) return;
+            
+            foreach (var handler in _eventRegistry[evt].Values)
             {
-                foreach (var handler in _handlers[@event.GetType().FullName].Values)
-                {
-                    handler.Handle(@event);
-                }
+                handler.Handle(@event);
             }
         }
     }

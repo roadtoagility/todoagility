@@ -18,23 +18,21 @@
 
 
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class ActivityStateReference: PersistentState
+    public class ActivityStateReference : PersistentState
     {
-        public uint ActivityReferenceId { get; set; }
-
-        public uint ProjectId { get; set; }
-        
         public ActivityStateReference(uint activityReferenceId, uint projectId)
-            :base(DateTime.Now)
+            : base(DateTime.Now)
         {
             ActivityReferenceId = activityReferenceId;
             ProjectId = projectId;
         }
+
+        public uint ActivityReferenceId { get; set; }
+
+        public uint ProjectId { get; set; }
     }
 }

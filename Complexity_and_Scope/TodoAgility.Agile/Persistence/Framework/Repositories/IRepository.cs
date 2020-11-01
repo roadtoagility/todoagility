@@ -25,7 +25,7 @@ using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Persistence.Framework.Repositories
 {
-    public interface IRepository<TState,out TModel> where TState:class where TModel:class
+    public interface IRepository<TState, out TModel> where TState : class where TModel : class
     {
         void Add(IExposeValue<TState> task);
         void Remove(IExposeValue<TState> entity);

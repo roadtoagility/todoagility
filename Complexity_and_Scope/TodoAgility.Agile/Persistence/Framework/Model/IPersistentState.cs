@@ -21,7 +21,7 @@ using System;
 
 namespace TodoAgility.Agile.Persistence.Framework.Model
 {
-    interface IPersistentState
+    internal interface IPersistentState
     {
         public Guid PersistenceId { get; set; }
     }

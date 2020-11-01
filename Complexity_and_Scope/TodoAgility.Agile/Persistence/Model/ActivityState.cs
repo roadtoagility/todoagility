@@ -18,25 +18,24 @@
 
 
 using System;
-using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class ActivityState: PersistentState
+    public class ActivityState : PersistentState
     {
-        public uint ActivityId { get; set; }
-        public int Status { get; set; }
-        public string Description { get; set; }
-        public uint ProjectId { get; set; }
-        
         public ActivityState(int status, string description, uint activityId, uint projectId)
-            :base(DateTime.Now)
+            : base(DateTime.Now)
         {
             ActivityId = activityId;
             Status = status;
             Description = description;
             ProjectId = projectId;
         }
+
+        public uint ActivityId { get; set; }
+        public int Status { get; set; }
+        public string Description { get; set; }
+        public uint ProjectId { get; set; }
     }
 }

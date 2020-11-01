@@ -30,7 +30,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             Started,
             Completed
         }
-        
+
         private readonly Status _status;
 
         private ActivityStatus(Status status)
@@ -38,40 +38,71 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             _status = status;
         }
 
-        public static ActivityStatus From(int status)
-        {
-            if (!Enum.IsDefined(typeof(Status),status))
-            {
-                throw new ArgumentException("O estado informado é inválido.",nameof(status));
-            }
-            
-            return new ActivityStatus((Status)status);
-        }
-        
-        public static ActivityStatus FromState(ActivityState state)
-        {
-            return ActivityStatus.From(state.Status);
-        }
-
         int IExposeValue<int>.GetValue()
         {
-            return (int)_status;
+            return (int) _status;
         }
-        
+
+        public static ActivityStatus From(int status)
+        {
+            if (!Enum.IsDefined(typeof(Status), status))
+            {
+                throw new ArgumentException("O estado informado é inválido.", nameof(status));
+            }
+
+            return new ActivityStatus((Status) status);
+        }
+
+        public static ActivityStatus FromState(ActivityState state)
+        {
+            return From(state.Status);
+        }
+
+
+        public override string ToString()
+        {
+            return $"{_status}";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_status);
+        }
+
         #region IEquatable
-        
+
         public bool Equals(ActivityStatus other)
         {
-            if (ReferenceEquals(null, other)){ return false;}
-            if (ReferenceEquals(this, other)){ return true;}
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return _status == other._status;
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)){ return false;}
-            if (ReferenceEquals(this, obj)){ return true;}
-            if (obj.GetType() != this.GetType()){ return false;}
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+
             return Equals((ActivityStatus) obj);
         }
 
@@ -84,11 +115,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             return !Equals(left, right);
         }
-        
+
         #endregion
-        
+
         #region IComparable
-        
+
         public int CompareTo(ActivityStatus other)
         {
             if (ReferenceEquals(this, other))
@@ -116,7 +147,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 return 0;
             }
 
-            return obj is ActivityStatus other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(ActivityStatus)}");
+            return obj is ActivityStatus other
+                ? CompareTo(other)
+                : throw new ArgumentException($"Object must be of type {nameof(ActivityStatus)}");
         }
 
         public static bool operator <(ActivityStatus left, ActivityStatus right)
@@ -138,18 +171,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             return Comparer<ActivityStatus>.Default.Compare(left, right) >= 0;
         }
-        
-        #endregion
-        
-        
-        public override string ToString()
-        {
-            return $"{_status}";
-        }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_status);
-        }
+        #endregion
     }
 }

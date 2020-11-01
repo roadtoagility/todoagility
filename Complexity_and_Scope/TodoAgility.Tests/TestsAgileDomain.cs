@@ -27,8 +27,8 @@ namespace TodoAgility.Tests
 {
     public class TestsTodoDomain
     {
-        
         #region Description Business Object tests
+
         [Fact]
         public void Check_Description_Invalid_ValueNull()
         {
@@ -52,15 +52,16 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Description_Invalid_SizeLimit()
         {
-            var description = "Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo";
+            var description =
+                "Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo";
             Assert.Throws<ArgumentException>(() => Description.From(description));
         }
-       
+
         [Fact]
         public void Check_Description_Value_Exposing()
         {
-            string givenName = "Given Description";
-            Description todoName = Description.From(givenName);
+            var givenName = "Given Description";
+            var todoName = Description.From(givenName);
             IExposeValue<string> state = todoName;
             Assert.Equal(givenName, state.GetValue());
         }
@@ -72,18 +73,20 @@ namespace TodoAgility.Tests
             var givenName2 = "Given Description";
             var name1 = Description.From(givenName1);
             var name2 = Description.From(givenName2);
-            
+
             Assert.Equal(name1, name2);
         }
+
         #endregion
-        
+
         #region Activity Business Object tests
+
         [Fact]
         public void Check_Task_Invalid_Description()
         {
-            Assert.Throws<ArgumentException>(() => Activity.From(null, null,null));
+            Assert.Throws<ArgumentException>(() => Activity.From(null, null, null));
         }
-        
+
         [Fact]
         public void Check_Task_valid_instance()
         {
@@ -91,10 +94,10 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
             var entityId = EntityId.From(1u);
 
-            var task = Activity.From(name, entityId, projectId);            
+            var task = Activity.From(name, entityId, projectId);
             Assert.NotNull(task);
         }
-        
+
         [Fact]
         public void Check_Task_GetValue()
         {
@@ -106,26 +109,27 @@ namespace TodoAgility.Tests
             var todo = Activity.From(name, entityId, projectId);
             IExposeValue<ActivityState> state = todo;
             var todoState = state.GetValue();
-                
+
             Assert.Equal(todoState.Description, givenName);
         }
-        
+
         [Fact]
         public void Check_TaskStatus_Invalid_Status()
         {
             Assert.Throws<ArgumentException>(() => ActivityStatus.From(-1));
         }
-        
+
         [Fact]
         public void Check_TaskStatus_valid_Status()
         {
             var statusStarted = ActivityStatus.From(2);
             IExposeValue<int> state = statusStarted;
 
-            Assert.Equal(2,state.GetValue());
+            Assert.Equal(2, state.GetValue());
         }
+
         #endregion
-        
+
         #region Activity aggregate
 
         [Fact]
@@ -135,18 +139,18 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var id = EntityId.From(1u);
             var projectId = EntityId.From(1u);
-            
+
             var project = Project.From(projectId, Description.From(descriptionText));
             var task = Activity.From(Description.From(descriptionText), id, projectId);
-            
+
             //when
             var agg = ActivityAggregationRoot.CreateFrom(Description.From(descriptionText), id, project);
             var changes = agg.GetChange();
-            
+
             //then
             Assert.Equal(changes, task);
         }
-        
+
         [Fact]
         public void Check_TaskAggregation_UpdateTask()
         {
@@ -156,16 +160,16 @@ namespace TodoAgility.Tests
             var id = EntityId.From(1u);
             var projectId = EntityId.From(1u);
 
-            var oldState = Activity.From(Description.From(descriptionText), id, projectId);            
+            var oldState = Activity.From(Description.From(descriptionText), id, projectId);
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
             agg.UpdateTask(Activity.Patch.FromDescription(Description.From(descriptionNewText)));
             var changes = agg.GetChange();
-            
+
             //then
             Assert.NotEqual(changes, oldState);
         }
-   
+
         [Fact]
         public void Check_TaskAggregation_UpdateTaskStatus()
         {
@@ -174,18 +178,18 @@ namespace TodoAgility.Tests
             var id = EntityId.From(1u);
             var newStatus = 2;
             var projectId = EntityId.From(1u);
-            var oldState = Activity.From(Description.From(descriptionText),id, projectId);
-            
+            var oldState = Activity.From(Description.From(descriptionText), id, projectId);
+
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
             agg.ChangeTaskStatus(ActivityStatus.From(newStatus));
             var changes = agg.GetChange();
-            
+
             //then
             Assert.NotEqual(changes, oldState);
         }
 
-           
+
         [Fact]
         public void Check_TaskAggregation_UpdateTaskStatus_invalid()
         {
@@ -195,19 +199,15 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
             var newStatus = 6;
 
-            var oldState = Activity.From(Description.From(descriptionText),id, projectId);
-            
+            var oldState = Activity.From(Description.From(descriptionText), id, projectId);
+
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
-            
+
             //then
-            Assert.Throws<ArgumentException>(() =>
-            {
-                agg.ChangeTaskStatus(ActivityStatus.From(newStatus));
-            });
+            Assert.Throws<ArgumentException>(() => { agg.ChangeTaskStatus(ActivityStatus.From(newStatus)); });
         }
 
         #endregion
-        
     }
 }

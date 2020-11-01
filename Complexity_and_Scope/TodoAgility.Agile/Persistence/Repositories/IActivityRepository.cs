@@ -23,8 +23,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public interface IActivityRepository: IRepository<ActivityState, Activity>
+    public interface IActivityRepository : IRepository<ActivityState, Activity>
     {
-
     }
 }

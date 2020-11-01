@@ -27,12 +27,6 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 {
     public sealed class Project : IEquatable<Project>, IExposeValue<ProjectState>
     {
-        public EntityId Id { get; }
-        public Description Description { get; }
-
-        public IReadOnlyList<EntityId> Activities { get; }
-        
-
         private Project(Description description, EntityId id, IReadOnlyList<EntityId> tasks)
         {
             Description = description;
@@ -40,85 +34,76 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             Activities = new List<EntityId>(tasks);
         }
 
+        public EntityId Id { get; }
+        public Description Description { get; }
+
+        public IReadOnlyList<EntityId> Activities { get; }
+
+        ProjectState IExposeValue<ProjectState>.GetValue()
+        {
+            IExposeValue<string> stateDescr = Description;
+            IExposeValue<uint> id = Id;
+
+            var tasks = Activities.Select(t =>
+            {
+                IExposeValue<uint> task = t;
+                return new ActivityStateReference(task.GetValue(), id.GetValue());
+            });
+
+            return new ProjectState(stateDescr.GetValue(), id.GetValue(), tasks.ToList());
+        }
+
         public static Project From(EntityId id, Description description)
         {
-            if (id == null)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-            
-            if (description == null)
-            {
-                throw new ArgumentNullException(nameof(description));
-            }
-            
-            return new Project(description, id,ImmutableList<EntityId>.Empty);
+            if (id == null) throw new ArgumentNullException(nameof(id));
+
+            if (description == null) throw new ArgumentNullException(nameof(description));
+
+            return new Project(description, id, ImmutableList<EntityId>.Empty);
         }
 
         public static Project CombineProjectAndActivities(Project project, IReadOnlyList<EntityId> activities)
         {
-            if (project == null)
-            {
-                throw new ArgumentNullException(nameof(project));
-            }
-            
-            if (activities == null)
-            {
-                throw new ArgumentNullException(nameof(activities));
-            }
-            
-            return new Project(project.Description,project.Id,activities);
+            if (project == null) throw new ArgumentNullException(nameof(project));
+
+            if (activities == null) throw new ArgumentNullException(nameof(activities));
+
+            return new Project(project.Description, project.Id, activities);
         }
 
         //     
         /// <summary>
-        /// used to restore the aggregation
+        ///     used to restore the aggregation
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         public static Project FromState(ProjectState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentException("Informe um projeto válido.", nameof(state));
-            }
+            if (state == null) throw new ArgumentException("Informe um projeto válido.", nameof(state));
 
-            var activities = state.Activities.Select(ac =>
-            {
-                return  EntityId.From(ac.ProjectId);
-            }).ToList();
-            
+            var activities = state.Activities.Select(ac => { return EntityId.From(ac.ProjectId); }).ToList();
+
             return new Project(Description.From(state.Description), EntityId.From(state.ProjectId), activities);
         }
 
-        ProjectState IExposeValue<ProjectState>.GetValue()
+        public override string ToString()
         {
-            IExposeValue<string> stateDescr = Description;
-            IExposeValue<uint> id = Id;
-            
-            var tasks = Activities.Select(t =>
-            {
-                IExposeValue<uint> task = t;
-                return new ActivityStateReference(task.GetValue(), id.GetValue());
-            });
-            
-            return new ProjectState(stateDescr.GetValue(), id.GetValue(),tasks.ToList());
+            return $"[PROJECT]:[Id:{Id}, description: {Description}]";
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Description);
         }
 
         #region IEquatable implementation
 
         public bool Equals(Project other)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, other)) return false;
 
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
+            if (ReferenceEquals(this, other)) return true;
 
             return Description == other.Description
                    && Id == other.Id;
@@ -126,20 +111,11 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, obj)) return false;
 
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
+            if (ReferenceEquals(this, obj)) return true;
 
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
+            if (obj.GetType() != GetType()) return false;
 
             return Equals((Project) obj);
         }
@@ -155,15 +131,5 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         }
 
         #endregion
-
-        public override string ToString()
-        {
-            return $"[PROJECT]:[Id:{Id.ToString()}, description: {Description.ToString()}]";
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id, Description);
-        }
     }
 }

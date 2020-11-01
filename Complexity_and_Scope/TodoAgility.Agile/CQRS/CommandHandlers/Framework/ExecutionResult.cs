@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,27 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
 {
-    public abstract class DomainEventHandler : IDomainEventHandler
+    public class ExecutionResult
     {
-        protected Exception Exception { get; set; }
-        public string HandlerId { get; protected set; }
-
-        public void Handle(IDomainEvent @event)
+        public ExecutionResult(bool isSucceed)
         {
-            try
-            {
-                ExecuteHandle(@event);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
+            IsSucceed = isSucceed;
         }
 
-        protected abstract void ExecuteHandle(IDomainEvent @event);
+        public bool IsSucceed { get; }
     }
 }

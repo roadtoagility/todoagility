@@ -16,14 +16,11 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System.Collections.Generic;
-
 namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public abstract class AggregationRoot<TId,TChange>: IChangeSet<TId,TChange>
+    public abstract class AggregationRoot<TId, TChange> : IChangeSet<TId, TChange>
     {
-        
-        private  TChange _change;
+        private TChange _change;
 
         public TId Id { get; protected set; }
 

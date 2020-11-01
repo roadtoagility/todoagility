@@ -1,24 +1,23 @@
 using Microsoft.EntityFrameworkCore;
-using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class ActivityDbContext: AggregateDbContext
+    public class ActivityDbContext : AggregateDbContext
     {
-        public ActivityDbContext(DbContextOptions options) 
+        public ActivityDbContext(DbContextOptions options)
             : base(options)
         {
         }
-        
+
         public DbSet<ActivityState> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
             #region ConfigureTask
-            
+
             modelBuilder.Entity<ActivityState>(
                 b =>
                 {
@@ -31,10 +30,12 @@ namespace TodoAgility.Agile.Persistence.Model
                     b.Property(p => p.PersistenceId);
                     b.Property(e => e.CreateAt).IsRequired();
                     b.Property(e => e.IsDeleted).IsRequired();
-                   
+                    b.Property(e => e.RowVersion).ValueGeneratedOnAddOrUpdate().IsRowVersion();
+
                     b.HasQueryFilter(qf => !qf.IsDeleted);
                     b.HasIndex(idx => new {idx.ProjectId, idx.ActivityId});
                 });
+
             #endregion
         }
     }

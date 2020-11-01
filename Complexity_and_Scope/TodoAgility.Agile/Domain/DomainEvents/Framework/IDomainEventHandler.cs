@@ -18,12 +18,10 @@
 
 namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
-    public interface IDomainEventHandler 
+    public interface IDomainEventHandler
     {
         string HandlerId { get; }
-        
-        string EventType { get; }
-        
+
         void Handle(IDomainEvent @event);
     }
 }

@@ -21,18 +21,19 @@ using System;
 
 namespace TodoAgility.Agile.Persistence.Framework.Model
 {
-    public abstract class PersistentState:IPersistentState
+    public abstract class PersistentState : IPersistentState
     {
-
-        public Guid PersistenceId { get; set; }
-        public DateTime CreateAt { get; set; }
-        
-        public bool IsDeleted { get; set; }
- 
         protected PersistentState(DateTime createAt)
         {
             PersistenceId = Guid.NewGuid();
             CreateAt = createAt;
         }
+
+        public DateTime CreateAt { get; set; }
+
+        public byte[] RowVersion { get; set; }
+        public bool IsDeleted { get; set; }
+
+        public Guid PersistenceId { get; set; }
     }
 }

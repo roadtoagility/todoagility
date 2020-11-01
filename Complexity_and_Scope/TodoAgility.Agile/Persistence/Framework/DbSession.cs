@@ -22,16 +22,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TodoAgility.Agile.Persistence.Framework
 {
-    public class DbSession<TRepository>:IDbSession<TRepository>, IDisposable
+    public class DbSession<TRepository> : IDbSession<TRepository>, IDisposable
     {
-        private DbContext Context { get;}
-        public TRepository Repository { get;}
-
         public DbSession(DbContext context, TRepository repository)
         {
             Context = context;
             Repository = repository;
         }
+
+        private DbContext Context { get; }
+        public TRepository Repository { get; }
 
         public void SaveChanges()
         {

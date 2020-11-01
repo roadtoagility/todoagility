@@ -16,27 +16,20 @@
 // Boston, MA  02110-1301, USA.
 //
 
+
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Persistence.Framework.Repositories
 {
-    public abstract class DomainEventHandler : IDomainEventHandler
+    public interface IProjectionRepository<TModel> where TModel : class
     {
-        protected Exception Exception { get; set; }
-        public string HandlerId { get; protected set; }
-
-        public void Handle(IDomainEvent @event)
-        {
-            try
-            {
-                ExecuteHandle(@event);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
-        }
-
-        protected abstract void ExecuteHandle(IDomainEvent @event);
+        void Add(TModel entity);
+        void Remove(TModel entity);
+        TModel Get(IExposeValue<uint> id);
+        IEnumerable<TModel> Find(Expression<Func<TModel, bool>> predicate);
     }
 }

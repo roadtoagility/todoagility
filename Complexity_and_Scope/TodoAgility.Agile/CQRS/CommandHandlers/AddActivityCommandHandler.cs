@@ -16,39 +16,41 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
+using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 using TodoAgility.Agile.Domain.Aggregations;
-using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.DomainEvents.Framework;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
-using TodoAgility.Agile.Persistence;
 using TodoAgility.Agile.Persistence.Framework;
-using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public sealed class AddTaskCommandHandler : ICommandHandler<AddTaskCommand>
+    public sealed class AddActivityCommandHandler : CommandHandler<AddActivityCommand, ExecutionResult>
     {
-        private readonly IDbSession<IActivityRepository> _taskSession;
         private readonly IDbSession<IProjectRepository> _projectSession;
-        
-        public AddTaskCommandHandler(IDbSession<IActivityRepository> taskSession, IDbSession<IProjectRepository> projectSession)
+        private readonly IDbSession<IActivityRepository> _taskSession;
+
+        public AddActivityCommandHandler(IEventDispatcher publisher, IDbSession<IActivityRepository> taskSession,
+            IDbSession<IProjectRepository> projectSession):base(publisher)
         {
             _taskSession = taskSession;
             _projectSession = projectSession;
         }
-        public void Execute(AddTaskCommand command)
+
+        protected override ExecutionResult ExecuteCommand(AddActivityCommand command)
         {
             var descr = command.Description;
             var projectId = command.ProjectId;
             var entityId = EntityId.From(1u);
             var project = _projectSession.Repository.Get(projectId);
-            
+
             var agg = ActivityAggregationRoot.CreateFrom(descr, entityId, project);
             var task = agg.GetChange();
-            
+
             _taskSession.Repository.Add(task);
             _taskSession.SaveChanges();
+            
+            return new ExecutionResult(true);
         }
     }
 }

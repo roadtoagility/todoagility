@@ -22,12 +22,13 @@ using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.Aggregations
 {
-    public sealed class ActivityAggregationRoot:AggregationRoot<Guid, Activity> 
+    public sealed class ActivityAggregationRoot : AggregationRoot<Guid, Activity>
     {
         private readonly Activity _currentActivity;
         private readonly Project _project;
+
         /// <summary>
-        /// load an aggregate from store
+        ///     load an aggregate from store
         /// </summary>
         /// <param name="currentActivity"></param>
         private ActivityAggregationRoot(Activity currentActivity)
@@ -37,39 +38,39 @@ namespace TodoAgility.Agile.Domain.Aggregations
         }
 
         /// <summary>
-        /// to register new aggregate as change
+        ///     to register new aggregate as change
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="projectId"></param>
         private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
-        :this(Activity.From(descr, entityId, project.Id))
+            : this(Activity.From(descr, entityId, project.Id))
         {
             _project = project;
             Change(_currentActivity);
         }
 
         /// <summary>
-        /// update currentActivity value allowed from patch interface
+        ///     update currentActivity value allowed from patch interface
         /// </summary>
         /// <param name="patchTask"></param>
         public void UpdateTask(Activity.Patch patchTask)
         {
             var change = Activity.CombineWithPatch(_currentActivity, patchTask);
-                
+
             Change(change);
         }
 
         public void ChangeTaskStatus(ActivityStatus newStatus)
         {
             var change = Activity.CombineWithStatus(_currentActivity, newStatus);
-                
+
             Change(change);
         }
 
         #region Aggregation contruction
-        
+
         /// <summary>
-        /// reconstructing aggregation from current state loaded from store
+        ///     reconstructing aggregation from current state loaded from store
         /// </summary>
         /// <param name="currentState"></param>
         /// <returns></returns>
@@ -79,7 +80,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
         }
 
         /// <summary>
-        /// creating new aggregation as design by business based on business concepts 
+        ///     creating new aggregation as design by business based on business concepts
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="project"></param>
@@ -89,7 +90,7 @@ namespace TodoAgility.Agile.Domain.Aggregations
         {
             return new ActivityAggregationRoot(descr, entityId, project);
         }
-        
+
         #endregion
     }
 }

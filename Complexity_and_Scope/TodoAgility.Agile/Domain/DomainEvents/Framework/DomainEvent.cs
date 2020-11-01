@@ -20,13 +20,13 @@ using System;
 
 namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
-    public class DomainEvent:IDomainEvent
+    public class DomainEvent : IDomainEvent
     {
-        public DateTime When { get;}
-
         protected DomainEvent(DateTime when)
         {
             When = when;
-        } 
+        }
+
+        public DateTime When { get; }
     }
 }

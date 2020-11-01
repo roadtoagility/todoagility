@@ -28,45 +28,41 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Repositories
 {
-    public sealed class ActivityRepository: IActivityRepository
+    public sealed class ActivityRepository : IActivityRepository
     {
-        private ActivityDbContext DbContext { get; }
-
         public ActivityRepository(DbContext context)
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             DbContext = context as ActivityDbContext;
         }
-        
+
+        private ActivityDbContext DbContext { get; }
+
         // https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities
-        
+
         public void Add(IExposeValue<ActivityState> entity)
         {
             var entry = entity.GetValue();
             var oldState =
-                DbContext.Activities.FirstOrDefault(b=> b.ActivityId == entry.ActivityId);
+                DbContext.Activities.FirstOrDefault(b => b.ActivityId == entry.ActivityId);
 
             if (oldState == null)
-            {
                 DbContext.Activities.Add(entry);
-            }
             else
-            {
                 DbContext.Entry(oldState).CurrentValues.SetValues(entry);
-            }
         }
-        
+
         public void Remove(IExposeValue<ActivityState> entity)
         {
             DbContext.Activities.Remove(entity.GetValue());
         }
-        
+
         public Activity Get(EntityId id)
         {
             IExposeValue<uint> entityId = id;
             var task = DbContext.Activities.AsQueryable()
-                .OrderByDescending( ob => ob.ActivityId )
+                .OrderByDescending(ob => ob.ActivityId)
                 .First(t => t.ActivityId == entityId.GetValue());
 
             return Activity.FromState(task);
@@ -74,7 +70,7 @@ namespace TodoAgility.Agile.Persistence.Repositories
 
         public IEnumerable<Activity> Find(Expression<Func<ActivityState, bool>> predicate)
         {
-            return DbContext.Activities.Where(predicate).Select(t=> Activity.FromState(t));
+            return DbContext.Activities.Where(predicate).Select(t => Activity.FromState(t));
         }
     }
 }

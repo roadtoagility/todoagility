@@ -22,7 +22,7 @@ namespace TodoAgility.Agile.Domain.DomainEvents.Framework
 {
     public interface IEventDispatcher
     {
-        void Subscribe(Type eventType,IDomainEventHandler handler);
+        void Subscribe(string eventType, IDomainEventHandler handler);
         void Publish(IDomainEvent @event);
     }
 }
