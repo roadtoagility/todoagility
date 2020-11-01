@@ -54,13 +54,22 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public static Activity From(Description description, EntityId entityId, EntityId projectId)
         {
-            if (description == null) throw new ArgumentException("Informe uma descripção válida.", nameof(description));
+            if (description == null)
+            {
+                throw new ArgumentException("Informe uma descripção válida.", nameof(description));
+            }
 
 
-            if (projectId == null) throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
+            if (projectId == null)
+            {
+                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
+            }
 
 
-            if (entityId == null) throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
+            if (entityId == null)
+            {
+                throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
+            }
 
             return new Activity(ActivityStatus.From(InitialStatus), description, entityId, projectId);
         }
@@ -73,7 +82,10 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         /// <exception cref="ArgumentException"></exception>
         public static Activity FromState(ActivityState state)
         {
-            if (state == null) throw new ArgumentException("Informe uma atividade válida.", nameof(state));
+            if (state == null)
+            {
+                throw new ArgumentException("Informe uma atividade válida.", nameof(state));
+            }
 
 
             return new Activity(ActivityStatus.From(state.Status),
@@ -97,18 +109,26 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             var projectId = EntityId.From(state.ProjectId);
             var status = ActivityStatus.From(state.Status);
 
-            if (patch == null) throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
+            if (patch == null)
+            {
+                throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
+            }
 
 
             if (descr == patch.Description)
+            {
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
+            }
 
             return new Activity(status, patch.Description, id, projectId);
         }
 
         public static Activity CombineWithStatus(Activity current, ActivityStatus status)
         {
-            if (status == null) throw new ArgumentNullException(nameof(status));
+            if (status == null)
+            {
+                throw new ArgumentNullException(nameof(status));
+            }
 
             var state = ((IExposeValue<ActivityState>) current).GetValue();
             IExposeValue<int> st = status;
@@ -145,9 +165,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public bool Equals(Activity other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
 
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
 
             return Description == other.Description
                    && Id == other.Id && Status == other.Status;
@@ -155,11 +181,20 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
 
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
 
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
 
             return Equals((Activity) obj);
         }
