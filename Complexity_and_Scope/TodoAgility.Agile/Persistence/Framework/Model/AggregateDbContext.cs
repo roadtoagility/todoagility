@@ -18,6 +18,7 @@ namespace TodoAgility.Agile.Persistence.Framework.Model
         private void UpdateSoftDeleteLogic()
         {
             foreach (var entry in ChangeTracker.Entries())
+            {
                 if (entry.State == EntityState.Deleted)
                 {
                     entry.State = EntityState.Modified;
@@ -27,6 +28,7 @@ namespace TodoAgility.Agile.Persistence.Framework.Model
                 {
                     entry.CurrentValues["IsDeleted"] = false;
                 }
+            }
         }
     }
 }

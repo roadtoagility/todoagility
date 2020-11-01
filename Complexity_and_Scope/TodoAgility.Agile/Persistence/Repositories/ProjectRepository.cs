@@ -71,10 +71,12 @@ namespace TodoAgility.Agile.Persistence.Repositories
                 }
 
                 foreach (var activity in oldState.Activities)
+                {
                     if (!entry.Activities.All(p => p.ActivityReferenceId == activity.ActivityReferenceId))
                     {
                         DbContext.Remove(activity);
-                    }
+                    }                    
+                }
             }
         }
 
