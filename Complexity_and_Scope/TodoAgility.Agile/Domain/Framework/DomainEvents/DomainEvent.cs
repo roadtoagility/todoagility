@@ -18,7 +18,7 @@
 
 using System;
 
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
     public class DomainEvent : IDomainEvent
     {

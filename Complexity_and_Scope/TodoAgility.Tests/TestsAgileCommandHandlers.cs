@@ -19,8 +19,8 @@
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.CQRS.CommandHandlers;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.DomainEvents.Framework;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;

@@ -16,27 +16,12 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
-    public abstract class DomainEventHandler : IDomainEventHandler
+    public interface IDomainEventHandler
     {
-        protected Exception Exception { get; set; }
-        public string HandlerId { get; protected set; }
+        string HandlerId { get; }
 
-        public void Handle(IDomainEvent @event)
-        {
-            try
-            {
-                ExecuteHandle(@event);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
-        }
-
-        protected abstract void ExecuteHandle(IDomainEvent @event);
+        void Handle(IDomainEvent @event);
     }
 }

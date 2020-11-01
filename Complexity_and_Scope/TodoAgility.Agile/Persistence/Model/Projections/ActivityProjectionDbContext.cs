@@ -12,11 +12,12 @@ namespace TodoAgility.Agile.Persistence.Model.Projections
         :base(connectionString, modelBuilder)
         {
             Activities = Database.GetCollection<ActivityProjection>("activity");
+            OnModelCreating(modelBuilder);
         }
         
         public ILiteCollection<ActivityProjection> Activities { get; }
         
-        protected override void OnModelCreating(BsonMapper modelBuilder)
+        private void OnModelCreating(BsonMapper modelBuilder)
         {
             #region ConfigureActivityView
 

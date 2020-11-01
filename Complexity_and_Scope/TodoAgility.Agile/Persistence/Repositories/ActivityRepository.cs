@@ -48,9 +48,13 @@ namespace TodoAgility.Agile.Persistence.Repositories
                 DbContext.Activities.FirstOrDefault(b => b.ActivityId == entry.ActivityId);
 
             if (oldState == null)
+            {
                 DbContext.Activities.Add(entry);
+            }
             else
+            {
                 DbContext.Entry(oldState).CurrentValues.SetValues(entry);
+            }
         }
 
         public void Remove(IExposeValue<ActivityState> entity)

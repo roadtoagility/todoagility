@@ -55,18 +55,30 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public static Project From(EntityId id, Description description)
         {
-            if (id == null) throw new ArgumentNullException(nameof(id));
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
 
-            if (description == null) throw new ArgumentNullException(nameof(description));
+            if (description == null)
+            {
+                throw new ArgumentNullException(nameof(description));
+            }
 
             return new Project(description, id, ImmutableList<EntityId>.Empty);
         }
 
         public static Project CombineProjectAndActivities(Project project, IReadOnlyList<EntityId> activities)
         {
-            if (project == null) throw new ArgumentNullException(nameof(project));
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
 
-            if (activities == null) throw new ArgumentNullException(nameof(activities));
+            if (activities == null)
+            {
+                throw new ArgumentNullException(nameof(activities));
+            }
 
             return new Project(project.Description, project.Id, activities);
         }
@@ -80,7 +92,10 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         /// <exception cref="ArgumentException"></exception>
         public static Project FromState(ProjectState state)
         {
-            if (state == null) throw new ArgumentException("Informe um projeto válido.", nameof(state));
+            if (state == null)
+            {
+                throw new ArgumentException("Informe um projeto válido.", nameof(state));
+            }
 
             var activities = state.Activities.Select(ac => { return EntityId.From(ac.ProjectId); }).ToList();
 
@@ -101,9 +116,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public bool Equals(Project other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
 
-            if (ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
 
             return Description == other.Description
                    && Id == other.Id;
@@ -111,11 +132,20 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
 
-            if (ReferenceEquals(this, obj)) return true;
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
 
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
 
             return Equals((Project) obj);
         }

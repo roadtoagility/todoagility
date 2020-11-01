@@ -19,7 +19,7 @@
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 using TodoAgility.Agile.Domain.Aggregations;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.DomainEvents.Framework;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 

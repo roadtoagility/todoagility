@@ -61,14 +61,20 @@ namespace TodoAgility.Agile.Persistence.Repositories
                         .FirstOrDefault(p => p.ActivityReferenceId == activity.ActivityReferenceId);
 
                     if (existing == null)
+                    {
                         oldState.Activities.Add(activity);
+                    }
                     else
+                    {
                         DbContext.Entry(oldState).CurrentValues.SetValues(activity);
+                    }
                 }
 
                 foreach (var activity in oldState.Activities)
                     if (!entry.Activities.All(p => p.ActivityReferenceId == activity.ActivityReferenceId))
+                    {
                         DbContext.Remove(activity);
+                    }
             }
         }
 

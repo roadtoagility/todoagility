@@ -19,7 +19,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
     public sealed class DomainEventDispatcher : IEventDispatcher
     {
@@ -44,7 +44,10 @@ namespace TodoAgility.Agile.Domain.DomainEvents.Framework
         {
             var evt = @event.GetType().FullName;
 
-            if (string.IsNullOrEmpty(evt) || !_eventRegistry.ContainsKey(evt)) return;
+            if (string.IsNullOrEmpty(evt) || !_eventRegistry.ContainsKey(evt))
+            {
+                return;
+            }
             
             foreach (var handler in _eventRegistry[evt].Values)
             {

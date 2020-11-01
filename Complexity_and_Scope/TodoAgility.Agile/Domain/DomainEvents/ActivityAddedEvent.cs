@@ -1,7 +1,7 @@
 using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.DomainEvents.Framework;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
 namespace TodoAgility.Agile.Domain.DomainEvents
 {

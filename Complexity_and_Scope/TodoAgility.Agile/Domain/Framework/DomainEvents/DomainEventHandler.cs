@@ -18,11 +18,25 @@
 
 using System;
 
-namespace TodoAgility.Agile.Domain.DomainEvents.Framework
+namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
-    public interface IEventDispatcher
+    public abstract class DomainEventHandler : IDomainEventHandler
     {
-        void Subscribe(string eventType, IDomainEventHandler handler);
-        void Publish(IDomainEvent @event);
+        protected Exception Exception { get; set; }
+        public string HandlerId { get; protected set; }
+
+        public void Handle(IDomainEvent @event)
+        {
+            try
+            {
+                ExecuteHandle(@event);
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+            }
+        }
+
+        protected abstract void ExecuteHandle(IDomainEvent @event);
     }
 }

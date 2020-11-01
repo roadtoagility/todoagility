@@ -7,11 +7,9 @@ namespace TodoAgility.Agile.Persistence.Framework.Projections
         protected ProjectionDbContext(string connectionString, BsonMapper modelBuilder)
         {
             Database = new LiteDatabase(connectionString);
-            OnModelCreating(modelBuilder);
         }
 
         public ILiteDatabase Database { get; }
-       
-        protected abstract void OnModelCreating(BsonMapper modelBuilder);
+
     }
 }
