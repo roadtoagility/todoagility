@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,22 +16,28 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.Domain.Aggregations
+using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
+
+namespace TodoAgility.Agile.Domain.AggregationProject.Events
 {
-    public abstract class AggregationRoot<TId, TChange> : IChangeSet<TId, TChange>
+    public class ProjectAddedEvent : DomainEvent
     {
-        private TChange _change;
-
-        public TId Id { get; protected set; }
-
-        public void Change(TChange item)
+        private ProjectAddedEvent(EntityId id, Description description)
+            : base(DateTime.Now)
         {
-            _change = item;
+            Description = description;
+            Id = id;
         }
 
-        public TChange GetChange()
+        public Description Description { get; }
+        public EntityId Id { get; }
+
+        public static ProjectAddedEvent For(AggregationActivity.Project project)
         {
-            return _change;
+            return new ProjectAddedEvent(project.Id,project.Description);
         }
     }
 }

@@ -17,7 +17,7 @@
 //
 
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
-using TodoAgility.Agile.Domain.Aggregations;
+using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;
@@ -27,22 +27,19 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public sealed class AddActivityCommandHandler : CommandHandler<AddActivityCommand, ExecutionResult>
     {
-        private readonly IDbSession<IProjectRepository> _projectSession;
         private readonly IDbSession<IActivityRepository> _taskSession;
 
-        public AddActivityCommandHandler(IEventDispatcher publisher, IDbSession<IActivityRepository> taskSession,
-            IDbSession<IProjectRepository> projectSession):base(publisher)
+        public AddActivityCommandHandler(IEventDispatcher publisher, IDbSession<IActivityRepository> taskSession)
+            :base(publisher)
         {
             _taskSession = taskSession;
-            _projectSession = projectSession;
         }
 
         protected override ExecutionResult ExecuteCommand(AddActivityCommand command)
         {
             var descr = command.Description;
-            var projectId = command.ProjectId;
             var entityId = EntityId.From(1u);
-            var project = _projectSession.Repository.Get(projectId);
+            var project = _taskSession.Repository.GetProject(command.ProjectId);
 
             var agg = ActivityAggregationRoot.CreateFrom(descr, entityId, project);
             var task = agg.GetChange();

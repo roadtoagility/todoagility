@@ -18,9 +18,10 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Domain.BusinessObjects
+namespace TodoAgility.Agile.Domain.AggregationActivity
 {
     public sealed class ActivityStatus : IEquatable<ActivityStatus>, IComparable<ActivityStatus>, IExposeValue<int>
     {

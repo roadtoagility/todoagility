@@ -18,29 +18,31 @@
 
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using TodoAgility.Agile.Persistence.Framework.Model;
 
 namespace TodoAgility.Agile.Persistence.Model
 {
-    public class ActivityState : PersistentState
+    public class ProjectStateReference : PersistentState
     {
-        public ActivityState(int status, string description, uint activityId)
-            : this(status,description,activityId,null)
+        public ProjectStateReference(string description, uint projectId)
+            : this(description, projectId, ImmutableList<ActivityState>.Empty)
         {
-        }
-        public ActivityState(int status, string description, uint activityId, ProjectStateReference project)
-            : base(DateTime.Now)
-        {
-            ActivityId = activityId;
-            Status = status;
             Description = description;
-            Project = project;
         }
 
-        public uint ActivityId { get; set; }
-        public int Status { get; set; }
-        public string Description { get; set; }
-        
-        public ProjectStateReference Project { get; set; }
+        public ProjectStateReference(string description, uint projectId, IList<ActivityState> activities)
+            : base(DateTime.Now)
+        {
+            ProjectId = projectId;
+            Description = description;
+            Activities = new List<ActivityState>(activities);
+        }
+
+        public uint ProjectId { get; set; }
+        public string Description { get; }
+
+        public ICollection<ActivityState> Activities { get; }
     }
 }

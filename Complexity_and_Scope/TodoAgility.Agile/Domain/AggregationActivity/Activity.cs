@@ -17,24 +17,25 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
-namespace TodoAgility.Agile.Domain.BusinessObjects
+namespace TodoAgility.Agile.Domain.AggregationActivity
 {
     public sealed class Activity : IEquatable<Activity>, IExposeValue<ActivityState>
     {
         private static readonly int InitialStatus = 1;
 
-        private Activity(ActivityStatus status, Description description, EntityId id, EntityId projectId)
+        private Activity(ActivityStatus status, Description description, EntityId id, Project project)
         {
             Status = status;
             Description = description;
             Id = id;
-            ProjectId = projectId;
+            Project = project;
         }
 
-        public EntityId ProjectId { get; }
+        public Project Project { get; }
 
         public ActivityStatus Status { get; }
 
@@ -47,12 +48,13 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             IExposeValue<int> stateStatus = Status;
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
-            IExposeValue<uint> projectId = ProjectId;
+            IExposeValue<ProjectStateReference> project = Project;
+            var stateProject = project.GetValue();
             return new ActivityState(stateStatus.GetValue(), stateDescr.GetValue()
-                , id.GetValue(), projectId.GetValue());
+                , id.GetValue(), new ProjectStateReference(stateProject.Description,stateProject.ProjectId));
         }
 
-        public static Activity From(Description description, EntityId entityId, EntityId projectId)
+        public static Activity From(Description description, EntityId entityId, Project project)
         {
             if (description == null)
             {
@@ -60,9 +62,9 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             }
 
 
-            if (projectId == null)
+            if (project == null)
             {
-                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
+                throw new ArgumentException("Informe um projeto válido.", nameof(project));
             }
 
 
@@ -71,7 +73,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
 
-            return new Activity(ActivityStatus.From(InitialStatus), description, entityId, projectId);
+            return new Activity(ActivityStatus.From(InitialStatus), description, entityId, project);
         }
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
             return new Activity(ActivityStatus.From(state.Status),
                 Description.From(state.Description), EntityId.From(state.ActivityId),
-                EntityId.From(state.ProjectId));
+                Project.FromState(state.Project));
         }
 
         /// <summary>
@@ -106,7 +108,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
             var descr = Description.From(state.Description);
             var id = EntityId.From(state.ActivityId);
-            var projectId = EntityId.From(state.ProjectId);
+            var project = Project.FromState(state.Project);
             var status = ActivityStatus.From(state.Status);
 
             if (patch == null)
@@ -114,13 +116,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
             }
 
-
             if (descr == patch.Description)
             {
                 throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
             }
 
-            return new Activity(status, patch.Description, id, projectId);
+            return new Activity(status, patch.Description, id, project);
         }
 
         public static Activity CombineWithStatus(Activity current, ActivityStatus status)
@@ -138,12 +139,12 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public override string ToString()
         {
-            return $"[TASK]:[Id:{Id}, description: {Description}: status: {Status}: Project: {ProjectId}]";
+            return $"[TASK]:[Id:{Id}, description: {Description}: status: {Status}: Project: {Project}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Description, Status, ProjectId);
+            return HashCode.Combine(Id, Description, Status, Project);
         }
 
         public class Patch

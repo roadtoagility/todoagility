@@ -17,6 +17,8 @@
 //
 
 using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.AggregationProject;
+using TodoAgility.Agile.Domain.AggregationProject.DomainEventHandlers;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.DomainEvents;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
@@ -25,6 +27,9 @@ using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
+
+using Activity = TodoAgility.Agile.Domain.AggregationActivity.Activity;
+using ProjectReference =  TodoAgility.Agile.Domain.AggregationActivity.Project;
 
 namespace TodoAgility.Tests
 {
@@ -36,9 +41,13 @@ namespace TodoAgility.Tests
         public void Check_DomainEvents_Raise()
         {
             //given
-            var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), 
-                EntityId.From(1u));
+            
+            //existing project
             var project = Project.From(EntityId.From(1u), Description.From("descriptionText"));
+            
+            //a activity it is attached to it
+            var projectReference = ProjectReference.From(EntityId.From(1u), Description.From("descriptionText"));
+            var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), projectReference);
             
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_proj_activity_reference.db;");
@@ -47,7 +56,7 @@ namespace TodoAgility.Tests
             using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
             repProject.Add(project);
             projectDbSession.SaveChanges();
-            var handlerActivityAdded = new ProjectAggregateActivityAddedHandler(projectDbSession);
+            var handlerActivityAdded = new ActivityAddedHandler(projectDbSession);
             var dispatcher = new DomainEventDispatcher();
             dispatcher.Subscribe(typeof(ActivityAddedEvent).FullName, handlerActivityAdded);
 
