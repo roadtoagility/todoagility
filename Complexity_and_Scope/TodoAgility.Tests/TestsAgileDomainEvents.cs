@@ -17,8 +17,10 @@
 //
 
 using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.AggregationActivity.DomainEventHandlers;
 using TodoAgility.Agile.Domain.AggregationProject;
 using TodoAgility.Agile.Domain.AggregationProject.DomainEventHandlers;
+using TodoAgility.Agile.Domain.AggregationProject.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.DomainEvents;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
@@ -30,6 +32,7 @@ using Xunit;
 
 using Activity = TodoAgility.Agile.Domain.AggregationActivity.Activity;
 using ProjectReference =  TodoAgility.Agile.Domain.AggregationActivity.Project;
+using Project = TodoAgility.Agile.Domain.AggregationProject.Project;
 
 namespace TodoAgility.Tests
 {
@@ -38,7 +41,7 @@ namespace TodoAgility.Tests
         #region Activity DomainEvents
 
         [Fact]
-        public void Check_DomainEvents_Raise()
+        public void Check_DomainEvents_ActivityAdded_Raise()
         {
             //given
             
@@ -68,6 +71,33 @@ namespace TodoAgility.Tests
             Assert.True(proj.Activities.Count > 0);
         }
 
+        [Fact]
+        public void Check_DomainEvents_ProjectAdded_Raise()
+        {
+            //given
+            
+            //existing project
+            var project = ProjectReference.From(EntityId.From(1u), Description.From("descriptionText"));
+            
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_projectAdded_test.db;");
+            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var repTask = new ActivityRepository(taskDbContext);
+
+            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
+
+            var handlerActivityAdded = new ProjectAddedHandler(taskDbSession);
+            var dispatcher = new DomainEventDispatcher();
+            dispatcher.Subscribe(typeof(ProjectAddedEvent).FullName, handlerActivityAdded);
+
+            //when
+            dispatcher.Publish(ProjectAddedEvent.For(project));
+
+            //then
+            var projectId = EntityId.From(1u);
+            var proj = repTask.GetProject(projectId);
+            Assert.NotNull(proj);
+        }
         #endregion
     }
 }

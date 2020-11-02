@@ -24,26 +24,22 @@ using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity.DomainEventHandlers
 {
-    public class ActivityAggregateProjectAddedHandler : DomainEventHandler
+    public class ProjectAddedHandler : DomainEventHandler
     {
         private readonly IDbSession<IActivityRepository> _activitySession;
 
-        public ActivityAggregateProjectAddedHandler(IDbSession<IActivityRepository> activitySession)
+        public ProjectAddedHandler(IDbSession<IActivityRepository> activitySession)
         {
             _activitySession = activitySession;
-            HandlerId = nameof(ActivityAggregateProjectAddedHandler);
+            HandlerId = nameof(ProjectAddedHandler);
         }
 
         protected override void ExecuteHandle(IDomainEvent @event)
         {
             var ev = @event as ProjectAddedEvent;
-            // var activity = _activitySession.Repository.Add(Project.From(ev?.Id,ev?.Description));
-            //
-            // var activity = new List<EntityId> {ev?.Id};
-            // var projectWithTasks = AggregationProject.Project.CombineProjectAndActivities(project, activity);
-            //
-            // _projectSession.Repository.Add(projectWithTasks);
-            // _projectSession.SaveChanges();
+            var project = Project.From(ev?.Id,ev?.Description);
+            _activitySession.Repository.AddProject(project);
+            _activitySession.SaveChanges();
         }
     }
 }
