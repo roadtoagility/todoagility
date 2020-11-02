@@ -18,9 +18,10 @@
 
 using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Aggregates;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Domain.Aggregations
+namespace TodoAgility.Agile.Domain.AggregationActivity
 {
     public sealed class ActivityAggregationRoot : AggregationRoot<Guid, Activity>
     {
@@ -41,9 +42,10 @@ namespace TodoAgility.Agile.Domain.Aggregations
         ///     to register new aggregate as change
         /// </summary>
         /// <param name="descr"></param>
-        /// <param name="projectId"></param>
+        /// <param name="entityId"></param>
+        /// <param name="project"></param>
         private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
-            : this(Activity.From(descr, entityId, project.Id))
+            : this(Activity.From(descr, entityId, project))
         {
             _project = project;
             Change(_currentActivity);

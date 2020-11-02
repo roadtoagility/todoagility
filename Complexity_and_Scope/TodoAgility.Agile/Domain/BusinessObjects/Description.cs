@@ -17,6 +17,7 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {

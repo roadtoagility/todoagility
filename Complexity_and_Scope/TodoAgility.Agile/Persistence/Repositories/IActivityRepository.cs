@@ -17,7 +17,10 @@
 //
 
 
+using System.Collections.Generic;
+using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework.Repositories;
 using TodoAgility.Agile.Persistence.Model;
 
@@ -25,5 +28,10 @@ namespace TodoAgility.Agile.Persistence.Repositories
 {
     public interface IActivityRepository : IRepository<ActivityState, Activity>
     {
+        void AddProject(IExposeValue<ProjectStateReference> project);
+        
+        void RemoveProject(IExposeValue<ProjectStateReference> projectId);
+
+        Project GetProject(EntityId id);
     }
 }

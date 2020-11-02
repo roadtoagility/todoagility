@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,15 +16,22 @@
 // Boston, MA  02110-1301, USA.
 //
 
-
-using TodoAgility.Agile.Domain.AggregationProject;
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Persistence.Framework.Repositories;
-using TodoAgility.Agile.Persistence.Model;
-
-namespace TodoAgility.Agile.Persistence.Repositories
+namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
-    public interface IProjectRepository : IRepository<ProjectState, Project>
+    public abstract class AggregationRoot<TId, TChange> : IChangeSet<TId, TChange>
     {
+        private TChange _change;
+
+        public TId Id { get; protected set; }
+
+        public void Change(TChange item)
+        {
+            _change = item;
+        }
+
+        public TChange GetChange()
+        {
+            return _change;
+        }
     }
 }
