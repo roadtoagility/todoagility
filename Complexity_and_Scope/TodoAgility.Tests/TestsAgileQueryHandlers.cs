@@ -28,7 +28,6 @@ using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Model.Projections;
 using TodoAgility.Agile.Persistence.Projections;
 using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;
@@ -69,65 +68,6 @@ namespace TodoAgility.Tests
             
             //then
             Assert.True(activities.Items.AsQueryable().Count(i=> i.ProjectId == projectId2) == 1);
-        }
-
-        [Fact]
-        public void Task_UpdateCommandHandler_Succeed()
-        {
-            var description = "Given Description";
-            var id = 1u;
-            var projectId = 1u;
-            var dispatcher = new DomainEventDispatcher();
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
-            taskOptionsBuilder.UseSqlite("Data Source=todoagility_cqrs_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
-            var repTask = new ActivityRepository(taskDbContext);
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
-
-            var project = Project.From(EntityId.From(projectId), Description.From(description));
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), project);
-            taskDbSession.Repository.AddProject(project);
-            taskDbSession.Repository.Add(originalTask);
-            taskDbSession.SaveChanges();
-
-            var descriptionNew = "Given Description Changed";
-            var command = new UpdateActivityCommand(id, descriptionNew);
-
-            var handler = new UpdateActivityCommandHandler(taskDbSession,dispatcher);
-            handler.Execute(command);
-
-            var task = taskDbSession.Repository.Get(EntityId.From(id));
-
-            Assert.NotEqual(task, originalTask);
-        }
-
-        [Fact]
-        public void Task_ChangeStatusCommandHandler_Succeed()
-        {
-            var description = "Given Description";
-            var id = 1u;
-            var status = 2;
-            var projectId = 1u;
-            var dispatcher = new DomainEventDispatcher();
-            var optionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
-            optionsBuilder.UseSqlite("Data Source=todoagility_cqrs_changed_test.db;");
-            var taskDbContext = new ActivityDbContext(optionsBuilder.Options);
-            var repTask = new ActivityRepository(taskDbContext);
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
-
-            var project = Project.From(EntityId.From(projectId), Description.From(description));
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), project);
-            taskDbSession.Repository.Add(originalTask);
-            taskDbSession.SaveChanges();
-
-            var command = new ChangeActivityStatusCommand(id, status);
-
-            var handler = new ChangeActivityStatusCommandHandler(taskDbSession,dispatcher);
-            handler.Execute(command);
-
-            var task = taskDbSession.Repository.Get(EntityId.From(id));
-
-            Assert.NotEqual(task, originalTask);
         }
 
         #endregion

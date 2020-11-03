@@ -20,7 +20,6 @@
 using System;
 using LiteDB;
 using TodoAgility.Agile.Persistence.Framework.Projections;
-using TodoAgility.Agile.Persistence.Model.Projections;
 
 namespace TodoAgility.Agile.Persistence.Framework
 {

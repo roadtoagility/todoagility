@@ -18,11 +18,11 @@
 
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.AggregationActivity.DomainEventHandlers;
+using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.AggregationProject;
 using TodoAgility.Agile.Domain.AggregationProject.DomainEventHandlers;
 using TodoAgility.Agile.Domain.AggregationProject.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.DomainEvents;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;

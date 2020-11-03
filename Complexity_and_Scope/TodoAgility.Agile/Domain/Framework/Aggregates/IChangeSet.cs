@@ -16,12 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
+
 namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
-    public interface IChangeSet<out TId, TChange>
+    public interface IChangeSet<out TChange>
     {
-        TId Id { get; }
-        void Change(TChange item);
         TChange GetChange();
+        IReadOnlyList<IDomainEvent> GetEvents();
     }
 }
