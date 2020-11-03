@@ -27,9 +27,7 @@ namespace TodoAgility.Agile.Persistence.Model
                     b.HasKey(e => e.ActivityId);
                     b.Property(e => e.Description).IsRequired();
                     b.Property(e => e.Status).IsRequired();
-                    b.HasOne<ProjectStateReference>()
-                        .WithMany(m => m.Activities)
-                        .HasForeignKey(f => f.ProjectId);
+                    b.Property(p => p.ProjectId).IsRequired();
                     b.Property(p => p.PersistenceId);
                     b.Property(e => e.CreateAt).IsRequired();
                     b.Property(e => e.IsDeleted).IsRequired();
@@ -48,7 +46,6 @@ namespace TodoAgility.Agile.Persistence.Model
                     b.Property(e => e.CreateAt).IsRequired();
                     b.Property(e => e.IsDeleted).IsRequired();
                     b.Property(e => e.RowVersion).ValueGeneratedOnAddOrUpdate().IsRowVersion();
-
                     b.HasQueryFilter(qf => !qf.IsDeleted);
                 });
 
