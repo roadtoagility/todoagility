@@ -47,7 +47,7 @@ namespace TodoAgility.Tests
             
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText), id, project);
+            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
@@ -74,7 +74,7 @@ namespace TodoAgility.Tests
 
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText), id, project);
+            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
@@ -106,7 +106,7 @@ namespace TodoAgility.Tests
             var id = EntityId.From(1u);
             var project = Project.From(EntityId.From(1u), Description.From(descriptionText));
             var projectReference = ProjectReference.From(projectId, Description.From(descriptionText));
-            var task = Activity.From(Description.From(descriptionText), id, projectReference);
+            var task = Activity.From(Description.From(descriptionText), id, projectId);
 
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_update.db;");

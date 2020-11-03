@@ -24,23 +24,19 @@ namespace TodoAgility.Agile.Persistence.Model
 {
     public class ActivityState : PersistentState
     {
-        public ActivityState(int status, string description, uint activityId)
-            : this(status,description,activityId,null)
-        {
-        }
-        public ActivityState(int status, string description, uint activityId, ProjectStateReference project)
+        public ActivityState(int status, string description, uint activityId, uint projectId)
             : base(DateTime.Now)
         {
             ActivityId = activityId;
             Status = status;
             Description = description;
-            Project = project;
+            ProjectId = projectId;
         }
 
         public uint ActivityId { get; set; }
         public int Status { get; set; }
         public string Description { get; set; }
         
-        public ProjectStateReference Project { get; set; }
+        public uint ProjectId { get; set; }
     }
 }

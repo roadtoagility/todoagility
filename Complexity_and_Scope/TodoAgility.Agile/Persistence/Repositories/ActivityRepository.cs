@@ -86,7 +86,6 @@ namespace TodoAgility.Agile.Persistence.Repositories
         {
             IExposeValue<uint> entityId = id;
             var task = DbContext.Activities.AsQueryable()
-                .Include(i=> i.Project)
                 .OrderByDescending(ob => ob.ActivityId)
                 .First(t => t.ActivityId == entityId.GetValue());
 

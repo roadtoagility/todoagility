@@ -42,7 +42,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <param name="entityId"></param>
         /// <param name="project"></param>
         private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
-            : this(Activity.From(descr, entityId, project))
+            : this(Activity.From(descr, entityId, project.Id))
         {
             Change(_entityRoot);
             Raise(ActivityAddedEvent.For(_entityRoot));

@@ -36,7 +36,7 @@ namespace TodoAgility.Tests
         #region Activity Command Handlers
 
         [Fact]
-        public void Task_AddCommandHandler_Succeed()
+        public void Check_AddActivityCommandHandler_Succeed()
         {
             var description = "Given Description";
             var projectId = 1u;
@@ -46,21 +46,20 @@ namespace TodoAgility.Tests
             var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
-            
-            var command = new AddActivityCommand(description, projectId);
-
             taskDbSession.Repository.AddProject(Project.From(EntityId.From(projectId), Description.From(description)));
             taskDbSession.SaveChanges();
+
             var handler = new AddActivityCommandHandler(dispatcher, taskDbSession);
+            var command = new AddActivityCommand(description, projectId);
             handler.Execute(command);
 
-            var task = taskDbSession.Repository.Find(a => a.Project.ProjectId == projectId);
+            var task = taskDbSession.Repository.Find(a => a.ProjectId == projectId);
 
             Assert.NotNull(task);
         }
 
         [Fact]
-        public void Task_UpdateCommandHandler_Succeed()
+        public void Check_UpdateActivityCommandHandler_Succeed()
         {
             var description = "Given Description";
             var id = 1u;
@@ -73,7 +72,7 @@ namespace TodoAgility.Tests
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 
             var project = Project.From(EntityId.From(projectId), Description.From(description));
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), project);
+            var originalTask = Activity.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
             taskDbSession.Repository.AddProject(project);
             taskDbSession.Repository.Add(originalTask);
             taskDbSession.SaveChanges();
@@ -90,7 +89,7 @@ namespace TodoAgility.Tests
         }
 
         [Fact]
-        public void Task_ChangeStatusCommandHandler_Succeed()
+        public void Check_ChangeStatusActivityCommandHandler_Succeed()
         {
             var description = "Given Description";
             var id = 1u;
@@ -103,8 +102,7 @@ namespace TodoAgility.Tests
             var repTask = new ActivityRepository(taskDbContext);
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 
-            var project = Project.From(EntityId.From(projectId), Description.From(description));
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), project);
+            var originalTask = Activity.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
             taskDbSession.Repository.Add(originalTask);
             taskDbSession.SaveChanges();
 

@@ -27,15 +27,15 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
     {
         private static readonly int InitialStatus = 1;
 
-        private Activity(ActivityStatus status, Description description, EntityId id, Project project)
+        private Activity(ActivityStatus status, Description description, EntityId id, EntityId projectId)
         {
             Status = status;
             Description = description;
             Id = id;
-            Project = project;
+            ProjectId = projectId;
         }
 
-        public Project Project { get; }
+        public EntityId ProjectId { get; }
 
         public ActivityStatus Status { get; }
 
@@ -48,13 +48,13 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             IExposeValue<int> stateStatus = Status;
             IExposeValue<string> stateDescr = Description;
             IExposeValue<uint> id = Id;
-            IExposeValue<ProjectStateReference> project = Project;
+            IExposeValue<uint> project = ProjectId;
             var stateProject = project.GetValue();
             return new ActivityState(stateStatus.GetValue(), stateDescr.GetValue()
-                , id.GetValue(), new ProjectStateReference(stateProject.Description,stateProject.ProjectId));
+                , id.GetValue(), stateProject);
         }
 
-        public static Activity From(Description description, EntityId entityId, Project project)
+        public static Activity From(Description description, EntityId entityId, EntityId projectId)
         {
             if (description == null)
             {
@@ -62,9 +62,9 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             }
 
 
-            if (project == null)
+            if (projectId == null)
             {
-                throw new ArgumentException("Informe um projeto válido.", nameof(project));
+                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
             }
 
 
@@ -73,7 +73,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
             }
 
-            return new Activity(ActivityStatus.From(InitialStatus), description, entityId, project);
+            return new Activity(ActivityStatus.From(InitialStatus), description, entityId, projectId);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
             return new Activity(ActivityStatus.From(state.Status),
                 Description.From(state.Description), EntityId.From(state.ActivityId),
-                Project.FromState(state.Project));
+                EntityId.From(state.ProjectId));
         }
 
         /// <summary>
@@ -104,24 +104,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <exception cref="ArgumentException"></exception>
         public static Activity CombineWithPatch(Activity current, Patch patch)
         {
-            var state = ((IExposeValue<ActivityState>) current).GetValue();
-
-            var descr = Description.From(state.Description);
-            var id = EntityId.From(state.ActivityId);
-            var project = Project.FromState(state.Project);
-            var status = ActivityStatus.From(state.Status);
-
             if (patch == null)
             {
                 throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
             }
 
-            if (descr == patch.Description)
-            {
-                throw new ArgumentException("Informe uma descrição diferente da atual.", nameof(patch));
-            }
-
-            return new Activity(status, patch.Description, id, project);
+            return new Activity(current.Status, patch.Description, current.Id, current.ProjectId);
         }
 
         public static Activity CombineWithStatus(Activity current, ActivityStatus status)
@@ -139,12 +127,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
         public override string ToString()
         {
-            return $"[TASK]:[Id:{Id}, description: {Description}: status: {Status}: Project: {Project}]";
+            return $"[TASK]:[Id:{Id}, description: {Description}: status: {Status}: Project: {ProjectId}]";
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Description, Status, Project);
+            return HashCode.Combine(Id, Description, Status, ProjectId);
         }
 
         public class Patch
