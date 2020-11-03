@@ -17,16 +17,16 @@
 //
 
 using System;
+using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.Aggregates;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class ActivityAggregationRoot : AggregationRoot<Guid, Activity>
+    public sealed class ActivityAggregationRoot : AggregationRoot<Activity>
     {
         private readonly Activity _currentActivity;
-        private readonly Project _project;
 
         /// <summary>
         ///     load an aggregate from store
@@ -34,7 +34,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <param name="currentActivity"></param>
         private ActivityAggregationRoot(Activity currentActivity)
         {
-            Id = Guid.NewGuid();
             _currentActivity = currentActivity;
         }
 
@@ -47,8 +46,8 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
             : this(Activity.From(descr, entityId, project))
         {
-            _project = project;
             Change(_currentActivity);
+            Raise(ActivityAddedEvent.For(_currentActivity));
         }
 
         /// <summary>
@@ -60,6 +59,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             var change = Activity.CombineWithPatch(_currentActivity, patchTask);
 
             Change(change);
+            Raise(ActivityUpdatedEvent.For(change));
         }
 
         public void ChangeTaskStatus(ActivityStatus newStatus)
@@ -67,6 +67,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             var change = Activity.CombineWithStatus(_currentActivity, newStatus);
 
             Change(change);
+            Raise(ActivityStatusChangedEvent.For(change));
         }
 
         #region Aggregation contruction

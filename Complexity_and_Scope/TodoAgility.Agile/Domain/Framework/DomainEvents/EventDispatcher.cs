@@ -39,7 +39,15 @@ namespace TodoAgility.Agile.Domain.Framework.DomainEvents
                 handlers.Add(handler.HandlerId, handler);                
             }
         }
-
+        
+        public void Publish(IReadOnlyList<IDomainEvent> events)
+        {
+            foreach (var @event in events)
+            {
+                Publish(@event);
+            }
+        }
+        
         public void Publish(IDomainEvent @event)
         {
             var evt = @event.GetType().FullName;

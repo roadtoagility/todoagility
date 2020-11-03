@@ -18,7 +18,7 @@
 
 
 using System.Collections.Generic;
-using TodoAgility.Agile.Domain.DomainEvents;
+using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence.Framework;

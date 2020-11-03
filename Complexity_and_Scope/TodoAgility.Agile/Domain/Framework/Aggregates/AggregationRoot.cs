@@ -16,22 +16,40 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
+
 namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
-    public abstract class AggregationRoot<TId, TChange> : IChangeSet<TId, TChange>
+    public abstract class AggregationRoot<TChange> : IChangeSet<TChange>
     {
-        private TChange _change;
+        private TChange _entityRoot;
+        private readonly IList<IDomainEvent> _domainEvents;
 
-        public TId Id { get; protected set; }
-
-        public void Change(TChange item)
+        protected AggregationRoot()
         {
-            _change = item;
-        }
+            _domainEvents = new List<IDomainEvent>();
+        } 
 
+        protected void Change(TChange item)
+        {
+            _entityRoot = item;
+        }
+        
+        protected void Raise(IDomainEvent @event)
+        {
+            _domainEvents.Add(@event);
+        }
+        
         public TChange GetChange()
         {
-            return _change;
+            return _entityRoot;
+        }
+
+        public IReadOnlyList<IDomainEvent> GetEvents()
+        {
+            return _domainEvents.ToImmutableList();
         }
     }
 }

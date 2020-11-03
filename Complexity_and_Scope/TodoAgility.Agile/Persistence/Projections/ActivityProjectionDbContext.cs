@@ -1,10 +1,7 @@
 using LiteDB;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using TodoAgility.Agile.Persistence.Framework.Projections;
-using TodoAgility.Agile.Persistence.Projections;
 
-namespace TodoAgility.Agile.Persistence.Model.Projections
+namespace TodoAgility.Agile.Persistence.Projections
 {
     public class ActivityProjectionDbContext:ProjectionDbContext
     {

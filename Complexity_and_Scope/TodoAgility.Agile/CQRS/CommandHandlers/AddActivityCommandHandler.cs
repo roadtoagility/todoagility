@@ -46,6 +46,7 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 
             _taskSession.Repository.Add(task);
             _taskSession.SaveChanges();
+            Publisher.Publish(agg.GetEvents());
             
             return new ExecutionResult(true);
         }

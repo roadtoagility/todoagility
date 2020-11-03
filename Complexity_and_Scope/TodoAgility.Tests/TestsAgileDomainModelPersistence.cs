@@ -24,7 +24,6 @@ using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
-using TodoAgility.Agile.Persistence.Model.Projections;
 using TodoAgility.Agile.Persistence.Projections;
 using TodoAgility.Agile.Persistence.Repositories;
 using Xunit;

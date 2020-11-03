@@ -16,11 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
+
 namespace TodoAgility.Agile.Domain.Framework.DomainEvents
 {
     public interface IEventDispatcher
     {
         void Subscribe(string eventType, IDomainEventHandler handler);
         void Publish(IDomainEvent @event);
+
+        void Publish(IReadOnlyList<IDomainEvent> events);
     }
 }

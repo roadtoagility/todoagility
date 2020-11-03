@@ -5,9 +5,9 @@ using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity.Events
 {
-    public class ActivityAddedEvent : DomainEvent
+    public class ActivityUpdatedEvent : DomainEvent
     {
-        private ActivityAddedEvent(EntityId id, Description description, Project project, ActivityStatus status)
+        private ActivityUpdatedEvent(EntityId id, Description description, Project project, ActivityStatus status)
             : base(DateTime.Now)
         {
             Description = description;
@@ -21,9 +21,9 @@ namespace TodoAgility.Agile.Domain.AggregationActivity.Events
         public Project Project { get; }
         public ActivityStatus Status { get; }
 
-        public static ActivityAddedEvent For(Activity activity)
+        public static ActivityUpdatedEvent For(Activity activity)
         {
-            return new ActivityAddedEvent(activity.Id,activity.Description, activity.Project, activity.Status);
+            return new ActivityUpdatedEvent(activity.Id,activity.Description, activity.Project, activity.Status);
         }
     }
 }
