@@ -24,11 +24,12 @@ namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
     public abstract class AggregationRoot<TChange> : IChangeSet<TChange>
     {
-        private TChange _entityRoot;
+        protected TChange _entityRoot;
         private readonly IList<IDomainEvent> _domainEvents;
 
-        protected AggregationRoot()
+        protected AggregationRoot(TChange entityRoot)
         {
+            _entityRoot = entityRoot;
             _domainEvents = new List<IDomainEvent>();
         } 
 
