@@ -77,7 +77,7 @@ namespace TodoAgility.Tests
             //given
             
             //existing project
-            var project = ProjectReference.From(EntityId.From(1u), Description.From("descriptionText"));
+            var project = Project.From(EntityId.From(1u), Description.From("descriptionText"));
             
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_projectAdded_test.db;");

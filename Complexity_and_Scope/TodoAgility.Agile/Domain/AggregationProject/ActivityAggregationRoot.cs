@@ -16,23 +16,24 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
-using TodoAgility.Agile.Domain.AggregationActivity.Events;
+using TodoAgility.Agile.Domain.AggregationActivity;
+using TodoAgility.Agile.Domain.AggregationProject.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.Aggregates;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Domain.AggregationActivity
+namespace TodoAgility.Agile.Domain.AggregationProject
 {
-    public sealed class ActivityAggregationRoot : AggregationRoot<Activity>
+    public sealed class ProjectAggregationRoot : AggregationRoot<Project>
     {
         /// <summary>
         ///     load an aggregate from store
         /// </summary>
         /// <param name="currentActivity"></param>
-        private ActivityAggregationRoot(Activity currentActivity)
-        :base(currentActivity)
+        private ProjectAggregationRoot(Project current)
+        :base(current)
         {
+            
         }
 
         /// <summary>
@@ -41,31 +42,11 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <param name="descr"></param>
         /// <param name="entityId"></param>
         /// <param name="project"></param>
-        private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
-            : this(Activity.From(descr, entityId, project))
+        private ProjectAggregationRoot(Description descr, EntityId entityId)
+            : this(Project.From(entityId, descr))
         {
             Change(_entityRoot);
-            Raise(ActivityAddedEvent.For(_entityRoot));
-        }
-
-        /// <summary>
-        ///     update currentActivity value allowed from patch interface
-        /// </summary>
-        /// <param name="patchTask"></param>
-        public void UpdateTask(Activity.Patch patchTask)
-        {
-            var change = Activity.CombineWithPatch(_entityRoot, patchTask);
-
-            Change(change);
-            Raise(ActivityUpdatedEvent.For(change));
-        }
-
-        public void ChangeTaskStatus(ActivityStatus newStatus)
-        {
-            var change = Activity.CombineWithStatus(_entityRoot, newStatus);
-
-            Change(change);
-            Raise(ActivityStatusChangedEvent.For(change));
+            Raise(ProjectAddedEvent.For(_entityRoot));
         }
 
         #region Aggregation contruction
@@ -75,9 +56,9 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// </summary>
         /// <param name="currentState"></param>
         /// <returns></returns>
-        public static ActivityAggregationRoot ReconstructFrom(Activity currentState)
+        public static ProjectAggregationRoot ReconstructFrom(Project currentState)
         {
-            return new ActivityAggregationRoot(currentState);
+            return new ProjectAggregationRoot(currentState);
         }
 
         /// <summary>
@@ -87,9 +68,9 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <param name="project"></param>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        public static ActivityAggregationRoot CreateFrom(Description descr, EntityId entityId, Project project)
+        public static ProjectAggregationRoot CreateFrom(Description descr, EntityId entityId)
         {
-            return new ActivityAggregationRoot(descr, entityId, project);
+            return new ProjectAggregationRoot(descr, entityId);
         }
 
         #endregion

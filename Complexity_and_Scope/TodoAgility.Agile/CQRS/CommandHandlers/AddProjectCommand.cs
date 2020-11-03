@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,28 +16,20 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-namespace TodoAgility.Agile.Domain.AggregationProject.Events
+namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public class ProjectAddedEvent : DomainEvent
+    public class AddProjectCommand
     {
-        private ProjectAddedEvent(EntityId id, Description description)
-            : base(DateTime.Now)
+        public AddProjectCommand(string description, uint projectId)
         {
-            Description = description;
-            Id = id;
+            Description = Description.From(description);
+            ProjectId = EntityId.From(projectId);
         }
 
         public Description Description { get; }
-        public EntityId Id { get; }
-
-        public static ProjectAddedEvent For(Project project)
-        {
-            return new ProjectAddedEvent(project.Id,project.Description);
-        }
+        public EntityId ProjectId { get; }
     }
 }
