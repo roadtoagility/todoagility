@@ -39,7 +39,7 @@ namespace TodoAgility.Agile.Domain.AggregationProject.DomainEventHandlers
         protected override void ExecuteHandle(IDomainEvent @event)
         {
             var ev = @event as ActivityAddedEvent;
-            var project = _projectSession.Repository.Get(ev?.Project.Id);
+            var project = _projectSession.Repository.Get(ev?.ProjectId);
 
             var activity = new List<EntityId> {ev?.Id};
             var projectWithTasks = Project.CombineProjectAndActivities(project, activity);

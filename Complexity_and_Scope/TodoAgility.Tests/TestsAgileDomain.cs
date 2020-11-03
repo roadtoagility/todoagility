@@ -93,10 +93,9 @@ namespace TodoAgility.Tests
         public void Check_Task_valid_instance()
         {
             var name = Description.From("givenName");
-            var project = Project.From(EntityId.From(1u), name);
             var entityId = EntityId.From(1u);
 
-            var task = Activity.From(name, entityId, project);
+            var task = Activity.From(name, entityId, EntityId.From(1u));
             Assert.NotNull(task);
         }
 
@@ -108,7 +107,7 @@ namespace TodoAgility.Tests
             var project = Project.From(EntityId.From(1u), Description.From(givenName));
             var entityId = EntityId.From(1u);
 
-            var todo = Activity.From(name, entityId, project);
+            var todo = Activity.From(name, entityId, EntityId.From(1u));
             IExposeValue<ActivityState> state = todo;
             var todoState = state.GetValue();
 
@@ -143,7 +142,7 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
 
             var project = Project.From(projectId, Description.From(descriptionText));
-            var task = Activity.From(Description.From(descriptionText), id, project);
+            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
             var agg = ActivityAggregationRoot.CreateFrom(Description.From(descriptionText), id, project);
@@ -160,9 +159,8 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var descriptionNewText = "Given Description New One";
             var id = EntityId.From(1u);
-            var project = Project.From(EntityId.From(1u), Description.From(descriptionText));
 
-            var oldState = Activity.From(Description.From(descriptionText), id, project);
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
             agg.UpdateTask(Activity.Patch.FromDescription(Description.From(descriptionNewText)));
@@ -179,8 +177,7 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var id = EntityId.From(1u);
             var newStatus = 2;
-            var project = Project.From(EntityId.From(1u), Description.From(descriptionText));
-            var oldState = Activity.From(Description.From(descriptionText), id, project);
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
@@ -197,11 +194,10 @@ namespace TodoAgility.Tests
         {
             //given
             var descriptionText = "Given Description";
-            var project = Project.From(EntityId.From(1u), Description.From(descriptionText));
             var id = EntityId.From(1u);
             var newStatus = 6;
 
-            var oldState = Activity.From(Description.From(descriptionText), id, project);
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
