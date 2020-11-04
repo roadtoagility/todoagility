@@ -48,6 +48,16 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 
             return GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
         }
+        
+        public static bool operator ==(ValueObject left, ValueObject right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ValueObject left, ValueObject right)
+        {
+            return !Equals(left, right);
+        }
 
         public override int GetHashCode()
         {
