@@ -40,7 +40,7 @@ namespace TodoAgility.Tests
         #region Activity Query Handlers
 
         [Fact]
-        public void Check_GetActivitiesByProject()
+        public void Check_ProjectionGetActivitiesByProject()
         {
             //given
             var descriptionText = "Given Description";
