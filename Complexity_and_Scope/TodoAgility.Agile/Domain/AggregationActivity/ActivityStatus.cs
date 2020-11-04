@@ -23,7 +23,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class ActivityStatus : ValueObject, IComparable<ActivityStatus>, IExposeValue<int>
+    public sealed class ActivityStatus : ValueObject, IExposeValue<int>
     {
         public enum Status
         {
@@ -81,52 +81,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             return _status.CompareTo(other._status);
         }
 
-        public int CompareTo(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return 1;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return 0;
-            }
-
-            return obj is ActivityStatus other
-                ? CompareTo(other)
-                : throw new ArgumentException($"Object must be of type {nameof(ActivityStatus)}");
-        }
-
-        public static bool operator <(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) < 0;
-        }
-
-        public static bool operator >(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) > 0;
-        }
-
-        public static bool operator <=(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) <= 0;
-        }
-
-        public static bool operator >=(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) >= 0;
-        }
-
-        public static bool operator ==(ActivityStatus left, ActivityStatus right)
-        {
-            return (left == right);
-        }
-
-        public static bool operator !=(ActivityStatus left, ActivityStatus right)
-        {
-            return !(left == right);
-        }
         #endregion
     }
 }

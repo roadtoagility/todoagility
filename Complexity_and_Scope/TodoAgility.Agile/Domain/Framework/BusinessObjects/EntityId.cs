@@ -18,11 +18,10 @@
 
 using System;
 using System.Collections.Generic;
-using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
-    public sealed class EntityId : ValueObject, IComparable<EntityId>, IExposeValue<uint>
+    public sealed class EntityId : ValueObject, IExposeValue<uint>
     {
         private readonly uint _id;
 
@@ -75,37 +74,7 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 
             return _id.CompareTo(other._id);
         }
-        
-        public static bool operator <(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) < 0;
-        }
 
-        public static bool operator >(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) > 0;
-        }
-
-        public static bool operator <=(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) <= 0;
-        }
-
-        public static bool operator >=(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) >= 0;
-        }
-
-        
-        public static bool operator ==(EntityId left, EntityId right)
-        {
-            return (left == right);
-        }
-
-        public static bool operator !=(EntityId left, EntityId right)
-        {
-            return !(left == right);
-        }
         #endregion
     }
 }
