@@ -54,12 +54,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             return new ActivityStatus((Status) status);
         }
 
-        public static ActivityStatus FromState(ActivityState state)
-        {
-            return From(state.Status);
-        }
-
-
         public override string ToString()
         {
             return $"{_status}";
@@ -124,6 +118,15 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             return Comparer<ActivityStatus>.Default.Compare(left, right) >= 0;
         }
 
+        public static bool operator ==(ActivityStatus left, ActivityStatus right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ActivityStatus left, ActivityStatus right)
+        {
+            return !Equals(left, right);
+        }
         #endregion
     }
 }
