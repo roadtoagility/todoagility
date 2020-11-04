@@ -50,11 +50,6 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
             return $"{_id}";
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_id);
-        }
-
         #region IEquatable
 
         protected override IEnumerable<object> GetEqualityComponents()
