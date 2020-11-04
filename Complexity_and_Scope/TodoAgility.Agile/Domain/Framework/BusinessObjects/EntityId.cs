@@ -118,6 +118,16 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
             return Comparer<EntityId>.Default.Compare(left, right) >= 0;
         }
 
+        
+        public static bool operator ==(EntityId left, EntityId right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(EntityId left, EntityId right)
+        {
+            return !Equals(left, right);
+        }
         #endregion
     }
 }
