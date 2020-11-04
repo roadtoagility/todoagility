@@ -22,6 +22,7 @@ using LiteDB;
 using Microsoft.EntityFrameworkCore;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Persistence;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Projections;
@@ -82,7 +83,7 @@ namespace TodoAgility.Tests
             var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
 
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
+            using var taskDbSession = new ActivityDbSession(taskDbContext, repTask);
             taskDbSession.Repository.Add(task);
             taskDbSession.SaveChanges();
 
@@ -113,7 +114,7 @@ namespace TodoAgility.Tests
             var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
 
-            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
+            using var projectDbSession = new ProjectDbSession(projectDbContext, repProject);
             projectDbSession.Repository.Add(project);
             projectDbSession.SaveChanges();
 
@@ -147,7 +148,7 @@ namespace TodoAgility.Tests
             var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
 
-            using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
+            using var projectDbSession = new ProjectDbSession(projectDbContext, repProject);
             projectDbSession.Repository.Add(project);
             projectDbSession.SaveChanges();
 
@@ -160,7 +161,7 @@ namespace TodoAgility.Tests
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var repProject3 = new ProjectRepository(projectDbContext);
-                using var dbs = new DbSession<IProjectRepository>(projectDbContext, repProject3);
+                using var dbs = new ProjectDbSession(projectDbContext, repProject3);
                 return dbs.Repository.Get(projectId);
             });
         }
