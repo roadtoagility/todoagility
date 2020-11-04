@@ -18,15 +18,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class Project : IEquatable<Project>, IExposeValue<ProjectStateReference>
+    public sealed class Project : ValueObject, IExposeValue<ProjectStateReference>
     {
         private Project(Description description, EntityId id)
         {
@@ -82,59 +80,10 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             return $"[PROJECT]:[Id:{Id}, description: {Description}]";
         }
 
-        public override int GetHashCode()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            return HashCode.Combine(Id, Description);
+            yield return Id;
+            yield return Description;
         }
-
-        #region IEquatable implementation
-
-        public bool Equals(Project other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return Description == other.Description
-                   && Id == other.Id;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((Project) obj);
-        }
-
-        public static bool operator ==(Project left, Project right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Project left, Project right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
     }
 }

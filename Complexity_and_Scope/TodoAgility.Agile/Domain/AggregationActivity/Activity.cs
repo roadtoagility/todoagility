@@ -17,13 +17,14 @@
 //
 
 using System;
+using System.Collections.Generic;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class Activity : IEquatable<Activity>, IExposeValue<ActivityState>
+    public sealed class Activity : ValueObject, IExposeValue<ActivityState>
     {
         private static readonly int InitialStatus = 1;
 
@@ -129,12 +130,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         {
             return $"[TASK]:[Id:{Id}, description: {Description}: status: {Status}: Project: {ProjectId}]";
         }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id, Description, Status, ProjectId);
-        }
-
+        
         public class Patch
         {
             private Patch(Description description)
@@ -150,54 +146,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             }
         }
 
-        #region IEquatable implementation
-
-        public bool Equals(Activity other)
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return Description == other.Description
-                   && Id == other.Id && Status == other.Status;
+            yield return Id;
+            yield return Description;
+            yield return Status;
+            yield return ProjectId;
         }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((Activity) obj);
-        }
-
-        public static bool operator ==(Activity left, Activity right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Activity left, Activity right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
     }
 }

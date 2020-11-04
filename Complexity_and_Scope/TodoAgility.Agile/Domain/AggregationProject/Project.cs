@@ -26,7 +26,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationProject
 {
-    public sealed class Project : IEquatable<Project>, IExposeValue<ProjectState>
+    public sealed class Project : ValueObject, IExposeValue<ProjectState>
     {
         private Project(Description description, EntityId id, IReadOnlyList<EntityId> tasks)
         {
@@ -108,59 +108,15 @@ namespace TodoAgility.Agile.Domain.AggregationProject
             return $"[PROJECT]:[Id:{Id}, description: {Description}]";
         }
 
-        public override int GetHashCode()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            return HashCode.Combine(Id, Description);
-        }
+            yield return Id;
+            yield return Description;
 
-        #region IEquatable implementation
-
-        public bool Equals(Project other)
-        {
-            if (ReferenceEquals(null, other))
+            foreach (var activity in Activities)
             {
-                return false;
+                yield return activity;
             }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return Description == other.Description
-                   && Id == other.Id;
         }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((Project) obj);
-        }
-
-        public static bool operator ==(Project left, Project right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Project left, Project right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
     }
 }

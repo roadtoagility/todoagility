@@ -28,60 +28,50 @@ using System.Linq;
 
 namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
-    public abstract class ValueObject<TValueObject>
-        where TValueObject : ValueObject<TValueObject>, IEquatable<TValueObject>
+    public abstract class ValueObject
     {
-        protected abstract IEnumerable<object> GetValueComponents();
+        protected abstract IEnumerable<object> GetEqualityComponents();
 
-        public override string ToString()
+        public override bool Equals(object obj)
         {
-            return GetValueComponents().Select(prop => ":[{prop}]")
-                .Aggregate((current, next) => $"{current}:{next}").ToString();
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var valueObject = (ValueObject)obj;
+
+            return GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(GetValueComponents());
+            return HashCode.Combine(GetEqualityComponents());
         }
 
-        #region Equatable
-
-        public bool Equals(TValueObject other)
+        public static bool operator ==(ValueObject a, ValueObject b)
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-            
-            return GetValueComponents().SequenceEqual(other.GetValueComponents());
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
             {
                 return true;
             }
 
-            if (obj.GetType() != GetType())
+            if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
             {
                 return false;
             }
 
-            var vo = (ValueObject<TValueObject>) obj;
-            return Equals(vo);
+            return a.Equals(b);
         }
 
-        #endregion
+        public static bool operator !=(ValueObject a, ValueObject b)
+        {
+            return !(a == b);
+        }
     }
 }

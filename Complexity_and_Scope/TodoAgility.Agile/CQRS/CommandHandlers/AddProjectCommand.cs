@@ -23,13 +23,11 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
     public class AddProjectCommand
     {
-        public AddProjectCommand(string description, uint projectId)
+        public AddProjectCommand(string description)
         {
             Description = Description.From(description);
-            ProjectId = EntityId.From(projectId);
         }
 
         public Description Description { get; }
-        public EntityId ProjectId { get; }
     }
 }
