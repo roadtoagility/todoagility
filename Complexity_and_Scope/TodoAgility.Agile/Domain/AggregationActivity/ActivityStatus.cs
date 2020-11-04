@@ -23,7 +23,7 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class ActivityStatus : IEquatable<ActivityStatus>, IComparable<ActivityStatus>, IExposeValue<int>
+    public sealed class ActivityStatus : ValueObject, IExposeValue<int>
     {
         public enum Status
         {
@@ -54,70 +54,15 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             return new ActivityStatus((Status) status);
         }
 
-        public static ActivityStatus FromState(ActivityState state)
-        {
-            return From(state.Status);
-        }
-
-
         public override string ToString()
         {
             return $"{_status}";
         }
 
-        public override int GetHashCode()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            return HashCode.Combine(_status);
+            yield return _status;
         }
-
-        #region IEquatable
-
-        public bool Equals(ActivityStatus other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return _status == other._status;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((ActivityStatus) obj);
-        }
-
-        public static bool operator ==(ActivityStatus left, ActivityStatus right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(ActivityStatus left, ActivityStatus right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
 
         #region IComparable
 
@@ -134,43 +79,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             }
 
             return _status.CompareTo(other._status);
-        }
-
-        public int CompareTo(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return 1;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return 0;
-            }
-
-            return obj is ActivityStatus other
-                ? CompareTo(other)
-                : throw new ArgumentException($"Object must be of type {nameof(ActivityStatus)}");
-        }
-
-        public static bool operator <(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) < 0;
-        }
-
-        public static bool operator >(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) > 0;
-        }
-
-        public static bool operator <=(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) <= 0;
-        }
-
-        public static bool operator >=(ActivityStatus left, ActivityStatus right)
-        {
-            return Comparer<ActivityStatus>.Default.Compare(left, right) >= 0;
         }
 
         #endregion

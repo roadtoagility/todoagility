@@ -18,11 +18,10 @@
 
 using System;
 using System.Collections.Generic;
-using TodoAgility.Agile.Domain.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
-    public sealed class EntityId : IEquatable<EntityId>, IComparable<EntityId>, IExposeValue<uint>
+    public sealed class EntityId : ValueObject, IExposeValue<uint>
     {
         private readonly uint _id;
 
@@ -41,60 +40,20 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
             return new EntityId(id);
         }
 
-
+        public static EntityId GetNext()
+        {
+            return new EntityId((uint)DateTime.UnixEpoch.Millisecond);
+        }
         public override string ToString()
         {
             return $"{_id}";
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_id);
-        }
-
         #region IEquatable
 
-        public bool Equals(EntityId other)
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-            return _id == other._id;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((EntityId) obj);
-        }
-
-        public static bool operator ==(EntityId left, EntityId right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(EntityId left, EntityId right)
-        {
-            return !Equals(left, right);
+            yield return _id;
         }
 
         #endregion
@@ -114,43 +73,6 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
             }
 
             return _id.CompareTo(other._id);
-        }
-
-        public int CompareTo(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return 1;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return 0;
-            }
-
-            return obj is EntityId other
-                ? CompareTo(other)
-                : throw new ArgumentException($"Object must be of type {nameof(EntityId)}");
-        }
-
-        public static bool operator <(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) < 0;
-        }
-
-        public static bool operator >(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) > 0;
-        }
-
-        public static bool operator <=(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) <= 0;
-        }
-
-        public static bool operator >=(EntityId left, EntityId right)
-        {
-            return Comparer<EntityId>.Default.Compare(left, right) >= 0;
         }
 
         #endregion

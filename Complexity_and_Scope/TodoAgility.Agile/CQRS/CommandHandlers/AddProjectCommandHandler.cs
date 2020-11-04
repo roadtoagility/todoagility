@@ -38,7 +38,7 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 
         protected override ExecutionResult ExecuteCommand(AddProjectCommand command)
         {
-            var agg = ProjectAggregationRoot.CreateFrom(command.Description, command.ProjectId);
+            var agg = ProjectAggregationRoot.CreateFrom(command.Description, EntityId.GetNext());
 
             _dbSession.Repository.Add(agg.GetChange());
             _dbSession.SaveChanges();

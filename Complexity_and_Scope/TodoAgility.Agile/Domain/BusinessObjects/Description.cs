@@ -17,11 +17,12 @@
 //
 
 using System;
+using System.Collections.Generic;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class Description : IEquatable<Description>, IExposeValue<string>
+    public sealed class Description : ValueObject, IExposeValue<string>
     {
         private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
 
@@ -31,22 +32,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             _description = description;
         }
-
-        public bool Equals(Description other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            return string.Equals(_description, other._description);
-        }
-
+        
         string IExposeValue<string>.GetValue()
         {
             return _description;
@@ -72,45 +58,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
             return new Description(description);
         }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((Description) obj);
-        }
-
-        public static bool operator ==(Description left, Description right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Description left, Description right)
-        {
-            return !Equals(left, right);
-        }
-
+        
         public override string ToString()
         {
             return $"{_description}";
         }
 
-        public override int GetHashCode()
+        protected override IEnumerable<object> GetEqualityComponents()
         {
-            return HashCode.Combine(_description);
+            yield return _description;
         }
     }
 }
