@@ -120,12 +120,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
         public static bool operator ==(ActivityStatus left, ActivityStatus right)
         {
-            return Equals(left, right);
+            return (left == right);
         }
 
         public static bool operator !=(ActivityStatus left, ActivityStatus right)
         {
-            return !Equals(left, right);
+            return !(left == right);
         }
         #endregion
     }
