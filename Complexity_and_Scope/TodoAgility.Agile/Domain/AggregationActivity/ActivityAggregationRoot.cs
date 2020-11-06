@@ -21,6 +21,7 @@ using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.Aggregates;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
@@ -33,6 +34,14 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         private ActivityAggregationRoot(Activity currentActivity)
         :base(currentActivity)
         {
+            if (currentActivity.ValidationResult.IsValid)
+            {
+                Change(currentActivity);
+                Raise(ActivityAddedEvent.For(currentActivity));            }
+            else
+            {
+                AddViolations(currentActivity.ValidationResult.Violations);
+            }
         }
 
         /// <summary>
@@ -44,8 +53,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
             : this(Activity.From(descr, entityId, project.Id))
         {
-            Change(_entityRoot);
-            Raise(ActivityAddedEvent.For(_entityRoot));
         }
 
         /// <summary>
@@ -56,16 +63,32 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         {
             var change = Activity.CombineWithPatch(_entityRoot, patchTask);
 
-            Change(change);
-            Raise(ActivityUpdatedEvent.For(change));
+            if (change.ValidationResult.IsValid)
+            {
+                Change(change);
+                Raise(ActivityUpdatedEvent.For(change));                
+            }
+            else
+            {
+                AddViolations(change.ValidationResult.Violations);
+            }
         }
 
         public void ChangeTaskStatus(ActivityStatus newStatus)
         {
             var change = Activity.CombineWithStatus(_entityRoot, newStatus);
-
-            Change(change);
-            Raise(ActivityStatusChangedEvent.For(change));
+            
+            if (change.ValidationResult.IsValid)
+            {
+                Change(change);
+                Raise(ActivityStatusChangedEvent.For(change));                
+            }
+            else
+            {
+                AddViolations(change.ValidationResult.Violations);
+            }
+            
+            
         }
 
         #region Aggregation contruction

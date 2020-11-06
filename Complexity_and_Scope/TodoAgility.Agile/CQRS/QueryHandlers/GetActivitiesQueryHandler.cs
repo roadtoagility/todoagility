@@ -17,7 +17,7 @@
 //
 
 using TodoAgility.Agile.CQRS.CommandHandlers;
-using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework;

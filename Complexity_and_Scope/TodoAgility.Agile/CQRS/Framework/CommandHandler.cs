@@ -18,15 +18,22 @@
 
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.CQRS.Framework
 {
-    public abstract class QueryHandler<TFilter, TResult> : ICommandHandler<TFilter, TResult>
+    public abstract class CommandHandler<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     {
-        public TResult Execute(TFilter filter)
+        protected IEventDispatcher Publisher { get; }
+        
+        protected CommandHandler(IEventDispatcher publisher)
         {
-            return ExecuteQuery(filter);
+            Publisher = publisher;
         }
 
-        protected abstract TResult ExecuteQuery(TFilter filter);
+        public TResult Execute(TCommand command)
+        {
+            return ExecuteCommand(command);
+        }
+
+        protected abstract TResult ExecuteCommand(TCommand command);
     }
 }

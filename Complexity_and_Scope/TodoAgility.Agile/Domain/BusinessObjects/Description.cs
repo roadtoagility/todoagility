@@ -19,18 +19,20 @@
 using System;
 using System.Collections.Generic;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class Description : ValueObject, IExposeValue<string>
+    public sealed class Description : ValueObject, IValidationResult, IExposeValue<string>
     {
         private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
 
         private readonly string _description;
 
-        private Description(string description)
+        private Description(string description, ValidationResult validationResult)
         {
             _description = description;
+            ValidationResult = validationResult;
         }
         
         string IExposeValue<string>.GetValue()
@@ -40,23 +42,15 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
 
         public static Description From(string description)
         {
-            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
-            {
-                throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
-                    nameof(description));
-            }
+            var validations = new ValidateCondition();
+            
+            validations.CheckCondition(string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description),
+                "description","A descrição informada é nulo, vazio ou composto por espaços em branco.");
 
+            validations.CheckCondition(!String.IsNullOrEmpty(description) && (description.Length > DESCRIPTION_LENGTH_LIMIT),
+                "description",$"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.");
 
-
-            if (description.Length > DESCRIPTION_LENGTH_LIMIT)
-            {
-                throw new ArgumentException(
-                    $"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
-                    nameof(description));
-            }
-
-
-            return new Description(description);
+            return new Description(description, validations.GetValidationResult());
         }
         
         public override string ToString()
@@ -68,5 +62,7 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
         {
             yield return _description;
         }
+
+        public ValidationResult ValidationResult { get; }
     }
 }

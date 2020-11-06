@@ -16,10 +16,12 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using System.Collections.Immutable;
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
+using TodoAgility.Agile.Domain.Framework.Validation;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
@@ -44,11 +46,18 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
             var agg = ActivityAggregationRoot.CreateFrom(descr, entityId, project);
             var task = agg.GetChange();
 
-            _taskSession.Repository.Add(task);
-            _taskSession.SaveChanges();
-            Publisher.Publish(agg.GetEvents());
+            if (agg.GetValidationResult().IsValid)
+            {
+                _taskSession.Repository.Add(task);
+                _taskSession.SaveChanges();
+                Publisher.Publish(agg.GetEvents());
+            }
+            else
+            {
+                return new ExecutionResult(false, agg.GetValidationResult().Violations);
+            }
             
-            return new ExecutionResult(true);
+            return new ExecutionResult(true, ImmutableList<Violation>.Empty);
         }
     }
 }

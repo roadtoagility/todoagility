@@ -17,10 +17,12 @@
 //
 
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+using System.Collections.Generic;
+
+namespace TodoAgility.Agile.Domain.Framework.Validation
 {
-    public interface IQueryHandler<in TFilter, out TResult>
+    public interface IValidationResult
     {
-        TResult Execute(TFilter filter);
+        ValidationResult ValidationResult { get; }
     }
 }

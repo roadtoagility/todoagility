@@ -16,15 +16,35 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+using System;
+using System.Collections.Generic;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+
+namespace TodoAgility.Agile.Domain.Framework.Validation
 {
-    public class ExecutionResult
+    public sealed class Scope :IExposeValue<string>
     {
-        public ExecutionResult(bool isSucceed)
+        private string _name { get; }
+
+        private Scope(string scopeName)
         {
-            IsSucceed = isSucceed;
+            _name = scopeName;
         }
 
-        public bool IsSucceed { get; }
+        public static Scope For(string scopeName)
+        {
+            
+            return new Scope(scopeName);
+        }
+
+        string IExposeValue<string>.GetValue()
+        {
+            return _name;
+        }
+
+        public override string ToString()
+        {
+            return $"{_name}";
+        }
     }
 }

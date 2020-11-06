@@ -19,10 +19,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
-    public abstract class AggregationRoot<TChange> : IChangeSet<TChange>
+    public abstract class AggregationRoot<TChange> : ValidateCondition, IChangeSet<TChange>
     {
         protected TChange _entityRoot;
         private readonly IList<IDomainEvent> _domainEvents;

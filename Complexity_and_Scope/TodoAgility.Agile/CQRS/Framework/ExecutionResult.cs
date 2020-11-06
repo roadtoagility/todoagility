@@ -17,16 +17,27 @@
 //
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.CQRS.Framework
 {
-    public class QueryResult<TResult>: ExecutionResult
+    public class ExecutionResult
     {
-        public QueryResult(bool isSucceed, IEnumerable<TResult> items)
-        :base(isSucceed)
+
+        public ExecutionResult(bool isSucceed)
+        :this(isSucceed, ImmutableArray<Violation>.Empty)
         {
-            Items = items;
         }
-        public IEnumerable<TResult> Items { get;}
+        
+        public ExecutionResult(bool isSucceed, IReadOnlyList<Violation> violations)
+        {
+            IsSucceed = isSucceed;
+            Violations = violations;
+        }
+
+        public bool IsSucceed { get; }
+
+        public IReadOnlyList<Violation> Violations { get; }
     }
 }

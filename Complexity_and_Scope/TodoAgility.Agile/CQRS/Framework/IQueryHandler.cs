@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,22 +16,11 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using System.Collections.Generic;
-using TodoAgility.Agile.CQRS.Framework;
-using TodoAgility.Agile.Persistence.Projections;
 
-namespace TodoAgility.Agile.CQRS.QueryHandlers
+namespace TodoAgility.Agile.CQRS.Framework
 {
-    public class GetActivitiesResponse:QueryResult<ActivityProjection>
+    public interface IQueryHandler<in TFilter, out TResult>
     {
-        private GetActivitiesResponse(bool isSucceed, IEnumerable<ActivityProjection> items)
-        :base(isSucceed, items)
-        {
-        }
-
-        public static GetActivitiesResponse From(bool isSucceed, IEnumerable<ActivityProjection> items)
-        {
-            return new GetActivitiesResponse(isSucceed,items);
-        }
+        TResult Execute(TFilter filter);
     }
 }

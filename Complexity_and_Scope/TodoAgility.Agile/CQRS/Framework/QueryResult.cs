@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,11 +16,17 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System.Collections.Generic;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.CQRS.Framework
 {
-    public interface ICommandHandler<in TCommand, out TResult>
+    public class QueryResult<TResult>: ExecutionResult
     {
-        TResult Execute(TCommand command);
+        public QueryResult(bool isSucceed, IEnumerable<TResult> items)
+        :base(isSucceed)
+        {
+            Items = items;
+        }
+        public IEnumerable<TResult> Items { get;}
     }
 }
