@@ -26,14 +26,14 @@ using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
-    public class ProjectFinishedCounterQueryHandler : QueryHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>, IRequestHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>
+    public class ProjectFinishedCounterQueryHandler : IRequestHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>
     {
-        public Task<ProjectFinishedCounterResponse> Handle(ProjectFinishedCounterFilter request, CancellationToken cancellationToken)
+        public ProjectFinishedCounterQueryHandler()
         {
-            return Task.FromResult(ExecuteQuery(request));
+
         }
 
-        protected override ProjectFinishedCounterResponse ExecuteQuery(ProjectFinishedCounterFilter filter)
+        public Task<ProjectFinishedCounterResponse> Handle(ProjectFinishedCounterFilter request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

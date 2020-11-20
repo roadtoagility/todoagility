@@ -22,7 +22,7 @@ using TodoAgility.Agile.Persistence.Projections;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers
 {
-    public class GetActivitiesResponse:QueryResult<ActivityProjection>
+    public class GetActivitiesResponse : QueryResult<ActivityProjection>
     {
         private GetActivitiesResponse(bool isSucceed, IEnumerable<ActivityProjection> items)
         :base(isSucceed, items)

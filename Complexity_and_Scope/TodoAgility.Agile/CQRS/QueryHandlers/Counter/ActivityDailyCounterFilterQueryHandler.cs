@@ -26,17 +26,17 @@ using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
-    public sealed class ActivityDailyCounterFilterQueryHandler : QueryHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>
-        , IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>
+    public sealed class ActivityDailyCounterFilterQueryHandler : IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>
     {
-        public Task<ActivityDailyCounterFilterResponse> Handle(ActivityDailyCounterFilter request, CancellationToken cancellationToken)
+
+        public ActivityDailyCounterFilterQueryHandler()
         {
-            return Task.FromResult(ExecuteQuery(request));
+
         }
 
-        protected override ActivityDailyCounterFilterResponse ExecuteQuery(ActivityDailyCounterFilter filter)
+        public Task<ActivityDailyCounterFilterResponse> Handle(ActivityDailyCounterFilter request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(ActivityDailyCounterFilterResponse.From(true, null));
         }
     }
 }

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as Chartist from 'chartist';
+import {DashboardService} from '../dashboard/dashboard.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,7 +11,103 @@ import * as Chartist from 'chartist';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  favoritedProjects: any[] = [];
+  lastProjects: any[] = [];
+  projectActivities: any[] = [];
+  activitiesByDayCounter: any[] = [];
+  finishedProjectsCounter: any[] = [];
+  finishedActivitiesCounter: any[] = [];
+
+  private _unsubscribeAll: Subject<any>;
+
+  constructor(private _dashboardService: DashboardService) {
+
+    this._unsubscribeAll = new Subject();
+
+    this.lastProjects.push({
+      projectId: 1,
+      name: "FaturamentoWeb",
+      budget: 36.738,
+      client: "Potencial"
+    },
+    {
+      projectId: 2,
+      name: "SCA",
+      budget: 23.789,
+      client: "Localiza"
+    },{
+      projectId: 3,
+      name: "API Rodovias",
+      budget: 6.142,
+      client: "Fiat"
+    },
+    {
+      projectId: 4,
+      name: "CargasWeb",
+      budget: 38.200,
+      client: "ANTT"
+    });
+
+    this.favoritedProjects.push({
+      name: "SCA",
+      icon: "bug_report",
+      id: 1
+    },
+    {
+      name: "FaturamentoWeb",
+      icon: "code",
+      id: 2
+    },
+    {
+      name: "API Rodovias",
+      icon: "cloud",
+      id: 3
+    });
+
+    this.projectActivities.push({
+      projectId: 1,
+      activities: [
+      {
+        id: 1,
+        title: "Desenho da interface de inclusão de usuários"
+      },
+      {
+        id: 1,
+        title: "Criação do PDM de modelo do banco"
+      },
+      {
+        id: 1,
+        title: "Integração com Active Directory"
+      },
+      {
+        id: 1,
+        title: "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"
+      }]
+    });
+    
+    this.projectActivities.push({
+      projectId: 2,
+      activities: [
+      {
+        id: 1,
+        title: "Desenho da interface de inclusão de usuários"
+      },
+      {
+        id: 1,
+        title: "Criação do PDM de modelo do banco"
+      }]
+    });
+
+    this.projectActivities.push({
+      projectId: 3,
+      activities: [
+      {
+        id: 1,
+        title: "Desenho da interface de inclusão de usuários"
+      }]
+    });  
+  }
+
   startAnimationForLineChart(chart){
       let seq: any, delays: any, durations: any;
       seq = 0;
@@ -66,6 +165,20 @@ export class DashboardComponent implements OnInit {
       seq2 = 0;
   };
   ngOnInit() {
+
+    this._dashboardService.getActivityByDayCounter();
+    this._dashboardService.getLatestProjects();
+    this._dashboardService.getFavoritedProjects();
+    this._dashboardService.getFinishedProjectsCounter();
+    this._dashboardService.getFinishedActivitiesCounter();
+
+
+    this._dashboardService.onProjectActivitiesChanged
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(entidades => {
+                console.log(entidades);
+            });
+
       /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
 
       const dataDailySalesChart: any = {
@@ -145,6 +258,15 @@ export class DashboardComponent implements OnInit {
 
       //start animation for the Emails Subscription Chart
       this.startAnimationForBarChart(websiteViewsChart);
+  }
+
+  /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+      // Unsubscribe from all subscriptions
+      this._unsubscribeAll.next();
+      this._unsubscribeAll.complete();
   }
 
 }

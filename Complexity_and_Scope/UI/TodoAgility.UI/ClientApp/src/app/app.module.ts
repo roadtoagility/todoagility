@@ -23,6 +23,8 @@ import {
 } from '@agm/core';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 
+import {DashboardService} from './dashboard/dashboard.service';
+
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -41,7 +43,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
     AdminLayoutComponent,
 
   ],
-  providers: [],
+  providers: [DashboardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

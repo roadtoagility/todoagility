@@ -23,19 +23,28 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Projections.Project;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Project
 {
-    public sealed class LastProjectsQueryHandler : QueryHandler<LastProjectsFilter, LastProjectsResponse>, IRequestHandler<LastProjectsFilter, LastProjectsResponse>
+    public sealed class LastProjectsQueryHandler : IRequestHandler<LastProjectsFilter, LastProjectsResponse>
     {
-        public Task<LastProjectsResponse> Handle(LastProjectsFilter request, CancellationToken cancellationToken)
+        public LastProjectsQueryHandler()
         {
-            return Task.FromResult(ExecuteQuery(request));
+
         }
 
-        protected override LastProjectsResponse ExecuteQuery(LastProjectsFilter filter)
+        public Task<LastProjectsResponse> Handle(LastProjectsFilter request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var projects = new List<LastProjectsProjection>()
+            {
+                new LastProjectsProjection(){ Id = 1, Name = "FaturamentoWeb", Budget = 36.738m, Client = "Potencial" },
+                new LastProjectsProjection(){ Id = 2, Name = "SCA", Budget = 23.789m, Client = "Localiza" },
+                new LastProjectsProjection(){ Id = 3, Name = "API Rodovias", Budget = 6.142m, Client = "Fiat" },
+                new LastProjectsProjection(){ Id = 4, Name = "CargasWeb", Budget = 38.200m, Client = "ANTT" }
+            };
+
+            return Task.FromResult(LastProjectsResponse.From(true, projects));
         }
     }
 }

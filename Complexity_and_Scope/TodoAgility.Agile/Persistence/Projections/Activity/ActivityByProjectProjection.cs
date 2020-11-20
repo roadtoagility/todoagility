@@ -25,8 +25,9 @@ namespace TodoAgility.Agile.Persistence.Projections.Activity
     public class ActivityByProjectProjection
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Budget { get; set; }
-        public string Cliente { get; set; }
+        public string Title { get; set; }
+        public int ProjectId { get; set; }
     }
+
+
 }

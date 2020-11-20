@@ -7,10 +7,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TodoAgility.Agile.CQRS.QueryHandlers.Activity;
+using TodoAgility.Agile.CQRS.QueryHandlers.Counter;
+using TodoAgility.Agile.CQRS.QueryHandlers.Project;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.API
 {
@@ -29,6 +35,17 @@ namespace TodoAgility.API
             services.AddControllers();
             services.AddMediatR(typeof(Startup));
             services.AddSwaggerGen();
+
+            services.AddDbContext<DbContext>();
+
+            services.AddScoped<IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>, ActivityByProjectQueryHandler>();
+            services.AddScoped<IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>, ActivityDailyCounterFilterQueryHandler>();
+            services.AddScoped<IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>, ActivityFinishedCounterQueryHandler>();
+            services.AddScoped<IRequestHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>, ProjectFinishedCounterQueryHandler>();
+            services.AddScoped<IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>, FeaturedProjectsQueryHandler>();
+            services.AddScoped<IRequestHandler<LastProjectsFilter, LastProjectsResponse>, LastProjectsQueryHandler>();
+            services.AddScoped<IActivityRepository, ActivityRepository>();
+            services.AddScoped<IDbSession<IActivityRepository>, DbSession<IActivityRepository>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

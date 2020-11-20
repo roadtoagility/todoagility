@@ -23,19 +23,30 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Projections.Activity;
+using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Activity
 {
-    public sealed class ActivityByProjectQueryHandler : QueryHandler<ActivityByProjectFilter, ActivityByProjectResponse>, IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>
+    public sealed class ActivityByProjectQueryHandler : IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>
     {
-        public Task<ActivityByProjectResponse> Handle(ActivityByProjectFilter request, CancellationToken cancellationToken)
+        public ActivityByProjectQueryHandler(IDbSession<IActivityRepository> taskSession)
         {
-            return Task.FromResult(ExecuteQuery(request));
+
         }
 
-        protected override ActivityByProjectResponse ExecuteQuery(ActivityByProjectFilter filter)
+        public Task<ActivityByProjectResponse> Handle(ActivityByProjectFilter request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var tasks = new List<ActivityByProjectProjection>()
+            {
+                new ActivityByProjectProjection(){ Id = 1, ProjectId = 1, Title = "Desenho da interface de inclusão de usuários"},
+                new ActivityByProjectProjection(){ Id = 2, ProjectId = 1, Title = "Criação do PDM de modelo do banco"},
+                new ActivityByProjectProjection(){ Id = 3, ProjectId = 1, Title = "Integração com Active Directory"},
+                new ActivityByProjectProjection(){ Id = 4, ProjectId = 1, Title = "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"}
+            };
+
+            return Task.FromResult(ActivityByProjectResponse.From(true, tasks));
         }
     }
 }

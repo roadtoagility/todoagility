@@ -23,19 +23,28 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Projections.Project;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Project
 {
-    public class FeaturedProjectsQueryHandler : QueryHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>, IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>
+    public class FeaturedProjectsQueryHandler : IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>
     {
-        public async Task<FeaturedProjectsResponse> Handle(FeaturedProjectsFilter request, CancellationToken cancellationToken)
+
+        public FeaturedProjectsQueryHandler()
         {
-            return await Task.FromResult(ExecuteQuery(request));
+
         }
 
-        protected override FeaturedProjectsResponse ExecuteQuery(FeaturedProjectsFilter filter)
+        public Task<FeaturedProjectsResponse> Handle(FeaturedProjectsFilter request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var featuredProjects = new List<FeaturedProjectsProjection>()
+            {
+                new FeaturedProjectsProjection(){ Id = 1, Name = "SCA", Icon = "bug_report"},
+                new FeaturedProjectsProjection(){ Id = 2, Name = "FaturamentoWeb", Icon = "code"},
+                new FeaturedProjectsProjection(){ Id = 3, Name = "API Rodovias", Icon = "cloud"}
+            };
+
+            return Task.FromResult(FeaturedProjectsResponse.From(true, featuredProjects));
         }
     }
 }

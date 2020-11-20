@@ -45,7 +45,7 @@ namespace TodoAgility.Tests
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_add_test.db;");
             var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
-            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
+            var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
             taskDbSession.Repository.AddProject(Project.From(EntityId.From(projectId), Description.From(description)));
             taskDbSession.SaveChanges();
 
