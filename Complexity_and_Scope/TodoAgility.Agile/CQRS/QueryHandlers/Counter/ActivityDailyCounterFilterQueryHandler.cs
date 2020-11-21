@@ -36,7 +36,10 @@ namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 
         public Task<ActivityDailyCounterFilterResponse> Handle(ActivityDailyCounterFilter request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(ActivityDailyCounterFilterResponse.From(true, null));
+            var labels = new string[] { "M", "T", "W", "T", "F", "S", "S" };
+            var series = new int[][] { new int[] { 12, 17, 7, 17, 23, 18, 38 } };
+
+            return Task.FromResult(ActivityDailyCounterFilterResponse.From(labels, series));
         }
     }
 }

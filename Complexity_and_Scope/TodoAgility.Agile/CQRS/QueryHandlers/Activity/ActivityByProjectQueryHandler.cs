@@ -31,7 +31,7 @@ namespace TodoAgility.Agile.CQRS.QueryHandlers.Activity
 {
     public sealed class ActivityByProjectQueryHandler : IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>
     {
-        public ActivityByProjectQueryHandler(IDbSession<IActivityRepository> taskSession)
+        public ActivityByProjectQueryHandler()
         {
 
         }

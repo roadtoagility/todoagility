@@ -26,16 +26,20 @@ using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
-    public class ActivityFinishedCounterQueryHandler : IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>
+    public class ActivityFinishedCounterQueryHandler : IRequestHandler<ActivityFinishedCounterFilter, ActivityFinishedCounterResponse>
     {
         public ActivityFinishedCounterQueryHandler()
         {
 
         }
 
-        public Task<ActivityDailyCounterFilterResponse> Handle(ActivityDailyCounterFilter request, CancellationToken cancellationToken)
+
+        public Task<ActivityFinishedCounterResponse> Handle(ActivityFinishedCounterFilter request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var labels = new string[] { "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D" };
+            var series = new int[][] { new int[] { 542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895 } };
+
+            return Task.FromResult(ActivityFinishedCounterResponse.From(labels, series));
         }
     }
 }

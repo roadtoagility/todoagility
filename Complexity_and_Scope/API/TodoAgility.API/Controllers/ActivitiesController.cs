@@ -22,11 +22,11 @@ namespace TodoAgility.API.Controllers
         }
 
         [HttpGet("ActivitiesByProject")]
-        public async Task<ActionResult<string>> ActivitiesByProject([FromQuery] ActivityByProjectDTO dto)
+        public async Task<ActionResult<ActivityByProjectResponse>> ActivitiesByProject([FromQuery] ActivityByProjectDTO dto)
         {
             var query = ActivityByProjectFilter.For(dto.ProjectId);
             var result = await _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Indicador", result));
+            return result;
         }
     }
 }

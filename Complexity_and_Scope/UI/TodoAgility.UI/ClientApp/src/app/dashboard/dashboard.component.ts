@@ -11,101 +11,18 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class DashboardComponent implements OnInit {
 
-  favoritedProjects: any[] = [];
-  lastProjects: any[] = [];
-  projectActivities: any[] = [];
-  activitiesByDayCounter: any[] = [];
-  finishedProjectsCounter: any[] = [];
-  finishedActivitiesCounter: any[] = [];
+  favoritedProjects: any = [];
+  lastProjects: any = [];
+  projectActivities: any = [];
+  activitiesByDayCounter: any = [];
+  finishedProjectsCounter: any = [];
+  finishedActivitiesCounter: any = [];
 
   private _unsubscribeAll: Subject<any>;
 
   constructor(private _dashboardService: DashboardService) {
 
     this._unsubscribeAll = new Subject();
-
-    this.lastProjects.push({
-      projectId: 1,
-      name: "FaturamentoWeb",
-      budget: 36.738,
-      client: "Potencial"
-    },
-    {
-      projectId: 2,
-      name: "SCA",
-      budget: 23.789,
-      client: "Localiza"
-    },{
-      projectId: 3,
-      name: "API Rodovias",
-      budget: 6.142,
-      client: "Fiat"
-    },
-    {
-      projectId: 4,
-      name: "CargasWeb",
-      budget: 38.200,
-      client: "ANTT"
-    });
-
-    this.favoritedProjects.push({
-      name: "SCA",
-      icon: "bug_report",
-      id: 1
-    },
-    {
-      name: "FaturamentoWeb",
-      icon: "code",
-      id: 2
-    },
-    {
-      name: "API Rodovias",
-      icon: "cloud",
-      id: 3
-    });
-
-    this.projectActivities.push({
-      projectId: 1,
-      activities: [
-      {
-        id: 1,
-        title: "Desenho da interface de inclusão de usuários"
-      },
-      {
-        id: 1,
-        title: "Criação do PDM de modelo do banco"
-      },
-      {
-        id: 1,
-        title: "Integração com Active Directory"
-      },
-      {
-        id: 1,
-        title: "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"
-      }]
-    });
-    
-    this.projectActivities.push({
-      projectId: 2,
-      activities: [
-      {
-        id: 1,
-        title: "Desenho da interface de inclusão de usuários"
-      },
-      {
-        id: 1,
-        title: "Criação do PDM de modelo do banco"
-      }]
-    });
-
-    this.projectActivities.push({
-      projectId: 3,
-      activities: [
-      {
-        id: 1,
-        title: "Desenho da interface de inclusão de usuários"
-      }]
-    });  
   }
 
   startAnimationForLineChart(chart){
@@ -164,100 +81,131 @@ export class DashboardComponent implements OnInit {
 
       seq2 = 0;
   };
+
+  getActivitiesByProject(projectId){
+    this._dashboardService.loadActivitiesByProject(projectId);
+  }
+
   ngOnInit() {
 
     this._dashboardService.getActivityByDayCounter();
     this._dashboardService.getLatestProjects();
-    this._dashboardService.getFavoritedProjects();
+    this._dashboardService.getFeaturedProjects();
     this._dashboardService.getFinishedProjectsCounter();
     this._dashboardService.getFinishedActivitiesCounter();
 
 
-    this._dashboardService.onProjectActivitiesChanged
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(entidades => {
-                console.log(entidades);
-            });
+    this._dashboardService.onFeaturedProjectsChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        this.favoritedProjects = response;
 
-      /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
-
-      const dataDailySalesChart: any = {
-          labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-          series: [
-              [12, 17, 7, 17, 23, 18, 38]
-          ]
-      };
-
-     const optionsDailySalesChart: any = {
-          lineSmooth: Chartist.Interpolation.cardinal({
-              tension: 0
-          }),
-          low: 0,
-          high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-          chartPadding: { top: 0, right: 0, bottom: 0, left: 0},
+        if(this.favoritedProjects.length > 0){
+          this.getActivitiesByProject(this.favoritedProjects[0].id);
+        }
       }
+    });
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+    this._dashboardService.onLatestProjectsChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        this.lastProjects = response;
+      }
+    });
 
-      this.startAnimationForLineChart(dailySalesChart);
+    this._dashboardService.onProjectActivitiesChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        this.projectActivities = response;
+      }
+    });
 
+    this._dashboardService.onActivityDailyCounterChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        const activityDailyCounter: any = {
+          labels: response.labels,
+          series: response.series
+        };
+  
+        const optionsActivityDailyCounter: any = {
+            lineSmooth: Chartist.Interpolation.cardinal({
+                tension: 0
+            }),
+            low: 0,
+            high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+            chartPadding: { top: 0, right: 0, bottom: 0, left: 0},
+        }
+  
+        var activityDailyCounterChart = new Chartist.Line('#activityDailyCounter', activityDailyCounter, optionsActivityDailyCounter);
+  
+        this.startAnimationForLineChart(activityDailyCounterChart);
+      }
+    });
 
-      /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
+    this._dashboardService.onProjectFinishedCounterChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        var dataProjectFinishedCounterChart = {
+          labels: response.labels,
+          series: response.series
+        };
+  
+        var optionsProjectFinishedCounterChart = {
+            axisX: {
+                showGrid: false
+            },
+            low: 0,
+            high: 1000,
+            chartPadding: { top: 0, right: 5, bottom: 0, left: 0}
+        };
+        var responsiveOptions: any[] = [
+          ['screen and (max-width: 640px)', {
+            seriesBarDistance: 5,
+            axisX: {
+              labelInterpolationFnc: function (value) {
+                return value[0];
+              }
+            }
+          }]
+        ];
+        var projectFinishedCounter = new Chartist.Bar('#projectFinishedCounter', dataProjectFinishedCounterChart, optionsProjectFinishedCounterChart, responsiveOptions);
+  
+        //start animation for the Emails Subscription Chart
+        this.startAnimationForBarChart(projectFinishedCounter);
+      }
+    });
 
-      const dataCompletedTasksChart: any = {
-          labels: ['12p', '3p', '6p', '9p', '12p', '3a', '6a', '9a'],
-          series: [
-              [230, 750, 450, 300, 280, 240, 200, 190]
-          ]
-      };
-
-     const optionsCompletedTasksChart: any = {
+    this._dashboardService.onActivityFinishedCounterChanged
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe(response => {
+      if(Object.keys(response).length > 0){
+        const dataCompletedTasksChart: any = {
+          labels: response.labels,
+          series: response.series
+        };
+  
+        const optionsCompletedTasksChart: any = {
           lineSmooth: Chartist.Interpolation.cardinal({
               tension: 0
           }),
           low: 0,
           high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
           chartPadding: { top: 0, right: 0, bottom: 0, left: 0}
+       }
+  
+        var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
+  
+        // start animation for the Completed Tasks Chart - Line Chart
+        this.startAnimationForLineChart(completedTasksChart);
       }
-
-      var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
-
-      // start animation for the Completed Tasks Chart - Line Chart
-      this.startAnimationForLineChart(completedTasksChart);
-
-
-
-      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
-
-      var datawebsiteViewsChart = {
-        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-        series: [
-          [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
-        ]
-      };
-      var optionswebsiteViewsChart = {
-          axisX: {
-              showGrid: false
-          },
-          low: 0,
-          high: 1000,
-          chartPadding: { top: 0, right: 5, bottom: 0, left: 0}
-      };
-      var responsiveOptions: any[] = [
-        ['screen and (max-width: 640px)', {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function (value) {
-              return value[0];
-            }
-          }
-        }]
-      ];
-      var websiteViewsChart = new Chartist.Bar('#websiteViewsChart', datawebsiteViewsChart, optionswebsiteViewsChart, responsiveOptions);
-
-      //start animation for the Emails Subscription Chart
-      this.startAnimationForBarChart(websiteViewsChart);
+      
+    });
   }
 
   /**

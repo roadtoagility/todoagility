@@ -25,16 +25,14 @@ namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
     public class ActivityDailyCounterFilter : IRequest<ActivityDailyCounterFilterResponse>
     {
-        private ActivityDailyCounterFilter(DateTime dataFiltro)
+        private ActivityDailyCounterFilter()
         {
-            DataFiltro = dataFiltro;
         }
 
-        public DateTime DataFiltro { get; }
 
-        public static ActivityDailyCounterFilter For(DateTime dataFiltro)
+        public static ActivityDailyCounterFilter For()
         {
-            return new ActivityDailyCounterFilter(dataFiltro);
+            return new ActivityDailyCounterFilter();
         }
     }
 }

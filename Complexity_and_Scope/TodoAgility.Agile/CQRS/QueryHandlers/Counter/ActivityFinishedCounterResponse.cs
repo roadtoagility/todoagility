@@ -24,17 +24,20 @@ using TodoAgility.Agile.Persistence.Projections.Counter;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
-    public class ActivityFinishedCounterResponse : QueryResult<ActivityFinishedCounterProjection>
+    public class ActivityFinishedCounterResponse
     {
-        private ActivityFinishedCounterResponse(bool isSucceed, IEnumerable<ActivityFinishedCounterProjection> items)
-            : base(isSucceed, items)
-        {
+        public string[] Labels { get; private set; }
+        public int[][] Series { get; private set; }
 
+        private ActivityFinishedCounterResponse(string[] labels, int[][] series)
+        {
+            Labels = labels;
+            Series = series;
         }
 
-        public static ActivityFinishedCounterResponse From(bool isSucceed, IEnumerable<ActivityFinishedCounterProjection> items)
+        public static ActivityFinishedCounterResponse From(string[] labels, int[][] series)
         {
-            return new ActivityFinishedCounterResponse(isSucceed, items);
+            return new ActivityFinishedCounterResponse(labels, series);
         }
     }
 }

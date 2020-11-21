@@ -19,12 +19,35 @@
 
 using System;
 using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Persistence.Framework
 {
     public class DbSession<TRepository> : IDbSession<TRepository>, IDisposable
     {
         public DbSession(DbContext context, TRepository repository)
+        {
+            Context = context;
+            Repository = repository;
+        }
+
+        private DbContext Context { get; }
+        public TRepository Repository { get; }
+
+        public void SaveChanges()
+        {
+            Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context?.Dispose();
+        }
+    }
+
+    public class ActivityDbSession<TRepository> : IDbSession<TRepository>, IDisposable
+    {
+        public ActivityDbSession(ActivityDbContext context, TRepository repository)
         {
             Context = context;
             Repository = repository;

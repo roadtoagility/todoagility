@@ -16,6 +16,7 @@ using TodoAgility.Agile.CQRS.QueryHandlers.Activity;
 using TodoAgility.Agile.CQRS.QueryHandlers.Counter;
 using TodoAgility.Agile.CQRS.QueryHandlers.Project;
 using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.API
@@ -36,22 +37,34 @@ namespace TodoAgility.API
             services.AddMediatR(typeof(Startup));
             services.AddSwaggerGen();
 
-            services.AddDbContext<DbContext>();
+            services.AddDbContext<ActivityDbContext>();
 
             services.AddScoped<IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>, ActivityByProjectQueryHandler>();
             services.AddScoped<IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>, ActivityDailyCounterFilterQueryHandler>();
-            services.AddScoped<IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>, ActivityFinishedCounterQueryHandler>();
+            services.AddScoped<IRequestHandler<ActivityFinishedCounterFilter, ActivityFinishedCounterResponse>, ActivityFinishedCounterQueryHandler>();
             services.AddScoped<IRequestHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>, ProjectFinishedCounterQueryHandler>();
             services.AddScoped<IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>, FeaturedProjectsQueryHandler>();
             services.AddScoped<IRequestHandler<LastProjectsFilter, LastProjectsResponse>, LastProjectsQueryHandler>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
-            services.AddScoped<IDbSession<IActivityRepository>, DbSession<IActivityRepository>>();
+            services.AddScoped<IDbSession<IActivityRepository>, ActivityDbSession<IActivityRepository>>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("default", policy =>
+                {
+                    policy
+                          .AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSwagger();
+            app.UseCors("default");
 
             if (env.IsDevelopment())
             {

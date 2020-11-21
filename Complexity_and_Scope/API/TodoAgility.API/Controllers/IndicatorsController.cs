@@ -23,27 +23,27 @@ namespace TodoAgility.API.Controllers
 
 
         [HttpGet("ActivityDailyCounter")]
-        public async Task<ActionResult<string>> ActivityDailyCounter(DateTime filtro)
+        public async Task<ActionResult<ActivityDailyCounterFilterResponse>> ActivityDailyCounter()
         {
-            var query = ActivityDailyCounterFilter.For(filtro);
-            var result = _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Indicador", result));
+            var query = ActivityDailyCounterFilter.For();
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         [HttpGet("ProjectFinishedCounter")]
-        public async Task<ActionResult<int>> ProjectFinishedCounter()
+        public async Task<ActionResult<ProjectFinishedCounterResponse>> ProjectFinishedCounter()
         {
             var query = ProjectFinishedCounterFilter.For();
-            var result = _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Indicador", result));
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         [HttpGet("ActivityFinishedCounter")]
-        public async Task<ActionResult<string>> ActivityFinishedCounter()
+        public async Task<ActionResult<ActivityFinishedCounterResponse>> ActivityFinishedCounter()
         {
             var query = ActivityFinishedCounterFilter.For();
-            var result = _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Indicador", result));
+            var result = await _mediator.Send(query);
+            return result;
         }
     }
 }

@@ -21,19 +21,19 @@ namespace TodoAgility.API.Controllers
         }
 
         [HttpGet("FeaturedProjects")]
-        public async Task<ActionResult<string>> FeaturedProjects()
+        public async Task<ActionResult<FeaturedProjectsResponse>> FeaturedProjects()
         {
             var query = FeaturedProjectsFilter.For();
             var result = await _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Projects", result));
+            return result;
         }
 
         [HttpGet("LastProjects")]
-        public async Task<ActionResult<string>> LastProjects()
+        public async Task<ActionResult<LastProjectsResponse>> LastProjects()
         {
             var query = LastProjectsFilter.For();
             var result = await _mediator.Send(query);
-            return await Task.FromResult(CreatedAtAction("Projects", result));
+            return result;
         }
     }
 }

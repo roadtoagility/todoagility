@@ -16,13 +16,14 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
-    public class ActivityFinishedCounterFilter
+    public class ActivityFinishedCounterFilter : IRequest<ActivityFinishedCounterResponse>
     {
         private ActivityFinishedCounterFilter()
         {

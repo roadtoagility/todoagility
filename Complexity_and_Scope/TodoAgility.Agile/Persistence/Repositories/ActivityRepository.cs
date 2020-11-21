@@ -31,11 +31,11 @@ namespace TodoAgility.Agile.Persistence.Repositories
 {
     public sealed class ActivityRepository : IActivityRepository
     {
-        public ActivityRepository(DbContext context)
+        public ActivityRepository(ActivityDbContext context)
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
-            DbContext = context as ActivityDbContext;
+            DbContext = context;
         }
 
         private ActivityDbContext DbContext { get; }
