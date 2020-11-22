@@ -23,27 +23,24 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Projections.Project;
+using TodoAgility.Agile.Persistence.Repositories.ProjectRepos;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Project
 {
     public sealed class LastProjectsQueryHandler : IRequestHandler<LastProjectsFilter, LastProjectsResponse>
     {
-        public LastProjectsQueryHandler()
-        {
+        private readonly IDbSession<IProjectProjectionRepository> _session;
 
+        public LastProjectsQueryHandler(IDbSession<IProjectProjectionRepository> session)
+        {
+            _session = session;
         }
 
         public Task<LastProjectsResponse> Handle(LastProjectsFilter request, CancellationToken cancellationToken)
         {
-            var projects = new List<LastProjectsProjection>()
-            {
-                new LastProjectsProjection(){ Id = 1, Name = "FaturamentoWeb", Budget = 36.738m, Client = "Potencial" },
-                new LastProjectsProjection(){ Id = 2, Name = "SCA", Budget = 23.789m, Client = "Localiza" },
-                new LastProjectsProjection(){ Id = 3, Name = "API Rodovias", Budget = 6.142m, Client = "Fiat" },
-                new LastProjectsProjection(){ Id = 4, Name = "CargasWeb", Budget = 38.200m, Client = "ANTT" }
-            };
-
+            var projects = _session.Repository.GetLastProjects();
             return Task.FromResult(LastProjectsResponse.From(true, projects));
         }
     }

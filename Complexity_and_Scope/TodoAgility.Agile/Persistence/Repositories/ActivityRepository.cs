@@ -31,14 +31,14 @@ namespace TodoAgility.Agile.Persistence.Repositories
 {
     public sealed class ActivityRepository : IActivityRepository
     {
-        public ActivityRepository(ActivityDbContext context)
+        public ActivityRepository(ManagementDbContext context)
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             DbContext = context;
         }
 
-        private ActivityDbContext DbContext { get; }
+        private ManagementDbContext DbContext { get; }
 
         // https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities
 
@@ -49,7 +49,7 @@ namespace TodoAgility.Agile.Persistence.Repositories
 
             if (oldState == null)
             {
-                DbContext.Projects.Add(entry);
+                DbContext.ProjectsRef.Add(entry);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace TodoAgility.Agile.Persistence.Repositories
         
         public void RemoveProject(IExposeValue<ProjectStateReference> entity)
         {
-            DbContext.Projects.Remove(entity.GetValue());
+            DbContext.ProjectsRef.Remove(entity.GetValue());
         }
 
         public Activity Get(EntityId id)
@@ -95,7 +95,7 @@ namespace TodoAgility.Agile.Persistence.Repositories
         public Project GetProject(EntityId id)
         {
             IExposeValue<uint> entityId = id;
-            var found = DbContext.Projects.AsQueryable()
+            var found = DbContext.ProjectsRef.AsQueryable()
                 .OrderByDescending(ob => ob.ProjectId)
                 .First(t => t.ProjectId == entityId.GetValue());
 

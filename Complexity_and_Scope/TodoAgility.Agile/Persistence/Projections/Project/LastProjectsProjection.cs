@@ -10,5 +10,6 @@ namespace TodoAgility.Agile.Persistence.Projections.Project
         public int Id { get; set; }
         public decimal Budget { get; set; }
         public string Client { get; set; }
+
     }
 }

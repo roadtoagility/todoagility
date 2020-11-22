@@ -23,23 +23,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.CounterRepos;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
     public sealed class ActivityDailyCounterFilterQueryHandler : IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>
     {
+        private readonly IDbSession<ICounterProjectionRepository> _counterSession;
 
-        public ActivityDailyCounterFilterQueryHandler()
+        public ActivityDailyCounterFilterQueryHandler(IDbSession<ICounterProjectionRepository> counterSession)
         {
-
+            _counterSession = counterSession;
         }
 
         public Task<ActivityDailyCounterFilterResponse> Handle(ActivityDailyCounterFilter request, CancellationToken cancellationToken)
         {
-            var labels = new string[] { "M", "T", "W", "T", "F", "S", "S" };
-            var series = new int[][] { new int[] { 12, 17, 7, 17, 23, 18, 38 } };
-
-            return Task.FromResult(ActivityDailyCounterFilterResponse.From(labels, series));
+            var counter = _counterSession.Repository.GetDailyConunter();
+            return Task.FromResult(ActivityDailyCounterFilterResponse.From(counter.Labels, counter.Series));
         }
     }
 }

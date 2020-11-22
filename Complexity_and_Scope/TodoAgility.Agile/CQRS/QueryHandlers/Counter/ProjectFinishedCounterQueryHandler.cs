@@ -23,22 +23,25 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.CounterRepos;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Counter
 {
     public class ProjectFinishedCounterQueryHandler : IRequestHandler<ProjectFinishedCounterFilter, ProjectFinishedCounterResponse>
     {
-        public ProjectFinishedCounterQueryHandler()
-        {
+        private readonly IDbSession<ICounterProjectionRepository> _counterSession;
 
+        public ProjectFinishedCounterQueryHandler(IDbSession<ICounterProjectionRepository> counterSession)
+        {
+            _counterSession = counterSession;
         }
 
         public Task<ProjectFinishedCounterResponse> Handle(ProjectFinishedCounterFilter request, CancellationToken cancellationToken)
         {
-            var labels = new string[] { "J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D" };
-            var series = new int[][] { new int[] { 542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895 } };
-
-            return Task.FromResult(ProjectFinishedCounterResponse.From(labels, series));
+            var counter = _counterSession.Repository.GetFinishedProjectsCounter();
+            return Task.FromResult(ProjectFinishedCounterResponse.From(counter.Labels, counter.Series));
         }
     }
 }

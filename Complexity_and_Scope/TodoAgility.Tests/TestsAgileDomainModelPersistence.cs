@@ -51,9 +51,9 @@ namespace TodoAgility.Tests
             var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
 
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
@@ -78,9 +78,9 @@ namespace TodoAgility.Tests
             var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
 
             //when
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_repo_update_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
 
             using var taskDbSession = new ActivityDbSession(taskDbContext, repTask);
@@ -109,9 +109,9 @@ namespace TodoAgility.Tests
             var projectReference = ProjectReference.From(projectId, Description.From(descriptionText));
             var task = Activity.From(Description.From(descriptionText), id, projectId);
 
-            var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
+            var projectOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_update.db;");
-            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var projectDbContext = new ManagementDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
 
             using var projectDbSession = new ProjectDbSession(projectDbContext, repProject);
@@ -121,7 +121,7 @@ namespace TodoAgility.Tests
             //when
             var tasks = new List<EntityId> {task.Id};
             var projectWithTasks = Project.CombineProjectAndActivities(project, tasks);
-            var projectDbContext2 = new ProjectDbContext(projectOptionsBuilder.Options);
+            var projectDbContext2 = new ManagementDbContext(projectOptionsBuilder.Options);
             var repProject2 = new ProjectRepository(projectDbContext2);
 
             //then
@@ -142,10 +142,10 @@ namespace TodoAgility.Tests
 
             var project = Project.From(projectId, Description.From(descriptionText));
 
-            var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
+            var projectOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_remove.db;");
 
-            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var projectDbContext = new ManagementDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
 
             using var projectDbSession = new ProjectDbSession(projectDbContext, repProject);

@@ -18,6 +18,8 @@ using TodoAgility.Agile.CQRS.QueryHandlers.Project;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Repositories;
+using TodoAgility.Agile.Persistence.Repositories.CounterRepos;
+using TodoAgility.Agile.Persistence.Repositories.ProjectRepos;
 
 namespace TodoAgility.API
 {
@@ -37,7 +39,14 @@ namespace TodoAgility.API
             services.AddMediatR(typeof(Startup));
             services.AddSwaggerGen();
 
-            services.AddDbContext<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
+            taskOptionsBuilder.UseSqlite("Data Source=todoagility_add_test.db;");
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
+
+            services.AddDbContext<ManagementDbContext>(options =>
+            {
+                options.UseSqlite("Data Source=todoagility_add_test.db;");
+            });
 
             services.AddScoped<IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>, ActivityByProjectQueryHandler>();
             services.AddScoped<IRequestHandler<ActivityDailyCounterFilter, ActivityDailyCounterFilterResponse>, ActivityDailyCounterFilterQueryHandler>();
@@ -46,7 +55,11 @@ namespace TodoAgility.API
             services.AddScoped<IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>, FeaturedProjectsQueryHandler>();
             services.AddScoped<IRequestHandler<LastProjectsFilter, LastProjectsResponse>, LastProjectsQueryHandler>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
-            services.AddScoped<IDbSession<IActivityRepository>, ActivityDbSession<IActivityRepository>>();
+            services.AddScoped<ICounterProjectionRepository, CounterProjectionRepository>();
+            services.AddScoped<TodoAgility.Agile.Persistence.Repositories.ActivityRepos.IActivityProjectionRepository, TodoAgility.Agile.Persistence.Repositories.ActivityRepos.ActivityProjectionRepository>();
+            services.AddScoped<IProjectProjectionRepository, ProjectProjectionRepository>();
+
+            services.AddScoped(typeof(IDbSession<>), typeof(DbSession<>));
 
             services.AddCors(options =>
             {

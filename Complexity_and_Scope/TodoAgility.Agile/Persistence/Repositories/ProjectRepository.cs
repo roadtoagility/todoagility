@@ -33,12 +33,12 @@ namespace TodoAgility.Agile.Persistence.Repositories
     {
         public ProjectRepository(DbContext context)
         {
-            DbContext = context as ProjectDbContext;
+            DbContext = context as ManagementDbContext;
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
         }
 
-        private ProjectDbContext DbContext { get; }
+        private ManagementDbContext DbContext { get; }
 
         // https://docs.microsoft.com/en-us/ef/core/saving/disconnected-entities
 

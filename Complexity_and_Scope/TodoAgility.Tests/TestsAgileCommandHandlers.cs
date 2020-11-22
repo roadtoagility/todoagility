@@ -41,9 +41,9 @@ namespace TodoAgility.Tests
             var description = "Given Description";
             var projectId = 1u;
             var dispatcher = new DomainEventDispatcher();
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_add_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
             var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
             taskDbSession.Repository.AddProject(Project.From(EntityId.From(projectId), Description.From(description)));
@@ -65,9 +65,9 @@ namespace TodoAgility.Tests
             var id = 1u;
             var projectId = 1u;
             var dispatcher = new DomainEventDispatcher();
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_cqrs_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 
@@ -96,9 +96,9 @@ namespace TodoAgility.Tests
             var status = 2;
             var projectId = 1u;
             var dispatcher = new DomainEventDispatcher();
-            var optionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             optionsBuilder.UseSqlite("Data Source=todoagility_cqrs_changed_test.db;");
-            var taskDbContext = new ActivityDbContext(optionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(optionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 

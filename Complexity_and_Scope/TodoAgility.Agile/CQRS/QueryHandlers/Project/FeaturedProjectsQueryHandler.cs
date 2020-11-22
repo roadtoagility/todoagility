@@ -23,26 +23,24 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Projections.Project;
+using TodoAgility.Agile.Persistence.Repositories.ProjectRepos;
 
 namespace TodoAgility.Agile.CQRS.QueryHandlers.Project
 {
     public class FeaturedProjectsQueryHandler : IRequestHandler<FeaturedProjectsFilter, FeaturedProjectsResponse>
     {
+        private readonly IDbSession<IProjectProjectionRepository> _session;
 
-        public FeaturedProjectsQueryHandler()
+        public FeaturedProjectsQueryHandler(IDbSession<IProjectProjectionRepository> session)
         {
-
+            _session = session;
         }
 
         public Task<FeaturedProjectsResponse> Handle(FeaturedProjectsFilter request, CancellationToken cancellationToken)
         {
-            var featuredProjects = new List<FeaturedProjectsProjection>()
-            {
-                new FeaturedProjectsProjection(){ Id = 1, Name = "SCA", Icon = "bug_report"},
-                new FeaturedProjectsProjection(){ Id = 2, Name = "FaturamentoWeb", Icon = "code"},
-                new FeaturedProjectsProjection(){ Id = 3, Name = "API Rodovias", Icon = "cloud"}
-            };
+            var featuredProjects = _session.Repository.GetFeaturedProjects();
 
             return Task.FromResult(FeaturedProjectsResponse.From(true, featuredProjects));
         }

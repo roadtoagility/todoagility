@@ -51,9 +51,9 @@ namespace TodoAgility.Tests
             //a activity it is attached to it
             var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), EntityId.From(1u));
             
-            var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
+            var projectOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_proj_activity_reference.db;");
-            var projectDbContext = new ProjectDbContext(projectOptionsBuilder.Options);
+            var projectDbContext = new ManagementDbContext(projectOptionsBuilder.Options);
             var repProject = new ProjectRepository(projectDbContext);
             using var projectDbSession = new DbSession<IProjectRepository>(projectDbContext, repProject);
             repProject.Add(project);
@@ -78,9 +78,9 @@ namespace TodoAgility.Tests
             //existing project
             var project = Project.From(EntityId.From(1u), Description.From("descriptionText"));
             
-            var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            var taskOptionsBuilder = new DbContextOptionsBuilder<ManagementDbContext>();
             taskOptionsBuilder.UseSqlite("Data Source=todoagility_projectAdded_test.db;");
-            var taskDbContext = new ActivityDbContext(taskOptionsBuilder.Options);
+            var taskDbContext = new ManagementDbContext(taskOptionsBuilder.Options);
             var repTask = new ActivityRepository(taskDbContext);
 
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);

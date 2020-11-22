@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Projections.Activity;
 using TodoAgility.Agile.Persistence.Repositories;
@@ -31,20 +32,17 @@ namespace TodoAgility.Agile.CQRS.QueryHandlers.Activity
 {
     public sealed class ActivityByProjectQueryHandler : IRequestHandler<ActivityByProjectFilter, ActivityByProjectResponse>
     {
-        public ActivityByProjectQueryHandler()
-        {
+        private readonly IDbSession<TodoAgility.Agile.Persistence.Repositories.ActivityRepos.IActivityProjectionRepository> _session;
 
+        public ActivityByProjectQueryHandler(IDbSession<TodoAgility.Agile.Persistence.Repositories.ActivityRepos.IActivityProjectionRepository> session)
+        {
+            _session = session;
         }
 
         public Task<ActivityByProjectResponse> Handle(ActivityByProjectFilter request, CancellationToken cancellationToken)
         {
-            var tasks = new List<ActivityByProjectProjection>()
-            {
-                new ActivityByProjectProjection(){ Id = 1, ProjectId = 1, Title = "Desenho da interface de inclusão de usuários"},
-                new ActivityByProjectProjection(){ Id = 2, ProjectId = 1, Title = "Criação do PDM de modelo do banco"},
-                new ActivityByProjectProjection(){ Id = 3, ProjectId = 1, Title = "Integração com Active Directory"},
-                new ActivityByProjectProjection(){ Id = 4, ProjectId = 1, Title = "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"}
-            };
+            var id = ((IExposeValue<uint>)request.ProjectId).GetValue();
+            var tasks = _session.Repository.GetActivities(id);
 
             return Task.FromResult(ActivityByProjectResponse.From(true, tasks));
         }

@@ -26,7 +26,7 @@ namespace TodoAgility.Agile.Persistence
 {
     public class ActivityDbSession: DbSession<ActivityRepository>
     {
-        public ActivityDbSession(ActivityDbContext context, ActivityRepository repository)
+        public ActivityDbSession(ManagementDbContext context, ActivityRepository repository)
         :base(context,repository)
         {
         }
