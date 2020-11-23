@@ -18,33 +18,17 @@
 
 using System;
 using System.Collections.Generic;
+using FluentValidation;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.Domain.Framework.Validation
+namespace TodoAgility.Agile.Domain.AggregationActivity.Validators
 {
-    public sealed class Scope :IExposeValue<string>
+    public sealed class EntityIdValidator: AbstractValidator<EntityId>
     {
-        private string _name { get; }
-
-        private Scope(string scopeName)
+        public EntityIdValidator()
         {
-            _name = scopeName;
-        }
-
-        public static Scope For(string scopeName)
-        {
-            
-            return new Scope(scopeName);
-        }
-
-        string IExposeValue<string>.GetValue()
-        {
-            return _name;
-        }
-
-        public override string ToString()
-        {
-            return $"{_name}";
+            RuleFor(id => id.Value).NotNull();
+            RuleFor(id => id.Value).GreaterThan(0u);
         }
     }
 }

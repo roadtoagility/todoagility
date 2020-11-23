@@ -72,7 +72,8 @@ namespace TodoAgility.Tests
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 
             var project = Project.From(EntityId.From(projectId), Description.From(description));
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
+            var originalTask = Activity.From(Description.From(description), EntityId.From(id), 
+                EntityId.From(projectId), ActivityStatus.From(1));
             taskDbSession.Repository.AddProject(project);
             taskDbSession.Repository.Add(originalTask);
             taskDbSession.SaveChanges();
@@ -102,7 +103,8 @@ namespace TodoAgility.Tests
             var repTask = new ActivityRepository(taskDbContext);
             using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
 
-            var originalTask = Activity.From(Description.From(description), EntityId.From(id), EntityId.From(projectId));
+            var originalTask = Activity.From(Description.From(description), EntityId.From(id), 
+                EntityId.From(projectId),ActivityStatus.From(1));
             taskDbSession.Repository.Add(originalTask);
             taskDbSession.SaveChanges();
 
@@ -114,6 +116,33 @@ namespace TodoAgility.Tests
             var task = taskDbSession.Repository.Get(EntityId.From(id));
 
             Assert.NotEqual(task, originalTask);
+        }
+        
+        [Fact]
+        public void Check_ChangeStatusActivityCommandHandler_Failed()
+        {
+            var description = "Given Description";
+            var id = 1u;
+            var newStatus = 4;
+            var projectId = 1u;
+            var dispatcher = new DomainEventDispatcher();
+            var optionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
+            optionsBuilder.UseSqlite("Data Source=todoagility_cqrs_changed_failed_test.db;");
+            var taskDbContext = new ActivityDbContext(optionsBuilder.Options);
+            var repTask = new ActivityRepository(taskDbContext);
+            using var taskDbSession = new DbSession<IActivityRepository>(taskDbContext, repTask);
+
+            var originalTask = Activity.From(Description.From(description), EntityId.From(id), 
+                EntityId.From(projectId),ActivityStatus.From(1));
+            taskDbSession.Repository.Add(originalTask);
+            taskDbSession.SaveChanges();
+
+            var command = new ChangeActivityStatusCommand(id, newStatus);
+
+            var handler = new ChangeActivityStatusCommandHandler(taskDbSession,dispatcher);
+            var result = handler.Execute(command);
+
+            Assert.False(result.IsSucceed);
         }
 
         #endregion

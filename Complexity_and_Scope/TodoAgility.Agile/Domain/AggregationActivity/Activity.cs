@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.AggregationActivity.Validators;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.Validation;
@@ -25,18 +26,17 @@ using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class Activity : ValueObject, IValidationResult, IExposeValue<ActivityState>
+    public sealed class Activity : ValidationStatus, IExposeValue<ActivityState>
     {
         private static readonly int InitialStatus = 1;
 
         private Activity(ActivityStatus status, Description description, EntityId id,
-            EntityId projectId, ValidationResult validationResult)
+            EntityId projectId)
         {
             Status = status;
             Description = description;
             Id = id;
             ProjectId = projectId;
-            ValidationResult = validationResult;
         }
 
         public EntityId ProjectId { get; }
@@ -58,23 +58,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 , id.GetValue(), stateProject);
         }
 
-        public static Activity From(Description description, EntityId entityId, EntityId projectId)
+        public static Activity From(Description description, EntityId entityId, EntityId projectId, ActivityStatus status)
         {
-            var validation = new ValidateCondition();
-            
-            validation.CheckCondition(description == null,nameof(description),"Informe uma descripção válida.");
-
-            if (!description.ValidationResult.IsValid)
-            {
-                validation.AddViolations(description.ValidationResult.Violations);                
-            }
-
-            validation.CheckCondition(projectId == null,nameof(projectId),"Informe um projeto válido.");
-            
-            validation.CheckCondition(entityId == null,nameof(entityId),"Informe um identificador válido.");
-            
-            return new Activity(ActivityStatus.From(InitialStatus), description,
-                entityId, projectId, validation.GetValidationResult());
+            var activity = new Activity(status, description,entityId, projectId);
+            var validator = new ActivityValidator();
+            activity.SetValidationResult(validator.Validate(activity));
+            return activity;
         }
 
         /// <summary>
@@ -85,13 +74,8 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <exception cref="ArgumentException"></exception>
         public static Activity FromState(ActivityState state)
         {
-            var validation = new ValidateCondition();
-            
-            validation.CheckCondition(state == null,nameof(state),"Informe uma atividade válida.");
-
-            return new Activity(ActivityStatus.From(state.Status),
-                Description.From(state.Description), EntityId.From(state.ActivityId),
-                EntityId.From(state.ProjectId),validation.GetValidationResult());
+            return Activity.From( Description.From(state.Description), EntityId.From(state.ActivityId),
+                EntityId.From(state.ProjectId),ActivityStatus.From(state.Status));
         }
 
         /// <summary>
@@ -103,23 +87,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <exception cref="ArgumentException"></exception>
         public static Activity CombineWithPatch(Activity current, Patch patch)
         {
-            var validation = new ValidateCondition();
-            
-            validation.CheckCondition(patch == null,nameof(patch),"Informe os valores a serem atualizados.");
-
-            return new Activity(current.Status, patch.Description, current.Id, current.ProjectId,validation.GetValidationResult());
+            return Activity.From(patch.Description, current.Id, current.ProjectId,current.Status);
         }
 
         public static Activity CombineWithStatus(Activity current, ActivityStatus status)
         {
-            var validation = new ValidateCondition();
-            
-            validation.CheckCondition(status == null,nameof(status),"Informe um estado válido para a atividade.");
-
-            var state = ((IExposeValue<ActivityState>) current).GetValue();
-            IExposeValue<int> st = status;
-            state.Status = st.GetValue();
-            return FromState(state);
+            return From(current.Description,current.Id,current.ProjectId,status);
         }
 
         public override string ToString()
@@ -149,7 +122,5 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
             yield return Status;
             yield return ProjectId;
         }
-
-        public ValidationResult ValidationResult { get; }
     }
 }

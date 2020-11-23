@@ -19,45 +19,41 @@
 using System.Collections.Immutable;
 using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
-using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
-using TodoAgility.Agile.Domain.Framework.Validation;
+using TodoAgility.Agile.Hosting.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public sealed class AddActivityCommandHandler : CommandHandler<AddActivityCommand, ExecutionResult>
+    public sealed class ChangeActivityStatusCommandHandler : CommandHandler<ChangeActivityStatusCommand, ExecutionResult>
     {
-        private readonly IDbSession<IActivityRepository> _taskSession;
+        private readonly IDbSession<IActivityRepository> _session;
 
-        public AddActivityCommandHandler(IEventDispatcher publisher, IDbSession<IActivityRepository> taskSession)
-            :base(publisher)
+        public ChangeActivityStatusCommandHandler(IDbSession<IActivityRepository> session, IEventDispatcher publisher)
+        :base(publisher)
         {
-            _taskSession = taskSession;
+            _session = session;
         }
 
-        protected override ExecutionResult ExecuteCommand(AddActivityCommand command)
+        protected override ExecutionResult ExecuteCommand(ChangeActivityStatusCommand command)
         {
-            var descr = command.Description;
-            var entityId = EntityId.GetNext();
-            var project = _taskSession.Repository.GetProject(command.ProjectId);
+            var currentState = _session.Repository.Get(command.Id);
+            var agg = ActivityAggregationRoot.ReconstructFrom(currentState);
 
-            var agg = ActivityAggregationRoot.CreateFrom(descr, entityId, project);
+            agg.ChangeTaskStatus(command.NewStatus);
             var task = agg.GetChange();
-
-            if (agg.GetValidationResult().IsValid)
+            var isSucceed = false;
+            
+            if (agg.ValidationResults.IsValid)
             {
-                _taskSession.Repository.Add(task);
-                _taskSession.SaveChanges();
+                _session.Repository.Add(task);
+                _session.SaveChanges();
                 Publisher.Publish(agg.GetEvents());
-            }
-            else
-            {
-                return new ExecutionResult(false, agg.GetValidationResult().Violations);
+                isSucceed = true;
             }
             
-            return new ExecutionResult(true, ImmutableList<Violation>.Empty);
+            return new ExecutionResult(false, agg.ValidationResults.Errors.ToImmutableList());
         }
     }
 }

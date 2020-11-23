@@ -17,6 +17,7 @@
 //
 
 using System;
+using FluentValidation;
 using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.Aggregates;
@@ -32,26 +33,26 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// </summary>
         /// <param name="currentActivity"></param>
         private ActivityAggregationRoot(Activity currentActivity)
-        :base(currentActivity)
+            : base(currentActivity)
         {
             if (currentActivity.ValidationResult.IsValid)
             {
                 Change(currentActivity);
-                Raise(ActivityAddedEvent.For(currentActivity));            }
-            else
-            {
-                AddViolations(currentActivity.ValidationResult.Violations);
+                Raise(ActivityAddedEvent.For(currentActivity));
             }
-        }
 
+            ValidationResults = currentActivity.ValidationResult;
+        }
+    
         /// <summary>
         ///     to register new aggregate as change
         /// </summary>
         /// <param name="descr"></param>
         /// <param name="entityId"></param>
         /// <param name="project"></param>
-        private ActivityAggregationRoot(Description descr, EntityId entityId, Project project)
-            : this(Activity.From(descr, entityId, project.Id))
+        /// <param name="status"></param>
+        private ActivityAggregationRoot(Description descr, EntityId entityId, Project project, ActivityStatus status)
+            : this(Activity.From(descr, entityId, project.Id,status))
         {
         }
 
@@ -65,13 +66,15 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
             if (change.ValidationResult.IsValid)
             {
+                var context = new ValidationContext<Activity>(_entityRoot);
+                context.RootContextData["activity"] = change;
+                
+                
                 Change(change);
                 Raise(ActivityUpdatedEvent.For(change));                
             }
-            else
-            {
-                AddViolations(change.ValidationResult.Violations);
-            }
+            
+            ValidationResults = change.ValidationResult;
         }
 
         public void ChangeTaskStatus(ActivityStatus newStatus)
@@ -83,12 +86,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 Change(change);
                 Raise(ActivityStatusChangedEvent.For(change));                
             }
-            else
-            {
-                AddViolations(change.ValidationResult.Violations);
-            }
-            
-            
+            ValidationResults = change.ValidationResult;
         }
 
         #region Aggregation contruction
@@ -112,7 +110,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <returns></returns>
         public static ActivityAggregationRoot CreateFrom(Description descr, EntityId entityId, Project project)
         {
-            return new ActivityAggregationRoot(descr, entityId, project);
+            return new ActivityAggregationRoot(descr, entityId, project, ActivityStatus.From(1));
         }
 
         #endregion

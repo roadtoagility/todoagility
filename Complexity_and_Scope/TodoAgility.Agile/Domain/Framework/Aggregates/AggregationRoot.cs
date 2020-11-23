@@ -18,22 +18,23 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using FluentValidation.Results;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.Framework.Aggregates
 {
-    public abstract class AggregationRoot<TChange> : ValidateCondition, IChangeSet<TChange>
+    public abstract class AggregationRoot<TChange> : IChangeSet<TChange>
     {
         protected TChange _entityRoot;
         private readonly IList<IDomainEvent> _domainEvents;
-
+        
         protected AggregationRoot(TChange entityRoot)
         {
             _entityRoot = entityRoot;
             _domainEvents = new List<IDomainEvent>();
         } 
-
+        
         protected void Change(TChange item)
         {
             _entityRoot = item;
@@ -53,5 +54,7 @@ namespace TodoAgility.Agile.Domain.Framework.Aggregates
         {
             return _domainEvents.ToImmutableList();
         }
+        
+        public ValidationResult ValidationResults { get; protected set; }
     }
 }

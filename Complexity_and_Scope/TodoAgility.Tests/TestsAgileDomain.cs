@@ -34,29 +34,33 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Description_Invalid_ValueNull()
         {
-            Assert.Throws<ArgumentException>(() => Description.From(null));
+            var description = Description.From(null);
+            Assert.False(description.ValidationResult.IsValid);
         }
 
         [Fact]
         public void Check_Description_Invalid_ValueEmpty()
         {
-            var description = "";
-            Assert.Throws<ArgumentException>(() => Description.From(description));
+            var text = "";
+            var description = Description.From(text);
+            Assert.False(description.ValidationResult.IsValid);
         }
 
         [Fact]
         public void Check_Description_Invalid_ValueBlanks()
         {
-            var description = "        ";
-            Assert.Throws<ArgumentException>(() => Description.From(description));
+            var text = "        ";
+            var description = Description.From(text);
+            Assert.False(description.ValidationResult.IsValid);
         }
 
         [Fact]
         public void Check_Description_Invalid_SizeLimit()
         {
-            var description =
+            var text =
                 "Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo";
-            Assert.Throws<ArgumentException>(() => Description.From(description));
+            var description = Description.From(text);
+            Assert.False(description.ValidationResult.IsValid);
         }
 
         [Fact]
@@ -86,7 +90,8 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_Task_Invalid_Description()
         {
-            Assert.Throws<ArgumentException>(() => Activity.From(null, null, null));
+            var activity = Activity.From(null, null, null, null);
+            Assert.True(activity.ValidationResult.IsValid);
         }
 
         [Fact]
@@ -95,7 +100,7 @@ namespace TodoAgility.Tests
             var name = Description.From("givenName");
             var entityId = EntityId.From(1u);
 
-            var task = Activity.From(name, entityId, EntityId.From(1u));
+            var task = Activity.From(name, entityId, EntityId.From(1u), ActivityStatus.From(1));
             Assert.NotNull(task);
         }
 
@@ -107,7 +112,7 @@ namespace TodoAgility.Tests
             var project = Project.From(EntityId.From(1u), Description.From(givenName));
             var entityId = EntityId.From(1u);
 
-            var todo = Activity.From(name, entityId, EntityId.From(1u));
+            var todo = Activity.From(name, entityId, EntityId.From(1u), ActivityStatus.From(1));
             IExposeValue<ActivityState> state = todo;
             var todoState = state.GetValue();
 
@@ -117,16 +122,15 @@ namespace TodoAgility.Tests
         [Fact]
         public void Check_TaskStatus_Invalid_Status()
         {
-            Assert.Throws<ArgumentException>(() => ActivityStatus.From(-1));
+            var status = ActivityStatus.From(-1);
+            Assert.False(status.ValidationResult.IsValid);
         }
 
         [Fact]
         public void Check_TaskStatus_valid_Status()
         {
             var statusStarted = ActivityStatus.From(2);
-            IExposeValue<int> state = statusStarted;
-
-            Assert.Equal(2, state.GetValue());
+            Assert.Equal(2, statusStarted.Value);
         }
 
         #endregion
@@ -142,7 +146,8 @@ namespace TodoAgility.Tests
             var projectId = EntityId.From(1u);
 
             var project = Project.From(projectId, Description.From(descriptionText));
-            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u), 
+                ActivityStatus.From(1));
 
             //when
             var agg = ActivityAggregationRoot.CreateFrom(Description.From(descriptionText), id, project);
@@ -160,7 +165,8 @@ namespace TodoAgility.Tests
             var descriptionNewText = "Given Description New One";
             var id = EntityId.From(1u);
 
-            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u),
+                ActivityStatus.From(1));
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
             agg.UpdateTask(Activity.Patch.FromDescription(Description.From(descriptionNewText)));
@@ -177,7 +183,8 @@ namespace TodoAgility.Tests
             var descriptionText = "Given Description";
             var id = EntityId.From(1u);
             var newStatus = 2;
-            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u),
+                ActivityStatus.From(1));
 
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
@@ -197,13 +204,15 @@ namespace TodoAgility.Tests
             var id = EntityId.From(1u);
             var newStatus = 6;
 
-            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u),
+                ActivityStatus.From(1));
 
             //when
             var agg = ActivityAggregationRoot.ReconstructFrom(oldState);
-
+            agg.ChangeTaskStatus(ActivityStatus.From(newStatus));
+            
             //then
-            Assert.Throws<ArgumentException>(() => { agg.ChangeTaskStatus(ActivityStatus.From(newStatus)); });
+            Assert.False(agg.ValidationResults.IsValid);
         }
 
         #endregion

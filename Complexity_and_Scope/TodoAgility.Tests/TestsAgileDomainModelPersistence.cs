@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using LiteDB;
 using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Persistence;
@@ -48,7 +49,8 @@ namespace TodoAgility.Tests
             
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var task = Activity.From(Description.From(descriptionText), id, 
+                EntityId.From(1u),ActivityStatus.From(1));
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
@@ -75,7 +77,8 @@ namespace TodoAgility.Tests
 
             var id = EntityId.From(1u);
 
-            var task = Activity.From(Description.From(descriptionText), id, EntityId.From(1u));
+            var task = Activity.From(Description.From(descriptionText), id, 
+                EntityId.From(1u), ActivityStatus.From(1));
 
             //when
             var taskOptionsBuilder = new DbContextOptionsBuilder<ActivityDbContext>();
@@ -107,7 +110,8 @@ namespace TodoAgility.Tests
             var id = EntityId.From(1u);
             var project = Project.From(EntityId.From(1u), Description.From(descriptionText));
             var projectReference = ProjectReference.From(projectId, Description.From(descriptionText));
-            var task = Activity.From(Description.From(descriptionText), id, projectId);
+            var task = Activity.From(Description.From(descriptionText), id, projectId, 
+                ActivityStatus.From(1));
 
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_project_update.db;");

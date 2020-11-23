@@ -16,17 +16,25 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
 using System.Collections.Generic;
+using FluentValidation;
+using TodoAgility.Agile.Domain.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.CQRS.Framework
+namespace TodoAgility.Agile.Domain.AggregationActivity.Validators
 {
-    public class QueryResult<TResult>: ExecutionResult
+    public sealed class DescriptionValidator: AbstractValidator<Description>
     {
-        public QueryResult(bool isSucceed, IEnumerable<TResult> items)
-        :base(isSucceed)
+        public DescriptionValidator()
         {
-            Items = items;
+            RuleFor(description => description.Value).NotNull()
+                .DependentRules(() =>
+                {
+                    RuleFor(description => description.Value.Trim()).NotEmpty();
+                });
+            RuleFor(description => description.Value).NotEmpty();
+            RuleFor(description => description.Value).MaximumLength(Description.DescriptionLengthLimit);
         }
-        public IEnumerable<TResult> Items { get;}
     }
 }

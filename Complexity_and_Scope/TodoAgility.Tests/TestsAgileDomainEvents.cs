@@ -17,6 +17,7 @@
 //
 
 using Microsoft.EntityFrameworkCore;
+using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.AggregationActivity.DomainEventHandlers;
 using TodoAgility.Agile.Domain.AggregationActivity.Events;
 using TodoAgility.Agile.Domain.AggregationProject;
@@ -49,7 +50,8 @@ namespace TodoAgility.Tests
             var project = Project.From(EntityId.From(1u), Description.From("descriptionText"));
             
             //a activity it is attached to it
-            var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), EntityId.From(1u));
+            var activity = Activity.From(Description.From("activity to do"), EntityId.From(1u), 
+                EntityId.From(1u), ActivityStatus.From(1));
             
             var projectOptionsBuilder = new DbContextOptionsBuilder<ProjectDbContext>();
             projectOptionsBuilder.UseSqlite("Data Source=todoagility_proj_activity_reference.db;");
