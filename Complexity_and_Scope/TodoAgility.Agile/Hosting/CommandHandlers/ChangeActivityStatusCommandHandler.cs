@@ -53,7 +53,7 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
                 isSucceed = true;
             }
             
-            return new ExecutionResult(false, agg.ValidationResults.Errors.ToImmutableList());
+            return new ExecutionResult(isSucceed, agg.ValidationResults.Errors.ToImmutableList());
         }
     }
 }
