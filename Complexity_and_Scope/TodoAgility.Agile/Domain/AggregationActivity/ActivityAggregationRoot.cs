@@ -35,13 +35,13 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         private ActivityAggregationRoot(Activity currentActivity)
             : base(currentActivity)
         {
-            if (currentActivity.ValidationResult.IsValid)
+            if (currentActivity.ValidationResults.IsValid)
             {
                 Change(currentActivity);
                 Raise(ActivityAddedEvent.For(currentActivity));
             }
 
-            ValidationResults = currentActivity.ValidationResult;
+            ValidationResults = currentActivity.ValidationResults;
         }
     
         /// <summary>
@@ -64,7 +64,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         {
             var change = Activity.CombineWithPatch(_entityRoot, patchTask);
 
-            if (change.ValidationResult.IsValid)
+            if (change.ValidationResults.IsValid)
             {
                 var context = new ValidationContext<Activity>(_entityRoot);
                 context.RootContextData["activity"] = change;
@@ -74,19 +74,19 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 Raise(ActivityUpdatedEvent.For(change));                
             }
             
-            ValidationResults = change.ValidationResult;
+            ValidationResults = change.ValidationResults;
         }
 
         public void ChangeTaskStatus(ActivityStatus newStatus)
         {
             var change = Activity.CombineWithStatus(_entityRoot, newStatus);
             
-            if (change.ValidationResult.IsValid)
+            if (change.ValidationResults.IsValid)
             {
                 Change(change);
                 Raise(ActivityStatusChangedEvent.For(change));                
             }
-            ValidationResults = change.ValidationResult;
+            ValidationResults = change.ValidationResults;
         }
 
         #region Aggregation contruction

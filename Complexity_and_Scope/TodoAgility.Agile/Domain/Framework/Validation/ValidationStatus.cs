@@ -25,22 +25,14 @@ namespace TodoAgility.Agile.Domain.Framework.Validation
 {
     public abstract class ValidationStatus: ValueObject
     {
-        private bool _haveResults = false;
-
         public void SetValidationResult(ValidationResult result)
         {
             //avoid results overriding
-            if (!_haveResults)
+            if (ValidationResults == null)
             {
-                ValidationResult = result;
+                ValidationResults = result;
             }
-            else
-            {
-                _haveResults = true;
-            }
-        
-
-    }
-        public ValidationResult ValidationResult { get; set; }
+        }
+        public ValidationResult ValidationResults { get; set; }
     }
 }

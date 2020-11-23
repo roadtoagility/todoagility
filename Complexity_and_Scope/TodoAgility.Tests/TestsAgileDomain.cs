@@ -35,7 +35,7 @@ namespace TodoAgility.Tests
         public void Check_Description_Invalid_ValueNull()
         {
             var description = Description.From(null);
-            Assert.False(description.ValidationResult.IsValid);
+            Assert.False(description.ValidationResults.IsValid);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace TodoAgility.Tests
         {
             var text = "";
             var description = Description.From(text);
-            Assert.False(description.ValidationResult.IsValid);
+            Assert.False(description.ValidationResults.IsValid);
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace TodoAgility.Tests
         {
             var text = "        ";
             var description = Description.From(text);
-            Assert.False(description.ValidationResult.IsValid);
+            Assert.False(description.ValidationResults.IsValid);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace TodoAgility.Tests
             var text =
                 "Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo Teste excendo o limite do nome para o todo";
             var description = Description.From(text);
-            Assert.False(description.ValidationResult.IsValid);
+            Assert.False(description.ValidationResults.IsValid);
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace TodoAgility.Tests
         public void Check_Task_Invalid_Description()
         {
             var activity = Activity.From(null, null, null, null);
-            Assert.True(activity.ValidationResult.IsValid);
+            Assert.True(activity.ValidationResults.IsValid);
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace TodoAgility.Tests
         public void Check_TaskStatus_Invalid_Status()
         {
             var status = ActivityStatus.From(-1);
-            Assert.False(status.ValidationResult.IsValid);
+            Assert.False(status.ValidationResults.IsValid);
         }
 
         [Fact]

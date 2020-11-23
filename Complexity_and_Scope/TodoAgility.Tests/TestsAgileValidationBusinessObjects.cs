@@ -39,7 +39,7 @@ namespace TodoAgility.Tests
             var description = Description.From(text);
 
             //then
-            Assert.False(description.ValidationResult.IsValid);
+            Assert.False(description.ValidationResults.IsValid);
         }
         
         [Fact]
