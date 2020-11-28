@@ -3,6 +3,7 @@ import * as Chartist from 'chartist';
 import {DashboardService} from '../dashboard/dashboard.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,9 +21,17 @@ export class DashboardComponent implements OnInit {
 
   private _unsubscribeAll: Subject<any>;
 
-  constructor(private _dashboardService: DashboardService) {
+  constructor(public dialog: MatDialog, private _dashboardService: DashboardService) {
 
     this._unsubscribeAll = new Subject();
+  }
+
+  close() {
+    this.dialog.closeAll();
+}
+
+  openDialog() {
+    this.dialog.open(DialogContentExampleDialog);
   }
 
   startAnimationForLineChart(chart){
@@ -216,5 +225,14 @@ export class DashboardComponent implements OnInit {
       this._unsubscribeAll.next();
       this._unsubscribeAll.complete();
   }
+
+}
+
+@Component({
+  selector: 'dialog-content-example-dialog',
+  templateUrl: './dialog-content-example-dialog.html',
+  styleUrls: ['./dialog-content-example-dialog.css']
+})
+export class DialogContentExampleDialog{
 
 }

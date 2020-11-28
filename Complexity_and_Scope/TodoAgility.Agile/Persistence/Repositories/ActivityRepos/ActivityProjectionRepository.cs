@@ -20,14 +20,14 @@ namespace TodoAgility.Agile.Persistence.Repositories.ActivityRepos
 
         public List<ActivityByProjectProjection> GetActivities(uint projectId)
         {
-            //var tasks = new List<ActivityByProjectProjection>()
-            //{
-            //    new ActivityByProjectProjection(){ Id = 1, ProjectId = 1, Title = "Desenho da interface de inclusão de usuários"},
-            //    new ActivityByProjectProjection(){ Id = 2, ProjectId = 1, Title = "Criação do PDM de modelo do banco"},
-            //    new ActivityByProjectProjection(){ Id = 3, ProjectId = 1, Title = "Integração com Active Directory"},
-            //    new ActivityByProjectProjection(){ Id = 4, ProjectId = 1, Title = "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"}
-            //};
-            var tasks = _context.ActivitiesByProject.ToList();
+            var tasks = new List<ActivityByProjectProjection>()
+            {
+                new ActivityByProjectProjection(){ Id = 1, ProjectId = 1, Title = "Desenho da interface de inclusão de usuários"},
+                new ActivityByProjectProjection(){ Id = 2, ProjectId = 1, Title = "Criação do PDM de modelo do banco"},
+                new ActivityByProjectProjection(){ Id = 3, ProjectId = 1, Title = "Integração com Active Directory"},
+                new ActivityByProjectProjection(){ Id = 4, ProjectId = 1, Title = "Criar o board para SPRINT 5 com os épicos e estórias envolvidas, alinhar com equipe"}
+            };
+            //var tasks = _context.ActivitiesByProject.ToList();
             return tasks;
         }
     }

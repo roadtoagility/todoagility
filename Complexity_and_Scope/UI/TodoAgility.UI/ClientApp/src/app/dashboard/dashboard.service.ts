@@ -55,7 +55,7 @@ export class DashboardService implements Resolve<any>
     loadActivitiesByProject(projectId){
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get(`https://localhost:44311/api/Activities/activitiesByProject?ProjectId=${projectId}`)
+            .get(`https://localhost:44353/api/Activities/activitiesByProject?ProjectId=${projectId}`)
             .subscribe((response: any) => {
                 this.projectActivities = response.items;
                 this.onProjectActivitiesChanged.next(this.projectActivities);
@@ -67,7 +67,7 @@ export class DashboardService implements Resolve<any>
     getFeaturedProjects(): any {
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get('https://localhost:44311/api/projects/featuredProjects')
+            .get('https://localhost:44353/api/projects/featuredProjects')
             .subscribe((response: any) => {
                 this.favoritedProjects = response.items;
                 this.onFeaturedProjectsChanged.next(this.favoritedProjects);
@@ -79,7 +79,7 @@ export class DashboardService implements Resolve<any>
     getLatestProjects(): any {
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get('https://localhost:44311/api/projects/lastProjects')
+            .get('https://localhost:44353/api/projects/lastProjects')
             .subscribe((response: any) => {
                 this.lastProjects = response.items;
                 this.onLatestProjectsChanged.next(this.lastProjects);
@@ -91,7 +91,7 @@ export class DashboardService implements Resolve<any>
     getActivityByDayCounter(): any {
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get('https://localhost:44311/api/indicators/activityDailyCounter')
+            .get('https://localhost:44353/api/indicators/activityDailyCounter')
             .subscribe((response: any) => {
                 this.activitiesByDayCounter = response;
                 this.onActivityDailyCounterChanged.next(this.activitiesByDayCounter);
@@ -103,7 +103,7 @@ export class DashboardService implements Resolve<any>
     getFinishedProjectsCounter(): any {
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get('https://localhost:44311/api/indicators/projectFinishedCounter')
+            .get('https://localhost:44353/api/indicators/projectFinishedCounter')
             .subscribe((response: any) => {
                 this.finishedProjectsCounter = response;
                 this.onProjectFinishedCounterChanged.next(this.finishedProjectsCounter);
@@ -115,7 +115,7 @@ export class DashboardService implements Resolve<any>
     getFinishedActivitiesCounter(): any {
         return new Promise((resolve, reject) => {
             this._httpClient
-            .get('https://localhost:44311/api/indicators/activityFinishedCounter')
+            .get('https://localhost:44353/api/indicators/activityFinishedCounter')
             .subscribe((response: any) => {
                 this.finishedActivitiesCounter = response;
                 this.onActivityFinishedCounterChanged.next(this.finishedActivitiesCounter);

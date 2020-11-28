@@ -18,6 +18,11 @@ import { IconsComponent } from './icons/icons.component';
 import { MapsComponent } from './maps/maps.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { UpgradeComponent } from './upgrade/upgrade.component';
+
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatInputModule} from '@angular/material/input';
+
+
 import {
   AgmCoreModule
 } from '@agm/core';
@@ -34,9 +39,8 @@ import {DashboardService} from './dashboard/dashboard.service';
     ComponentsModule,
     RouterModule,
     AppRoutingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
-    })
+    MatDialogModule,
+    MatInputModule
   ],
   declarations: [
     AppComponent,
