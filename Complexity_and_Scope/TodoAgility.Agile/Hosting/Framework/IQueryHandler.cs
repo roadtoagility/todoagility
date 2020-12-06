@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2020  Road to Agility
+// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,24 +16,11 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.Hosting.Framework
 {
-    public abstract class CommandHandler<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+    public interface IQueryHandler<in TFilter, out TResult>
     {
-        protected IEventDispatcher Publisher { get; }
-        
-        protected CommandHandler(IEventDispatcher publisher)
-        {
-            Publisher = publisher;
-        }
-
-        public TResult Execute(TCommand command)
-        {
-            return ExecuteCommand(command);
-        }
-
-        protected abstract TResult ExecuteCommand(TCommand command);
+        TResult Execute(TFilter filter);
     }
 }

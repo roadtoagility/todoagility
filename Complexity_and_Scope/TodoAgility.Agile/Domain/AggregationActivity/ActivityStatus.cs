@@ -18,12 +18,14 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.AggregationActivity.Validators;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Validation;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class ActivityStatus : ValueObject, IExposeValue<int>
+    public sealed class ActivityStatus :ValidationStatus, IExposeValue<int>
     {
         public enum Status
         {
@@ -34,9 +36,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
         private readonly Status _status;
 
+        public int Value { get; }
+        
         private ActivityStatus(Status status)
         {
             _status = status;
+            Value = (int) status;
         }
 
         int IExposeValue<int>.GetValue()
@@ -46,12 +51,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 
         public static ActivityStatus From(int status)
         {
-            if (!Enum.IsDefined(typeof(Status), status))
-            {
-                throw new ArgumentException("O estado informado é inválido.", nameof(status));
-            }
+            var activity = new ActivityStatus((Status) status);
+            var validator = new ActivityStatusValidator();
 
-            return new ActivityStatus((Status) status);
+            activity.SetValidationResult(validator.Validate(activity));
+            
+            return activity;
         }
 
         public override string ToString()

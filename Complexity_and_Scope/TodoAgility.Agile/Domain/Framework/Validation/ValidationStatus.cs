@@ -17,10 +17,22 @@
 //
 
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+
+using FluentValidation.Results;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+
+namespace TodoAgility.Agile.Domain.Framework.Validation
 {
-    public interface IQueryHandler<in TFilter, out TResult>
+    public abstract class ValidationStatus: ValueObject
     {
-        TResult Execute(TFilter filter);
+        public void SetValidationResult(ValidationResult result)
+        {
+            //avoid results overriding
+            if (ValidationResults == null)
+            {
+                ValidationResults = result;
+            }
+        }
+        public ValidationResult ValidationResults { get; set; }
     }
 }

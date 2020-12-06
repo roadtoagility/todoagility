@@ -16,18 +16,15 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.BusinessObjects;
-
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Hosting.Framework
 {
-    public class AddProjectCommand
+    public abstract class QueryHandler<TFilter, TResult> : ICommandHandler<TFilter, TResult>
     {
-        public AddProjectCommand(string description)
+        public TResult Execute(TFilter filter)
         {
-            Description = Description.From(description);
+            return ExecuteQuery(filter);
         }
 
-        public Description Description { get; }
+        protected abstract TResult ExecuteQuery(TFilter filter);
     }
 }

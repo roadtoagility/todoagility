@@ -16,13 +16,16 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using System.Collections.Immutable;
+using TodoAgility.Agile.CQRS.CommandHandlers;
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
+using TodoAgility.Agile.Hosting.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Hosting.CommandHandlers
 {
     public sealed class ChangeActivityStatusCommandHandler : CommandHandler<ChangeActivityStatusCommand, ExecutionResult>
     {
@@ -41,12 +44,17 @@ namespace TodoAgility.Agile.CQRS.CommandHandlers
 
             agg.ChangeTaskStatus(command.NewStatus);
             var task = agg.GetChange();
-
-            _session.Repository.Add(task);
-            _session.SaveChanges();
-            Publisher.Publish(agg.GetEvents());
+            var isSucceed = false;
             
-            return new ExecutionResult(true);
+            if (agg.ValidationResults.IsValid)
+            {
+                _session.Repository.Add(task);
+                _session.SaveChanges();
+                Publisher.Publish(agg.GetEvents());
+                isSucceed = true;
+            }
+            
+            return new ExecutionResult(isSucceed, agg.ValidationResults.Errors.ToImmutableList());
         }
     }
 }

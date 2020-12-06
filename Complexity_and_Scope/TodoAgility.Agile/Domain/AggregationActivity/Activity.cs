@@ -18,17 +18,20 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.AggregationActivity.Validators;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Validation;
 using TodoAgility.Agile.Persistence.Model;
 
 namespace TodoAgility.Agile.Domain.AggregationActivity
 {
-    public sealed class Activity : ValueObject, IExposeValue<ActivityState>
+    public sealed class Activity : ValidationStatus, IExposeValue<ActivityState>
     {
         private static readonly int InitialStatus = 1;
 
-        private Activity(ActivityStatus status, Description description, EntityId id, EntityId projectId)
+        private Activity(ActivityStatus status, Description description, EntityId id,
+            EntityId projectId)
         {
             Status = status;
             Description = description;
@@ -55,26 +58,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 , id.GetValue(), stateProject);
         }
 
-        public static Activity From(Description description, EntityId entityId, EntityId projectId)
+        public static Activity From(Description description, EntityId entityId, EntityId projectId, ActivityStatus status)
         {
-            if (description == null)
-            {
-                throw new ArgumentException("Informe uma descripção válida.", nameof(description));
-            }
-
-
-            if (projectId == null)
-            {
-                throw new ArgumentException("Informe um projeto válido.", nameof(projectId));
-            }
-
-
-            if (entityId == null)
-            {
-                throw new ArgumentException("Informe um projeto válido.", nameof(entityId));
-            }
-
-            return new Activity(ActivityStatus.From(InitialStatus), description, entityId, projectId);
+            var activity = new Activity(status, description,entityId, projectId);
+            var validator = new ActivityValidator();
+            activity.SetValidationResult(validator.Validate(activity));
+            return activity;
         }
 
         /// <summary>
@@ -85,15 +74,8 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <exception cref="ArgumentException"></exception>
         public static Activity FromState(ActivityState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentException("Informe uma atividade válida.", nameof(state));
-            }
-
-
-            return new Activity(ActivityStatus.From(state.Status),
-                Description.From(state.Description), EntityId.From(state.ActivityId),
-                EntityId.From(state.ProjectId));
+            return Activity.From( Description.From(state.Description), EntityId.From(state.ActivityId),
+                EntityId.From(state.ProjectId),ActivityStatus.From(state.Status));
         }
 
         /// <summary>
@@ -105,25 +87,12 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// <exception cref="ArgumentException"></exception>
         public static Activity CombineWithPatch(Activity current, Patch patch)
         {
-            if (patch == null)
-            {
-                throw new ArgumentException("Informe os valores a serem atualizados.", nameof(patch));
-            }
-
-            return new Activity(current.Status, patch.Description, current.Id, current.ProjectId);
+            return Activity.From(patch.Description, current.Id, current.ProjectId,current.Status);
         }
 
         public static Activity CombineWithStatus(Activity current, ActivityStatus status)
         {
-            if (status == null)
-            {
-                throw new ArgumentNullException(nameof(status));
-            }
-
-            var state = ((IExposeValue<ActivityState>) current).GetValue();
-            IExposeValue<int> st = status;
-            state.Status = st.GetValue();
-            return FromState(state);
+            return From(current.Description,current.Id,current.ProjectId,status);
         }
 
         public override string ToString()

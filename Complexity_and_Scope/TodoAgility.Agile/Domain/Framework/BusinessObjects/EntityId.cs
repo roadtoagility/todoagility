@@ -18,16 +18,21 @@
 
 using System;
 using System.Collections.Generic;
+using TodoAgility.Agile.Domain.AggregationActivity.Validators;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 {
-    public sealed class EntityId : ValueObject, IExposeValue<uint>
+    public sealed class EntityId : ValidationStatus, IExposeValue<uint>
     {
         private readonly uint _id;
 
+        public uint Value { get; }
+        
         private EntityId(uint id)
         {
             _id = id;
+            Value = _id;
         }
 
         uint IExposeValue<uint>.GetValue()
@@ -37,12 +42,17 @@ namespace TodoAgility.Agile.Domain.Framework.BusinessObjects
 
         public static EntityId From(uint id)
         {
-            return new EntityId(id);
+            var entityId = new EntityId(id);
+            var validator = new EntityIdValidator();
+
+            entityId.SetValidationResult(validator.Validate(entityId));
+            
+            return entityId;
         }
 
         public static EntityId GetNext()
         {
-            return new EntityId((uint)DateTime.UnixEpoch.Millisecond);
+            return From((uint)DateTime.UnixEpoch.Millisecond);
         }
         public override string ToString()
         {

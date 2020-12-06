@@ -16,15 +16,22 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+using System.Collections.Generic;
+using TodoAgility.Agile.CQRS.Framework;
+using TodoAgility.Agile.Persistence.Projections;
+
+namespace TodoAgility.Agile.CQRS.QueryHandlers
 {
-    public class ExecutionResult
+    public class GetActivitiesResponse:QueryResult<ActivityProjection>
     {
-        public ExecutionResult(bool isSucceed)
+        private GetActivitiesResponse(bool isSucceed, IEnumerable<ActivityProjection> items)
+        :base(isSucceed, items)
         {
-            IsSucceed = isSucceed;
         }
 
-        public bool IsSucceed { get; }
+        public static GetActivitiesResponse From(bool isSucceed, IEnumerable<ActivityProjection> items)
+        {
+            return new GetActivitiesResponse(isSucceed,items);
+        }
     }
 }

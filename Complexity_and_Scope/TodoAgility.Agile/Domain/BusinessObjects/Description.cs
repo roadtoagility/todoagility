@@ -18,19 +18,25 @@
 
 using System;
 using System.Collections.Generic;
+using FluentValidation.Results;
+using TodoAgility.Agile.Domain.AggregationActivity.Validators;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.Validation;
 
 namespace TodoAgility.Agile.Domain.BusinessObjects
 {
-    public sealed class Description : ValueObject, IExposeValue<string>
+    public sealed class Description : ValidationStatus, IExposeValue<string>
     {
-        private static readonly int DESCRIPTION_LENGTH_LIMIT = 100;
+        public static readonly int DescriptionLengthLimit = 100;
 
         private readonly string _description;
+        
+        public string Value { get; }
 
         private Description(string description)
         {
             _description = description;
+            Value = description;
         }
         
         string IExposeValue<string>.GetValue()
@@ -38,25 +44,13 @@ namespace TodoAgility.Agile.Domain.BusinessObjects
             return _description;
         }
 
-        public static Description From(string description)
+        public static Description From(string value)
         {
-            if (string.IsNullOrEmpty(description) || string.IsNullOrWhiteSpace(description))
-            {
-                throw new ArgumentException("A descrição informada é nulo, vazio ou composto por espaços em branco.",
-                    nameof(description));
-            }
-
-
-
-            if (description.Length > DESCRIPTION_LENGTH_LIMIT)
-            {
-                throw new ArgumentException(
-                    $"A descripção excedeu o limite máximo de {DESCRIPTION_LENGTH_LIMIT} definido.",
-                    nameof(description));
-            }
-
-
-            return new Description(description);
+            var description = new Description(value);
+            var validator = new DescriptionValidator();
+            var results = validator.Validate(description);
+            description.SetValidationResult(results);
+            return description;
         }
         
         public override string ToString()

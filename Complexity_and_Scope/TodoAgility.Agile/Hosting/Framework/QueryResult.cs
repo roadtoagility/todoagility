@@ -17,8 +17,9 @@
 //
 
 using System.Collections.Generic;
+using TodoAgility.Agile.Hosting.Framework;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.CQRS.Framework
 {
     public class QueryResult<TResult>: ExecutionResult
     {

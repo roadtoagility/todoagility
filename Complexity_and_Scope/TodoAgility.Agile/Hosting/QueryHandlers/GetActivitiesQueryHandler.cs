@@ -16,35 +16,32 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.CQRS.CommandHandlers;
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
-using TodoAgility.Agile.Domain.AggregationProject;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.DomainEvents;
+using TodoAgility.Agile.Hosting.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.CQRS.QueryHandlers
 {
-    public sealed class AddProjectCommandHandler : CommandHandler<AddProjectCommand, ExecutionResult>
+    public sealed class GetActivitiesQueryHandler : QueryHandler<GetActivitiesFilter, GetActivitiesResponse>
     {
-        private readonly IDbSession<IProjectRepository> _dbSession;
+        private readonly IDbSession<IActivityProjectionRepository> _activitySession;
 
-        public AddProjectCommandHandler(IEventDispatcher publisher, IDbSession<IProjectRepository> dbSession)
-            :base(publisher)
+        public GetActivitiesQueryHandler(IDbSession<IActivityProjectionRepository> activitySession)
         {
-            _dbSession = dbSession;
+            _activitySession = activitySession;
         }
 
-        protected override ExecutionResult ExecuteCommand(AddProjectCommand command)
+        protected override GetActivitiesResponse ExecuteQuery(GetActivitiesFilter filter)
         {
-            var agg = ProjectAggregationRoot.CreateFrom(command.Description, EntityId.GetNext());
-
-            _dbSession.Repository.Add(agg.GetChange());
-            _dbSession.SaveChanges();
-            Publisher.Publish(agg.GetEvents());
-            
-            return new ExecutionResult(true);
+            IExposeValue<uint> id = filter.ProjectId;
+            var activities = _activitySession.Repository
+                .Find(fl => fl.ProjectId == id.GetValue());
+           
+            return GetActivitiesResponse.From(true, activities);
         }
     }
 }

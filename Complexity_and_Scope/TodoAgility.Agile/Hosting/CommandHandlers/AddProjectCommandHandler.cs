@@ -16,36 +16,34 @@
 // Boston, MA  02110-1301, USA.
 //
 
-using TodoAgility.Agile.CQRS.CommandHandlers.Framework;
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
+using TodoAgility.Agile.Domain.AggregationProject;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
+using TodoAgility.Agile.Hosting.CommandHandlers;
+using TodoAgility.Agile.Hosting.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
 namespace TodoAgility.Agile.CQRS.CommandHandlers
 {
-    public sealed class AddActivityCommandHandler : CommandHandler<AddActivityCommand, ExecutionResult>
+    public sealed class AddProjectCommandHandler : CommandHandler<AddProjectCommand, ExecutionResult>
     {
-        private readonly IDbSession<IActivityRepository> _taskSession;
+        private readonly IDbSession<IProjectRepository> _dbSession;
 
-        public AddActivityCommandHandler(IEventDispatcher publisher, IDbSession<IActivityRepository> taskSession)
+        public AddProjectCommandHandler(IEventDispatcher publisher, IDbSession<IProjectRepository> dbSession)
             :base(publisher)
         {
-            _taskSession = taskSession;
+            _dbSession = dbSession;
         }
 
-        protected override ExecutionResult ExecuteCommand(AddActivityCommand command)
+        protected override ExecutionResult ExecuteCommand(AddProjectCommand command)
         {
-            var descr = command.Description;
-            var entityId = EntityId.GetNext();
-            var project = _taskSession.Repository.GetProject(command.ProjectId);
+            var agg = ProjectAggregationRoot.CreateFrom(command.Description, EntityId.GetNext());
 
-            var agg = ActivityAggregationRoot.CreateFrom(descr, entityId, project);
-            var task = agg.GetChange();
-
-            _taskSession.Repository.Add(task);
-            _taskSession.SaveChanges();
+            _dbSession.Repository.Add(agg.GetChange());
+            _dbSession.SaveChanges();
             Publisher.Publish(agg.GetEvents());
             
             return new ExecutionResult(true);

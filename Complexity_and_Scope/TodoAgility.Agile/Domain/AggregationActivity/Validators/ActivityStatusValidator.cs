@@ -1,4 +1,4 @@
-// Copyright (C) 2020  Road to Agility
+﻿// Copyright (C) 2020  Road to Agility
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -16,11 +16,19 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using System;
+using System.Collections.Generic;
+using FluentValidation;
+using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers.Framework
+namespace TodoAgility.Agile.Domain.AggregationActivity.Validators
 {
-    public interface ICommandHandler<in TCommand, out TResult>
+    public sealed class ActivityStatusValidator: AbstractValidator<ActivityStatus>
     {
-        TResult Execute(TCommand command);
+        public ActivityStatusValidator()
+        {
+            RuleFor(status => status).NotNull();
+            RuleFor(status => status.Value).InclusiveBetween(1,3);
+        }
     }
 }
