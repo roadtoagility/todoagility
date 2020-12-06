@@ -17,7 +17,7 @@
 //
 
 
-namespace TodoAgility.Agile.CQRS.Framework
+namespace TodoAgility.Agile.Hosting.Framework
 {
     public interface ICommandHandler<in TCommand, out TResult>
     {

@@ -18,13 +18,12 @@
 
 using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.AggregationActivity;
-using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Hosting.Framework;
 using TodoAgility.Agile.Persistence.Framework;
 using TodoAgility.Agile.Persistence.Repositories;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Hosting.CommandHandlers
 {
     public sealed class UpdateActivityCommandHandler : CommandHandler<UpdateActivityCommand, ExecutionResult>
     {

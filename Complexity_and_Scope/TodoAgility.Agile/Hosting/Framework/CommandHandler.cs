@@ -16,9 +16,10 @@
 // Boston, MA  02110-1301, USA.
 //
 
+using TodoAgility.Agile.CQRS.Framework;
 using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-namespace TodoAgility.Agile.CQRS.Framework
+namespace TodoAgility.Agile.Hosting.Framework
 {
     public abstract class CommandHandler<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     {

@@ -16,7 +16,7 @@
 // Boston, MA  02110-1301, USA.
 //
 
-namespace TodoAgility.Agile.CQRS.Framework
+namespace TodoAgility.Agile.Hosting.Framework
 {
     public abstract class QueryHandler<TFilter, TResult> : ICommandHandler<TFilter, TResult>
     {

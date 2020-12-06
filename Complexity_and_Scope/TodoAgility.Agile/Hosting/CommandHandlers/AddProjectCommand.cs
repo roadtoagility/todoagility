@@ -17,9 +17,8 @@
 //
 
 using TodoAgility.Agile.Domain.BusinessObjects;
-using TodoAgility.Agile.Domain.Framework.BusinessObjects;
 
-namespace TodoAgility.Agile.CQRS.CommandHandlers
+namespace TodoAgility.Agile.Hosting.CommandHandlers
 {
     public class AddProjectCommand
     {
