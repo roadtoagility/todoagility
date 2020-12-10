@@ -22,6 +22,9 @@ import { UpgradeComponent } from './upgrade/upgrade.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
 
+import { ModalModule } from './dashboard/projetos/modal.module';
+import { ModalService } from './dashboard/projetos/modal.service';
+
 
 import {
   AgmCoreModule
@@ -40,7 +43,8 @@ import {DashboardService} from './dashboard/dashboard.service';
     RouterModule,
     AppRoutingModule,
     MatDialogModule,
-    MatInputModule
+    MatInputModule,
+    ModalModule
   ],
   declarations: [
     AppComponent,

@@ -4,6 +4,8 @@ import {DashboardService} from '../dashboard/dashboard.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
+import { ModalService } from './projetos/modal.service';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -20,8 +22,9 @@ export class DashboardComponent implements OnInit {
   finishedActivitiesCounter: any = [];
 
   private _unsubscribeAll: Subject<any>;
+  bodyText: string;
 
-  constructor(public dialog: MatDialog, private _dashboardService: DashboardService) {
+  constructor(public dialog: MatDialog, private _dashboardService: DashboardService, private modalService: ModalService) {
 
     this._unsubscribeAll = new Subject();
   }
@@ -32,6 +35,14 @@ export class DashboardComponent implements OnInit {
 
   openDialog() {
     this.dialog.open(DialogContentExampleDialog);
+  }
+
+  openModal(id: string) {
+    this.modalService.open(id);
+  }
+
+  closeModal(id: string) {
+      this.modalService.close(id);
   }
 
   startAnimationForLineChart(chart){
@@ -96,7 +107,7 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.bodyText = 'This text can be updated in modal 1';
     this._dashboardService.getActivityByDayCounter();
     this._dashboardService.getLatestProjects();
     this._dashboardService.getFeaturedProjects();
