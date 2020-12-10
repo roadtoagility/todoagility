@@ -1,12 +1,12 @@
 using LiteDB;
-using TodoAgility.Agile.Persistence.Framework.Projections;
+using TodoAgility.Agile.Persistence.Framework.Contexts;
 
 namespace TodoAgility.Agile.Persistence.Projections
 {
-    public class ActivityProjectionDbContext:ProjectionDbContext
+    public class ActivityProjectionDbContext:LiteDbContext
     {
         public ActivityProjectionDbContext(string connectionString, BsonMapper modelBuilder)
-        :base(connectionString, modelBuilder)
+        :base(connectionString)
         {
             Activities = Database.GetCollection<ActivityProjection>("activity");
             OnModelCreating(modelBuilder);

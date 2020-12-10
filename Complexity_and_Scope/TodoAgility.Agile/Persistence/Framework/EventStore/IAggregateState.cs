@@ -18,30 +18,19 @@
 
 
 using System;
-using TodoAgility.Agile.Persistence.Framework.Contexts;
+using System.Collections.Generic;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 
-namespace TodoAgility.Agile.Persistence.Framework
+namespace TodoAgility.Agile.Persistence.Framework.EventStore
 {
-    public class DbProjectionSession<TRepository> : IDbSession<TRepository>, IDisposable
+    internal interface IAggregateState
     {
+        public uint Version { get; }
+        public string AggregateType { get; }
+        public DateTime CreateAt { get;}
 
-        public DbProjectionSession(LiteDbContext context, TRepository repository)
-        {
-            Context = context;
-            Repository = repository;
-        }
+        public IReadOnlyList<IDomainEvent> Events { get;}
 
-        private LiteDbContext Context { get; }
-        public TRepository Repository { get; }
-
-        public void SaveChanges()
-        {
-            Context.Database.Commit();
-        }
-
-        public void Dispose()
-        {
-            Context?.Database.Dispose();
-        }
+        public Guid Id { get; set; }
     }
 }

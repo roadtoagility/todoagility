@@ -28,8 +28,6 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
 {
     public sealed class Activity : ValidationStatus, IExposeValue<ActivityState>
     {
-        private static readonly int InitialStatus = 1;
-
         private Activity(ActivityStatus status, Description description, EntityId id,
             EntityId projectId)
         {

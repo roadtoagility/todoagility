@@ -18,13 +18,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 using LiteDB;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TodoAgility.Agile.Domain.AggregationActivity;
 using TodoAgility.Agile.Domain.BusinessObjects;
 using TodoAgility.Agile.Domain.Framework.BusinessObjects;
+using TodoAgility.Agile.Domain.Framework.DomainEvents;
 using TodoAgility.Agile.Persistence;
 using TodoAgility.Agile.Persistence.Framework;
+using TodoAgility.Agile.Persistence.Framework.EventStore;
+using TodoAgility.Agile.Persistence.Framework.Repositories;
 using TodoAgility.Agile.Persistence.Model;
 using TodoAgility.Agile.Persistence.Projections;
 using TodoAgility.Agile.Persistence.Repositories;
@@ -32,6 +39,8 @@ using Xunit;
 
 using ProjectReference = TodoAgility.Agile.Domain.AggregationActivity.Project;
 using Activity = TodoAgility.Agile.Domain.AggregationActivity.Activity;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using JsonSerializerFromText = System.Text.Json.JsonSerializer;
 using Project = TodoAgility.Agile.Domain.AggregationProject.Project;
 
 namespace TodoAgility.Tests
@@ -193,6 +202,36 @@ namespace TodoAgility.Tests
 
             //then
             Assert.Equal(activity.ActivityId,found.ActivityId);
+        }
+        
+        [Fact]
+        public void Check_EventStore_AggregateState()
+        {
+            //given
+            var descriptionText = "Given Description";
+            var id = EntityId.From(1u);
+            
+            var oldState = Activity.From(Description.From(descriptionText), id, EntityId.From(1u),
+                ActivityStatus.From(1));
+            var connString = "Filename=todoagility_eventstore.db;Connection=shared";
+            var context = new EventStoreDbContext(connString, nameof(ActivityAggregationRoot), BsonMapper.Global);
+
+            //when
+            var agg = ActivityAggregationRoot.CreateFrom(Description.From(descriptionText), id, ProjectReference.From(id,Description.From("Project name")));
+            var events = agg.GetEvents();
+
+            var encoded = JsonConvert.SerializeObject(events);
+            var decoded = JsonConvert.DeserializeObject<ImmutableList<IDomainEvent>>(encoded);
+            
+            var aggregateState = new AggregateState(nameof(ActivityAggregationRoot),events);
+            var repActivity = new EventStoreRepository(context);
+            repActivity.Add(aggregateState);
+
+            //when
+            var found = repActivity.Load(aggregateState.Id,aggregateState.Version);
+
+            //then
+            Assert.Equal(aggregateState.Id,found.Id);
         }
     }
 }

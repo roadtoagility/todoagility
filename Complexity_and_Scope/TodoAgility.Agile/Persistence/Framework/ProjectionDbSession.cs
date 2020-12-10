@@ -18,21 +18,19 @@
 
 
 using System;
-using LiteDB;
-using Microsoft.EntityFrameworkCore;
-using TodoAgility.Agile.Persistence.Framework.Projections;
+using TodoAgility.Agile.Persistence.Framework.Contexts;
 
 namespace TodoAgility.Agile.Persistence.Framework
 {
     public class ProjectionDbSession<TProjection> : IDbSession<TProjection>, IDisposable
     {
-        public ProjectionDbSession(ProjectionDbContext context, TProjection repository)
+        public ProjectionDbSession(LiteDbContext context, TProjection repository)
         {
             Context = context;
             Repository = repository;
         }
 
-        private ProjectionDbContext Context { get; }
+        private LiteDbContext Context { get; }
         public TProjection Repository { get; }
 
         public void SaveChanges()

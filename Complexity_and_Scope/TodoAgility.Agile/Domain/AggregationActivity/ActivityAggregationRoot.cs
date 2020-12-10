@@ -71,7 +71,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
                 
                 
                 Change(change);
-                Raise(ActivityUpdatedEvent.For(change));                
+                Raise(ActivityUpdatedEvent.For(change)); //Apply                
             }
             
             ValidationResults = change.ValidationResults;
@@ -96,7 +96,7 @@ namespace TodoAgility.Agile.Domain.AggregationActivity
         /// </summary>
         /// <param name="currentState"></param>
         /// <returns></returns>
-        public static ActivityAggregationRoot ReconstructFrom(Activity currentState)
+        public static ActivityAggregationRoot ReconstructFrom(Activity currentState) //Replay
         {
             return new ActivityAggregationRoot(currentState);
         }
