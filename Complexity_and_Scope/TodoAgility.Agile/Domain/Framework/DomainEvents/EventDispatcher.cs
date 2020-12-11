@@ -59,7 +59,7 @@ namespace TodoAgility.Agile.Domain.Framework.DomainEvents
             
             foreach (var handler in _eventRegistry[evt].Values)
             {
-                ((dynamic) handler).Handle((dynamic) @event);
+                ((dynamic)handler).Handle((dynamic)@event);
             }
         }
     }

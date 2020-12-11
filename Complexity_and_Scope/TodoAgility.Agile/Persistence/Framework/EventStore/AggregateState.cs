@@ -26,6 +26,10 @@ namespace TodoAgility.Agile.Persistence.Framework.EventStore
 {
     public class AggregateState : IAggregateState
     {
+        public AggregateState()
+        {
+        }
+
         private static readonly uint InitialAggregateVersion = 0u;
         public AggregateState(string aggregateType, uint version, IReadOnlyList<IDomainEvent> events)
         {
