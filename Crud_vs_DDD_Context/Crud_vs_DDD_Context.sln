@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.Domain", "AppFabric.Domain\AppFabric.Domain.csproj", "{FDA97436-10C6-4C24-ACEC-FB7EF43AB21B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.Business", "AppFabric.Business\AppFabric.Business.csproj", "{095DD5CB-ED4D-4EE6-873C-88DD28DD186E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.Persistence", "AppFabric.Persistence\AppFabric.Persistence.csproj", "{810683F2-F5B7-4756-84E9-0BB614313A98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.Tests", "AppFabric.Tests\AppFabric.Tests.csproj", "{EC18FD01-2FD1-4ECF-9F14-D1C3811EB365}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.API", "AppFabric.API\AppFabric.API.csproj", "{3EED3704-88F3-487B-B74F-5038CA496153}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppFabric.Tests.Integration", "AppFabric.Tests.Integration\AppFabric.Tests.Integration.csproj", "{82EBBED7-C57E-4E37-9CC2-69051DC71522}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDA97436-10C6-4C24-ACEC-FB7EF43AB21B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDA97436-10C6-4C24-ACEC-FB7EF43AB21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDA97436-10C6-4C24-ACEC-FB7EF43AB21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDA97436-10C6-4C24-ACEC-FB7EF43AB21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{095DD5CB-ED4D-4EE6-873C-88DD28DD186E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{095DD5CB-ED4D-4EE6-873C-88DD28DD186E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{095DD5CB-ED4D-4EE6-873C-88DD28DD186E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{095DD5CB-ED4D-4EE6-873C-88DD28DD186E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{810683F2-F5B7-4756-84E9-0BB614313A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{810683F2-F5B7-4756-84E9-0BB614313A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{810683F2-F5B7-4756-84E9-0BB614313A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{810683F2-F5B7-4756-84E9-0BB614313A98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC18FD01-2FD1-4ECF-9F14-D1C3811EB365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC18FD01-2FD1-4ECF-9F14-D1C3811EB365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC18FD01-2FD1-4ECF-9F14-D1C3811EB365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC18FD01-2FD1-4ECF-9F14-D1C3811EB365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EED3704-88F3-487B-B74F-5038CA496153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EED3704-88F3-487B-B74F-5038CA496153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EED3704-88F3-487B-B74F-5038CA496153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EED3704-88F3-487B-B74F-5038CA496153}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82EBBED7-C57E-4E37-9CC2-69051DC71522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82EBBED7-C57E-4E37-9CC2-69051DC71522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82EBBED7-C57E-4E37-9CC2-69051DC71522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82EBBED7-C57E-4E37-9CC2-69051DC71522}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FFA8635C-C018-4DDE-A09A-22E643F901AA}
+	EndGlobalSection
+EndGlobal
